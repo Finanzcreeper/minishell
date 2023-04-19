@@ -1,45 +1,35 @@
 // microparser v1
 // - take in a linked list of tokens, implement simple grammar for a simple command and pipe, return an ast
-
-// CC COMMANDS:
-// cc -Wall -Werror -Wextra -Ilibft microparser.c libft/ft_strncmp.c -o microparser && ./microparser
-// cc -Wall -Werror -Wextra -Ilibft microparser.c libft/ft_strncmp.c -o microparser && valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt ./microparser
-
+// cc -Wall -Werror -Wextra -Ilibft microparser.c libft/ft_strncmp.c -o microparser && ./microparser "ls | wc | wc"
+// cc -Wall -Werror -Wextra -Ilibft microparser.c libft/ft_strncmp.c -o microparser && valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt ./microparser "ls | wc | wc"
 // IMPLEMENTATION:
 // - scans and parses the input text in one forward pass over the text
 // - builds up the parse tree incrementally, bottom up, and left to right, without guessing or backtracking
 // Uses SHIFT REDUCE approach:
 // -- A SHIFT step advances in the input stream by one symbol. That shifted symbol becomes a new single-node parse tree.
 // -- A REDUCE step applies a completed grammar rule to some of the recent parse trees, joining them together as one tree with a new root symbol.
+// TODO:
+// handle syntax errors correctly. most work apart from this:
+// FIXED: "wc wc" [now gives syntax error]
+// FIXED: "test | test | test | wc wc" [now gives syntax error]
+// how to differentiate between returning NULL for syntax error and returning NULL for malloc protection? maybe just exit on non-protected malloc
 
-// GRAMMAR:
+// in this grammar there are only two correct forms
+// 1. cmd_word PIPE cmd_word
+// 2. pipe_sequence PIPE cmd_word
+
+// grammar:
 // pipe_sequence	: cmd_word 
 // 				| pipe_sequence PIPE cmd_word
 // 				;
 // cmd_word		: WORD
 // 				;
-// 
-// in the above grammar there are only two correct forms:
-// 1. cmd_word PIPE cmd_word
-// 2. pipe_sequence PIPE cmd_word
 
+// Q: https://unix.stackexchange.com/questions/270275/what-is-the-difference-between-token-identifier-word-and-name
+
+#include "microlexer.c"
 #include <stdio.h>
 #include <stdlib.h>
-
-typedef enum e_token_types
-{
-	T_END = -2,
-	T_WORD = 0,
-	T_PIPE	
-}	t_token_types;
-
-typedef struct s_token
-{
-	int				type;
-	char			*content;
-	struct s_token	*prev;	
-	struct s_token	*next;
-}					t_token;
 
 typedef enum e_ast_types
 {
@@ -54,37 +44,6 @@ typedef struct s_node
 	struct s_node	*right; // only relevant for A_PIPE_SEQUENCE
 	char			*content; // only relevant for A_CMD
 }					t_node;
-
-void	ft_tokenadd_back(t_token **lst, t_token *new)
-{
-	t_token	*current;
-
-	if (!(*lst))
-	{
-		(*lst) = new;
-		return ;
-	}
-	current = (*lst);
-	while (current->next != 0)
-	{
-		current = current->next;
-	}
-	current->next = new;
-	current->next->prev = current; // enable ability to look back	
-}
-
-t_token	*ft_newtoken(void *content, int type)
-{
-	t_token		*re;
-
-	re = (t_token *)malloc(sizeof(t_token));
-	if (!re)
-		return (NULL);
-	re->content = content;
-	re->type = type;
-	re->next = 0;
-	return (re);
-}
 
 // recursively frees linked list of tokens (input should be first token in the list)
 void	free_tokens(t_token *tokens)
@@ -184,27 +143,15 @@ void free_ast(t_node *ast)
 	free(ast);
 }
 
-t_token *manually_tokenise(void)
-{
-	t_token *tokens;
-
-	tokens = NULL;
-	ft_tokenadd_back(&tokens, ft_newtoken("ls", T_WORD));
-	ft_tokenadd_back(&tokens, ft_newtoken("|", T_PIPE));
-	ft_tokenadd_back(&tokens, ft_newtoken("wc", T_WORD));
-	ft_tokenadd_back(&tokens, ft_newtoken("|", T_PIPE));
-	ft_tokenadd_back(&tokens, ft_newtoken("wc", T_WORD));
-	ft_tokenadd_back(&tokens, ft_newtoken(NULL, T_END));
-	return (tokens);
-}
-
-int main()
+int main(int argc, char **argv)
 {
 	t_token *tokens;
 	t_node *ast_root_node;
 
-	tokens = manually_tokenise();
-	ast_root_node = parse(tokens);
+	argc--;
+	argv++;
+	tokens = ms_tokenizer(*argv);
+		ast_root_node = parse(tokens);
 	free_tokens(tokens);
 	if (!ast_root_node)
 	{
@@ -216,5 +163,4 @@ int main()
 		print_ast(ast_root_node);
 	}
 	free_ast(ast_root_node);
-	printf("done!");
 }

@@ -1,7 +1,7 @@
 // microlexer v1
-// - take in a line, output a linked list of tokens
+// - take in a string representing a command line and output a linked list of tokens
 // cc -Wall -Werror -Wextra -Ilibft microlexer.c libft/ft_strncmp.c -o microlexer && ./microlexer "ls -l"
-// understand stolen tokenisation algorithm!
+// TODO: reimplement ms_tokenizer (not my code)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -115,7 +115,6 @@ t_token	*check_each(int len, char *s)
 		s++;
 	}
 	arr[i] = '\0';
-	// printf("ce: %s,  %s\n", s, arr);
 	current = ft_newtoken(arr);
 	return (current);
 }
@@ -156,18 +155,18 @@ char *tokentype_lookup(int type_num)
 	return(type_str);
 }
 
-// // line = first argument of main (in quotes) e.g. "he >> ho || ha"
-// int main(int argc, char **argv)
-// {
-// 	t_token	*all;
+// line = first argument of main (in quotes) e.g. "he >> ho || ha"
+int main(int argc, char **argv)
+{
+	t_token	*all;
 	
-// 	argc--;
-// 	argv++;
-// 	all = ms_tokenizer(*argv);
-// 	while(all)
-// 	{
-// 		printf("content: '%s'\n", all->content);
-// 		printf("type: %s\n", tokentype_lookup(all->type));
-// 		all=all->next;
-// 	}
-// }
+	argc--;
+	argv++;
+	all = ms_tokenizer(*argv);
+	while(all)
+	{
+		printf("content: '%s'\n", all->content);
+		printf("type: %s\n", tokentype_lookup(all->type));
+		all=all->next;
+	}
+}

@@ -1,18 +1,14 @@
 // microinterpreter
-// manually build an ast of the two forms of command handled in the grammar i.e. "ls -l" and "ls -l | wc -l"
+// manually build an ast of the two forms of command handled in the grammar i.e. "ls" and "ls | wc"
 // traverse the tree, executing the commands in subshells
 // cc -Wall -Werror -Wextra -Ilibft microinterpreter.c libft/ft_strjoin.c libft/ft_split.c libft/ft_substr.c libft/ft_strlen.c libft/ft_strncmp.c -o microinterpreter && ./microinterpreter
-
-// MAIN Q: why don't we see a result?
-
-// - integrate pipex bonus
-// 	-- everytime we encounter a pipe (or the root node) in the tree, we
-//		-- fork off a child process, setup read end of the pipe
-//		-- in parent process, setup write end of the pipe
+// - everytime we encounter a pipe (or the root node) in the tree, we
+//	- fork off a child process, setup read end of the pipe
+//	- in parent process, setup write end of the pipe
 // the root node is treated like a pipe, so that there is a watchover process to exit to
 // this way things should work nicely even when there is no pipe in the ast
-// we can test this by returning different nodes from the manually_make_tree function e.g.
-// -- node[4]: if marked as root, should execute
+
+// Q: why is there no output?!?
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -86,6 +82,7 @@ void	execute_cmd(char *cmd_args_str, char **env)
 	execute_cmd2(paths, cmd_args, env);
 }
 
+// run the given command in a forked subprocess, returning the output (stdout) to the parent process (stdin)
 // pid == 0 is child, pid > 0 is parent, ip pipe goes child [out] -> parent [in]
 void	pipe_to_parent(char *cmd, char **env)
 {
@@ -115,8 +112,6 @@ void	pipe_to_parent(char *cmd, char **env)
 
 void visit_and_execute(t_node *node, char **env)
 {
-	static char *cmd = NULL; // represents command and arguments separated by single spaces
-
 	if (!node)
 		return ;
 	visit_and_execute(node->left, env);
@@ -124,23 +119,13 @@ void visit_and_execute(t_node *node, char **env)
 
 	if (node->type == A_PIPE_SEQUENCE)
 	{
-		// printf("PIPE!\n");
-		pipe_to_parent(cmd, env);
-		free(node); // cut off this branch so that it isn't executed again i.e. stop browsing the left branch if we encounter another pipe
-		cmd = NULL;
+		pipe_to_parent(node->left->content, env);
+		pipe_to_parent(node->right->content, env);
+		// free(node); // cut off this branch so that it isn't executed again i.e. stop browsing the left branch if we encounter another pipe
 	}
 	if (node->type == A_CMD_WORD)
 	{
-		printf("CMD!\n");
-		if (!cmd)
-		{
-			cmd = node->content;
-		}
-		else
-		{
-			cmd = ft_strjoin(cmd, " ");
-			cmd = ft_strjoin(cmd, node->content);
-		}	
+		pipe_to_parent(node->content, env);
 	}
 }
 
@@ -159,35 +144,21 @@ t_node *manually_make_tree1()
 // t_node *manually_make_tree2()
 // {
 // 	int i;
-// 	t_node *nodes[8];
+// 	t_node *nodes[3];
 
 // 	i = 0;
-// 	while(i < 8)
+// 	while(i < 3)
 // 	{
 // 		nodes[i] = malloc(sizeof(t_node));
 // 		i++;
 // 	}
-// 	nodes[0]->type = R_PIPE_SEQUENCE;
-// 	nodes[1]->type = A_PIPE;
-// 	nodes[1]->content = "|";
-// 	nodes[2]->type = A_CMD;
-// 	nodes[3]->type = R_CMD_WORD;
-// 	nodes[3]->content = "ls";
-// 	nodes[4]->type = R_CMD_WORD;
-// 	nodes[4]->content = "-l";
-// 	nodes[5]->type = A_CMD;
-// 	nodes[6]->type = R_CMD_WORD;
-// 	nodes[6]->content = "wc";
-// 	nodes[7]->type = R_CMD_WORD;
-// 	nodes[7]->content = "-l";
+// 	nodes[0]->type = A_PIPE_SEQUENCE;
+// 	nodes[1]->type = A_CMD_WORD;
+// 	nodes[1]->content = "ls";
+// 	nodes[2]->type = A_CMD_WORD;
+// 	nodes[2]->content = "wc";
 // 	nodes[0]->left = nodes[1];
-// 	nodes[0]->right = nodes[5];
-// 	nodes[1]->left = nodes[2];
-// 	nodes[2]->left = nodes[3];
-// 	nodes[2]->right = nodes[4];
-// 	nodes[5]->left = nodes[6];
-// 	nodes[5]->right = nodes[7];
-// 	nodes[0]->type = ROOT;
+// 	nodes[0]->right = nodes[2];
 // 	return (nodes[0]);	
 // }
 
@@ -198,6 +169,7 @@ int main(int argc, char **argv, char **envp)
 	argc--;
 	argv++;
 	root_node = manually_make_tree1();
+	// root_node = manually_make_tree2();
 	visit_and_execute(root_node, envp);
 	return (0);
 }
