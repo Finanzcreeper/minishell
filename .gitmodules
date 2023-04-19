@@ -1,3 +1,6 @@
 [submodule "libft"]
 	path = libft
 	url = git@vogsphere.42berlin.de:vogsphere/intra-uuid-4c5fc7b9-d581-4394-a448-75634b093b57-4594178-gbooth
+[submodule "libgtt"]
+	path = libgtt
+	url = git@github.com:Finanzcreeper/Libft.git
