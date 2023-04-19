@@ -4,3 +4,6 @@
 [submodule "libgtt"]
 	path = libgtt
 	url = git@github.com:Finanzcreeper/Libft.git
+[submodule "Libft"]
+	path = Libft
+	url = git@github.com:Finanzcreeper/libft_modded.git
