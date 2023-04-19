@@ -34,16 +34,9 @@
 // ast types begin from 0 and represent the types of the orange nodes in the diagram
 typedef enum e_ast_types
 {
-	A_CMD = 0,		// 
-	A_PIPE,			// |
+	A_CMD_WORD,
+	A_PIPE_SEQUENCE,
 }	t_ast_types;
-
-// these represent grammar rules
-typedef enum e_rules
-{
-	R_PIPE_SEQUENCE = 100,
-	R_CMD_WORD,
-}	t_rules;
 
 typedef struct s_node
 {
@@ -129,15 +122,16 @@ void visit_and_execute(t_node *node, char **env)
 	visit_and_execute(node->left, env);
 	visit_and_execute(node->right, env);
 
-	if (node->type == A_PIPE || node->type == ROOT)
+	if (node->type == A_PIPE_SEQUENCE)
 	{
 		// printf("PIPE!\n");
 		pipe_to_parent(cmd, env);
 		free(node); // cut off this branch so that it isn't executed again i.e. stop browsing the left branch if we encounter another pipe
 		cmd = NULL;
 	}
-	if (node->type == A_CMD)
+	if (node->type == A_CMD_WORD)
 	{
+		printf("CMD!\n");
 		if (!cmd)
 		{
 			cmd = node->content;
@@ -150,30 +144,18 @@ void visit_and_execute(t_node *node, char **env)
 	}
 }
 
-// ls -l
+// ls
 t_node *manually_make_tree1()
 {
-	int i;
-	t_node *nodes[3];
+	t_node *node;
 
-	i = 0;
-	while(i < 3)
-	{
-		nodes[i] = malloc(sizeof(t_node));
-		i++;
-	}
-	nodes[0]->type = A_CMD;
-	nodes[1]->type = R_CMD_WORD;
-	nodes[1]->content = "ls";
-	nodes[2]->type = R_CMD_WORD;
-	nodes[2]->content = "-l";
-	nodes[0]->left = nodes[1];
-	nodes[0]->right = nodes[2];
-	nodes[0]->type = ROOT;
-	return (nodes[0]);	
+	node = malloc(sizeof(t_node));
+	node->type = A_CMD_WORD;
+	node->content = "ls";
+	return (node);	
 }
 
-// // ls -l | wc -l
+// // ls | wc
 // t_node *manually_make_tree2()
 // {
 // 	int i;
