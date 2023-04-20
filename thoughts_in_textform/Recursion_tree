@@ -1,0 +1,60 @@
+recursion refresher
+
+visit(node)
+    if node == null
+        return ;
+    visit(node->left)
+    visit(node->right)
+    <do something>
+    
+0:	Go left,	Go Right,	Do something
+		||			
+		||
+		\/
+	Go left,	Go Right,	Do something
+		||
+		||
+		\/
+	Go left,	Go Right,	Do something
+		||			||			||
+		--			--			||
+		\/			\/			\/
+								done
+1:	Go left,	Go Right,	Do something
+		||			
+		||
+		\/
+	Go left,	Go Right,	Do something
+		||			||
+		||			||
+		\/			\/
+		done		Go left	Go right	do something
+					||			||			||
+					--			--			||
+					\/			\/			\/
+											done
+2:	Go left,	Go Right,	Do something
+		||			
+		||
+		\/
+	Go left,	Go Right,	Do something
+		||			||			||
+		||			||			||
+		\/			\/			\/
+		done		done		done
+		
+3:	Go left,	Go Right,	Do something
+		||			||		
+		||			||
+		\/			\/
+		done		Go left	Go right	Do something
+					||			||			||
+					--			--			||
+					\/			\/			\/
+											done
+4:	Go left,	Go Right,	Do something
+		||			||			||	
+		||			||			||
+		\/			\/			\/
+		done		done		done
+		

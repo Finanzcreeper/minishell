@@ -1,6 +1,6 @@
 // microlexer v1
 // - take in a string representing a command line and output a linked list of tokens
-// cc -Wall -Werror -Wextra -Ilibft microlexer.c libft/ft_strncmp.c -o microlexer && ./microlexer "ls -l"
+// cc -Wall -Werror -Wextra -ILibft microlexer.c Libft/ft_strncmp.c -o microlexer && ./microlexer "ls -l"
 // TODO: reimplement ms_tokenizer (not my code)
 
 #include <stdio.h>
@@ -126,6 +126,23 @@ t_token	*ms_tokenizer(char *line)
 	int		len;
 
 	all = 0;
+
+	/*		*/
+	// int	c;
+	
+	// c = 0;
+	// while(line[c] != '\0')
+	// {
+	// 	while(line[c] == ' ' && line[c] != '\0')
+	// 		c++;
+	// 	len = count_len(line);
+	// 	if (len == 0)
+	// 		break ;
+	// 	current = check_each(len, line);
+	// 	ft_tokenadd_back(&all, current);
+	// 	c += len;
+	// }
+	/*		*/
 	while (*line)
 	{
 		while (*line == ' ' && *line)

@@ -2,8 +2,8 @@
 // - take in a linked list of tokens, implement simple grammar for a simple command and pipe, return an ast
 
 // CC COMMANDS:
-// cc -Wall -Werror -Wextra -Ilibft microparser.c libft/ft_strncmp.c -o microparser && ./microparser
-// cc -Wall -Werror -Wextra -Ilibft microparser.c libft/ft_strncmp.c -o microparser && valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt ./microparser
+// cc -Wall -Werror -Wextra -ILibft microparser.c Libft/ft_strncmp.c -o microparser && ./microparser
+// cc -Wall -Werror -Wextra -ILibft microparser.c Libft/ft_strncmp.c -o microparser && valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt ./microparser
 
 // IMPLEMENTATION:
 // - scans and parses the input text in one forward pass over the text

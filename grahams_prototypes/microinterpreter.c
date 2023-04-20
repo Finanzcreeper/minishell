@@ -1,7 +1,7 @@
 // microinterpreter
 // manually build an ast of the two forms of command handled in the grammar i.e. "ls" and "ls | wc"
 // traverse the tree, executing the commands in subshells
-// cc -Wall -Werror -Wextra -Ilibft microinterpreter.c libft/ft_strjoin.c libft/ft_split.c libft/ft_substr.c libft/ft_strlen.c libft/ft_strncmp.c -o microinterpreter && ./microinterpreter
+// cc -Wall -Werror -Wextra -ILibft microinterpreter.c  Libft/libft.a -o microinterpreter && ./microinterpreter
 // - everytime we encounter a pipe (or the root node) in the tree, we
 //	- fork off a child process, setup read end of the pipe
 //	- in parent process, setup write end of the pipe
@@ -54,7 +54,7 @@ void	execute_cmd2(char **paths, char **cmd_args, char **env)
 		if (access(path_cmd, 0) == 0)
 		{
 			free(paths);
-			// fprintf(stderr, "%s\n", path_cmd);
+			fprintf(stderr, "path: %s, arg1: %s, arg2: %s\n", path_cmd, cmd_args[0], cmd_args[1]);
 			if (execve(path_cmd, cmd_args, env) == -1)
 			{
 				perror("Execution error");
@@ -110,23 +110,35 @@ void	pipe_to_parent(char *cmd, char **env)
 	}
 }
 
+// void visit_and_execute(t_node *node, char **env)
+// {
+// 	if (!node)
+// 		return ;
+// 	visit_and_execute(node->left, env);
+// 	visit_and_execute(node->right, env);
+
+// 	if (node->type == A_PIPE_SEQUENCE)
+// 	{
+// 		pipe_to_parent(node->left->content, env);
+// 		pipe_to_parent(node->right->content, env);
+// 		// free(node); // cut off this branch so that it isn't executed again i.e. stop browsing the left branch if we encounter another pipe
+// 	}
+// 	if (node->type == A_CMD_WORD)
+// 		pipe_to_parent(node->content, env);
+// }
+
 void visit_and_execute(t_node *node, char **env)
 {
 	if (!node)
 		return ;
-	visit_and_execute(node->left, env);
-	visit_and_execute(node->right, env);
 
 	if (node->type == A_PIPE_SEQUENCE)
 	{
-		pipe_to_parent(node->left->content, env);
-		pipe_to_parent(node->right->content, env);
-		// free(node); // cut off this branch so that it isn't executed again i.e. stop browsing the left branch if we encounter another pipe
+		visit_and_execute(node->left, env);
+		visit_and_execute(node->right, env);
 	}
 	if (node->type == A_CMD_WORD)
-	{
 		pipe_to_parent(node->content, env);
-	}
 }
 
 // ls
@@ -141,26 +153,34 @@ t_node *manually_make_tree1()
 }
 
 // // ls | wc
-// t_node *manually_make_tree2()
-// {
-// 	int i;
-// 	t_node *nodes[3];
+t_node *manually_make_tree2()
+{
+	int i;
+	t_node *nodes[5];
 
-// 	i = 0;
-// 	while(i < 3)
-// 	{
-// 		nodes[i] = malloc(sizeof(t_node));
-// 		i++;
-// 	}
-// 	nodes[0]->type = A_PIPE_SEQUENCE;
-// 	nodes[1]->type = A_CMD_WORD;
-// 	nodes[1]->content = "ls";
-// 	nodes[2]->type = A_CMD_WORD;
-// 	nodes[2]->content = "wc";
-// 	nodes[0]->left = nodes[1];
-// 	nodes[0]->right = nodes[2];
-// 	return (nodes[0]);	
-// }
+	i = 0;
+	while(i < 5)
+	{
+		nodes[i] = malloc(sizeof(t_node));
+		i++;
+	}
+	nodes[0]->type = A_PIPE_SEQUENCE;
+	nodes[1]->type = A_PIPE_SEQUENCE;	
+
+	nodes[2]->type = A_CMD_WORD;
+	nodes[2]->content = "wc";
+	nodes[3]->type = A_CMD_WORD;
+	nodes[3]->content = "wc";
+	nodes[4]->type = A_CMD_WORD;
+	nodes[4]->content = "ls";
+
+	nodes[0]->left = nodes[1];
+	nodes[0]->right = nodes[2];
+	nodes[1]->left = nodes[4];
+	nodes[1]->right = nodes[3];
+
+	return (nodes[0]);	
+}
 
 int main(int argc, char **argv, char **envp)
 {
@@ -168,8 +188,8 @@ int main(int argc, char **argv, char **envp)
 
 	argc--;
 	argv++;
-	root_node = manually_make_tree1();
-	// root_node = manually_make_tree2();
+	// root_node = manually_make_tree1();
+	root_node = manually_make_tree2();
 	visit_and_execute(root_node, envp);
 	return (0);
 }
