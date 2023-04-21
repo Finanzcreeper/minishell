@@ -22,6 +22,10 @@ The following definitions are used throughout the rest of this document.
 				It is one of the following symbols: || & && ; ;; ;& ;;& ( ) | |& <newline>
 -----------------------------------------------------------------------------------------
 
+always use the last "<".
+always use the last ">".
+| always reads from STDIN_FD (if > was used before |, STDIN_FD will be empty).
+
 Definition of the Grammar (From Bash manual):
 -----------------------------------------------------------------------------------------
 Simple Commands

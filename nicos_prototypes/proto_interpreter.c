@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 16:42:46 by nreher            #+#    #+#             */
-/*   Updated: 2023/04/21 09:10:36 by nreher           ###   ########.fr       */
+/*   Updated: 2023/04/21 10:58:17 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,22 @@ void	traverse(t_node *tree)
 	{
 		traverse(tree->left);
 		traverse(tree->right);
+		do_pipe(tree);
 	}
 	else
 	{
-		operation(tree);
 	}
 }
 
 void	operation(t_node *tree)
 {
 	int	pid;
+	int	pipenbr;
+	int	*pipefd[2]
 
+	pipenbr = find_pipenbr(tree);	//need to create find_pipenbr
+	ft_calloc(pipenbr, sizeof(int *));
+	pipefd = make_pipe(pipefd);		//need to create make_pipe
 	pid = fork();
 	if (pid == 0)
 	{
