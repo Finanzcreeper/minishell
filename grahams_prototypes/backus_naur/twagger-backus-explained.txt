@@ -1,0 +1,92 @@
+# tokens
+
+- T_WORD
+- T_PIPE
+- T_RE_FROM
+- T_RE_TO
+- T_RE_TO_APPEND
+- T_RE_HEREDOC
+- T_END (is this really needed, why not just detect NULL?)
+
+# nodes
+
+in our AST we will only have three types of nodes:
+	- N_SIMPLE_COMMAND
+	- N_PIPE_SEQUENCE
+	- N_SUBSHELL (brackets, bonus to add later)
+
+# simplified twagger backus naur grammar
+full bash grammar is here https://cmdse.github.io/pages/appendix/bash-grammar.html
+
+pipe_sequence	: simple_command
+				| pipe_sequence T_PIPE simple_command
+				;
+				i.e.
+					[a single simple command or a pipe sequence separated by the T_PIPE token followed by another simple_command]
+
+simple_command	: cmd_prefix T_WORD cmd_suffix
+				| cmd_prefix T_WORD
+				| cmd_prefix
+				| T_WORD cmd_suffix
+				| T_WORD
+				;
+				i.e.
+					[a cmd_prefix (i.e. one or more io_redirects) with no WORD] - STRANGE CASE?!
+					[a single T_SWORD, optionally preceded by a cmd_prefix, cmd_suffix or both]
+
+cmd_prefix		: io_redirect
+				| cmd_prefix io_redirect
+				;
+				i.e.
+					[one or more io_redirects]
+
+cmd_suffix		: io_redirect
+				| cmd_suffix io_redirect
+				| T_WORD
+				| cmd_suffix T_WORD
+				;
+				i.e.
+					[optional one or more command suffixes followed by either an io_redirect or a T_WORD]
+
+io_redirect		: T_RE_FROM WORD
+				| T_RE_FROM_HEREDOC WORD
+				| T_RE_TO WORD
+				| T_RE_TO_APPEND WORD
+				;
+				e.g.
+					< myfile
+					> myfile
+					>> myfile
+					<< myfile
+
+# simple_commands
+
+at the very least consist of a single word
+may or may not contain arguments
+may or may not be preceded or followed by redirections
+
+instead of our previous 'content' attribute
+
+## simple_command examples
+
+$ < file.txt echo "test"
+
+a. 
+	<				file.txt	grep	"test"
+	T_RE_FROM		T_WORD		T_WORD	T_WORD
+
+b. 
+	[< file.txt]	grep		"test"
+	io_redirect		T_WORD		T_WORD
+
+c. 
+	[< file.txt]	grep		"test"
+	cmd_prefix		T_WORD		T_WORD
+
+d. 
+	[< file.txt	grep]			"test"
+	simple_command				T_WORD	
+
+e. 
+	[< file.txt	grep]			"test"
+	simple_command				T_WORD

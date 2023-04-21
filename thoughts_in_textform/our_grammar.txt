@@ -1,0 +1,27 @@
+<pipeline> 				::= <cmd> | <pipeline> T_PIPE <cmd>
+<cmd>					::= T_WORD | <redir> <cmd> | <cmd> <redir> | <cmd> T_WORD
+<redir>					::= T_RE_FROM T_WORD
+						| T_RE_TO T_WORD
+						| T_RE_FROM_HEREDOC T_WORD
+						| T_RE_TO_APPEND T_WORD
+
+ls 		-l 		< 			infile | 		cat 	-e  	-g 		| 		echo  	"hi" 	"hello"	>		outfile
+T_WORD	T_WORD 	T_RE_FROM	T_WORD T_PIPE 	T_WORD 	T_WORD T_WORD 	T_PIPE 	T_WORD 	T_WORD 	T_WORD	T_RE_TO	T_WORD
+
+1.
+ls
+
+2.
+ls -l
+
+3.
+ls -l -m
+
+4.
+< infile ls -l -m
+
+5.
+ls -l -m < infile
+
+6. SYNTAX ERROR
+< ls -l -m
