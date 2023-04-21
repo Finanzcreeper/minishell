@@ -1,9 +1,46 @@
-<pipeline> 				::= <cmd> | <pipeline> T_PIPE <cmd>
+<pipeline> 				::= <cmd> | <cmd> T_PIPE <pipeline>
+<cmd> 					::= T_WORD | T_WORD <cmd>
+
 <cmd>					::= T_WORD | <redir> <cmd> | <cmd> <redir> | <cmd> T_WORD
 <redir>					::= T_RE_FROM T_WORD
 						| T_RE_TO T_WORD
 						| T_RE_FROM_HEREDOC T_WORD
 						| T_RE_TO_APPEND T_WORD
+ 
+<pipeline>	::= <cmd> {T_PIPE <cmd>}
+<cmd>		::= T_WORD {T_WORD}
+
+
+ls -l | cat -e
+			
+				                  |
+Token list = START -> TWORD -> TWORD -> TPIPE -> TWORD -> TWORD
+
+parse_command()
+{
+	if(predict(T_WORD))
+	{
+		match(T_WORD);
+		parse_command;
+	}
+}
+
+parse_pipeline()
+{
+	parse_command();
+	if (predict(T_WORD))
+	{
+		match(T_PIPE);
+		parse_pipeline()
+	}
+	else
+	{
+		match(T_WORD);
+	}
+}
+
+
+
 
 ls 		-l 		< 			infile | 		cat 	-e  	-g 		| 		echo  	"hi" 	"hello"	>		outfile
 T_WORD	T_WORD 	T_RE_FROM	T_WORD T_PIPE 	T_WORD 	T_WORD T_WORD 	T_PIPE 	T_WORD 	T_WORD 	T_WORD	T_RE_TO	T_WORD
@@ -23,5 +60,19 @@ ls -l -m
 5.
 ls -l -m < infile
 
-6. SYNTAX ERROR
+6. EXECUTION ERROR
 < ls -l -m
+
+
+
+match-predict-parser - recursive descent parser
+
+Token list = TWORD -> TWORD -> TPIPE -> TWORD
+
+match(TWORD)
+
+match(tokentype) checks if the token type is equal to current tokentype in the tokens stream 
+					if it does, it consumes the token, which means it advances the stream
+					if it doesnt it throws an error
+
+predict(tokentype) returns true or false if the next token in the stream matches the given tokentype
