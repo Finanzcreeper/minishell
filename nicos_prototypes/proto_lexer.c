@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 08:34:58 by nreher            #+#    #+#             */
-/*   Updated: 2023/04/20 14:54:28 by nreher           ###   ########.fr       */
+/*   Updated: 2023/04/21 08:46:34 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,24 +60,30 @@ t_token	*new_token(char *content, int type)
 t_token	*linker(char **tokens, char **metachars)
 {
 	int		c;
-	int		i;
 	int		type;
 	t_token	*token_list;
 
 	c = 0;
-	i = -1;
 	token_list = ft_calloc(1, sizeof(t_token));
 	while (tokens[c] != NULL)
 	{
 		type = T_WORD;
-		while (metachars[++i] != NULL)
-		{
-			if (ft_strncmp(tokens[c], metachars[i]
-					, ft_strlen(tokens[c])) == 0)
-				type = T_METACHAR;
-		}
+		if (ft_strncmp(tokens[c], metachars[0]
+				, ft_strlen(tokens[c])) == 0)
+			type = T_PIPE;
+		else if (ft_strncmp(tokens[c], metachars[1]
+				, ft_strlen(tokens[c])) == 0)
+			type = T_RE_FROM;
+		else if (ft_strncmp(tokens[c], metachars[2]
+				, ft_strlen(tokens[c])) == 0)
+			type = T_RE_TO;
+		else if (ft_strncmp(tokens[c], metachars[3]
+				, ft_strlen(tokens[c])) == 0)
+			type = T_RE_FROM_HEREDOC;
+		else if (ft_strncmp(tokens[c], metachars[4]
+				, ft_strlen(tokens[c])) == 0)
+			type = T_RE_TO_APPEND;
 		token_add_back(&token_list, new_token(tokens[c], type));
-		i = -1;
 		c++;
 	}
 	return (token_list);
