@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 08:34:58 by nreher            #+#    #+#             */
-/*   Updated: 2023/04/21 08:46:34 by nreher           ###   ########.fr       */
+/*   Updated: 2023/04/21 09:25:43 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,14 @@ t_defs	make_defs(void)
 	defs.metachars[3] = "<<";
 	defs.metachars[4] = ">>";
 	defs.metachars[5] = NULL;
+	defs.seperators[0] = " ";
+	defs.seperators[1] = "	";
+	defs.seperators[2] = "|";
+	defs.seperators[3] = "<";
+	defs.seperators[4] = ">";
+	defs.seperators[5] = "<<";
+	defs.seperators[6] = ">>";
+	defs.seperators[7] = NULL;
 	return (defs);
 }
 
@@ -96,7 +104,7 @@ t_token	*lexer(char *in)
 	t_token	*token_list;
 
 	defs = make_defs();
-	tokens = ft_split2(in, defs.blanks);
+	tokens = ft_split2(in, defs.seperators);
 	token_list = linker(tokens, defs.metachars);
 	return (token_list);
 }
@@ -105,7 +113,7 @@ int	main(void)
 {
 	t_token	*token_list;
 
-	token_list = lexer("ls -a  < |test > .. . |  >    <<  >> grep e");
+	token_list = lexer(">out  < in cat <in2");
 	while (token_list->next != NULL)
 	{
 		ft_printf("content: %s	type: %d\n",token_list->content, token_list->type);

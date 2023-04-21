@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "libft.h"
+#include "../Libft/libft.h"
 
 typedef enum e_token_types
 {
@@ -63,7 +63,7 @@ t_token	*ft_newtoken(void *content)
 	return (re);
 }
 
-int	sep(char s)
+int	sep(char s)	//returns if a char is a seperator
 {
 	if (s == ' ' || s == '>' || s == '<' || s == '|')
 		return (1);
@@ -72,10 +72,10 @@ int	sep(char s)
 
 int	count_sep(char *s, int len)
 {
-	while (sep(*s) && (*s) != ' ')
+	while (sep(*s) && (*s) != ' ')	//checks if the current pointed at char in s is a Seperator but not a space (' ')
 	{
-		s++;
-		len++;
+		s++;						//advances the currently pointed at char in s
+		len++;						//increases the length of the seperator read [NEVER STOPS!!!]
 	}
 	return (len);
 }
@@ -127,33 +127,33 @@ t_token	*ms_tokenizer(char *line)
 
 	all = 0;
 
-	/*		*/
-	// int	c;
+	/*	Nicos version	*/
+	int	c;
 	
-	// c = 0;
-	// while(line[c] != '\0')
+	c = 0;
+	while(line[c] != '\0')
+	{
+		while(line[c] == ' ' && line[c] != '\0')
+			c++;
+		len = count_len(&line[c]);
+		if (len == 0)
+			break ;
+		current = check_each(len, &line[c]);
+		ft_tokenadd_back(&all, current);
+		c += len;
+	}
+	/*	Original Version	*/
+	// while (*line)
 	// {
-	// 	while(line[c] == ' ' && line[c] != '\0')
-	// 		c++;
+	// 	while (*line == ' ' && *line)
+	// 		line++;
 	// 	len = count_len(line);
-	// 	if (len == 0)
+	// 	if (!len)
 	// 		break ;
 	// 	current = check_each(len, line);
 	// 	ft_tokenadd_back(&all, current);
-	// 	c += len;
+	// 	line = line + len;
 	// }
-	/*		*/
-	while (*line)
-	{
-		while (*line == ' ' && *line)
-			line++;
-		len = count_len(line);
-		if (!len)
-			break ;
-		current = check_each(len, line);
-		ft_tokenadd_back(&all, current);
-		line = line + len;
-	}
 	ft_tokenadd_back(&all, ft_newtoken(NULL));
 	return (all);
 }

@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 10:06:07 by nreher            #+#    #+#             */
-/*   Updated: 2023/04/20 10:33:37 by nreher           ###   ########.fr       */
+/*   Updated: 2023/04/21 09:33:47 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,8 @@
 
 int	is_delim(char mod, char *delim)
 {
-	int	i;
-
-	i = 0;
-	while (delim[i] != '\0')
-	{
-		if (mod == delim[i])
+		if (ft_strncmp(mod, delim, ft_strlen(mod)) == 0)
 			return (1);
-		i++;
-	}
 	return (0);
 }
 
