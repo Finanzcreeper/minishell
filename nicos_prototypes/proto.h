@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 08:42:24 by nreher            #+#    #+#             */
-/*   Updated: 2023/04/21 09:28:11 by nreher           ###   ########.fr       */
+/*   Updated: 2023/04/21 12:29:55 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,13 @@ typedef struct s_node
 	struct s_node	*left;
 	struct s_node	*right;
 }t_node;
+
+typedef struct s_rule
+{
+	char			*lhs;
+	char			*rhs;
+	struct s_rule	*next_rule;
+}t_rule;
 
 char	**ft_split2(char const *a1, char **delim);
 
