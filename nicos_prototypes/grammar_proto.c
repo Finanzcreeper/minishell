@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 12:19:08 by nreher            #+#    #+#             */
-/*   Updated: 2023/04/21 12:43:32 by nreher           ###   ########.fr       */
+/*   Updated: 2023/05/02 16:57:21 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ t_rule	*new_rule(char *lhs, char *rhs)
 	if (out == NULL)
 		return (NULL);
 	out->lhs = lhs;
-	out->rhs = rhs;
+	out->rhs = ft_split(rhs, ' ');
 	return (out);
 }
 
@@ -48,11 +48,14 @@ void	create_rules(t_rule *rules)
 	rule_add_back(rules, new_rule("E", "4"));
 }
 
-void	shift_reduce(t_rule *rules, char *argv[])
+void	shift_reduce(t_rule *rules, int argc, char *input)
 {
-	char	*stack[1000];
-	
+	char	**stack[argc];
+
 	while (rules != NULL)
+	{
+
+	}
 }
 
 int	main(int argc, char *argv[])
@@ -60,6 +63,6 @@ int	main(int argc, char *argv[])
 	t_rule	*rules;
 
 	create_rules(rules);
-	shift_reduce(rules, argv);
+	shift_reduce(rules, argc, argv);
 }
 

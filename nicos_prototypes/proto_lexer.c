@@ -6,117 +6,123 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 08:34:58 by nreher            #+#    #+#             */
-/*   Updated: 2023/04/21 09:25:43 by nreher           ###   ########.fr       */
+/*   Updated: 2023/05/05 13:46:19 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "proto.h"
 
-t_defs	make_defs(void)
-{
-	t_defs	defs;
-
-	defs.blanks[0] = ' ';
-	defs.blanks[1] = '	';
-	defs.blanks[2] = '\0';
-	defs.metachars[0] = "|";
-	defs.metachars[1] = "<";
-	defs.metachars[2] = ">";
-	defs.metachars[3] = "<<";
-	defs.metachars[4] = ">>";
-	defs.metachars[5] = NULL;
-	defs.seperators[0] = " ";
-	defs.seperators[1] = "	";
-	defs.seperators[2] = "|";
-	defs.seperators[3] = "<";
-	defs.seperators[4] = ">";
-	defs.seperators[5] = "<<";
-	defs.seperators[6] = ">>";
-	defs.seperators[7] = NULL;
-	return (defs);
-}
-
-void	token_add_back(t_token **token, t_token *new)
-{
-	t_token	*temp;
-
-	if (*token == NULL)
-	{
-		*token = new;
-		return ;
-	}
-	temp = *token;
-	while (temp -> next != NULL)
-	{
-		temp = temp -> next;
-	}
-	temp -> next = new;
-}
-
-t_token	*new_token(char *content, int type)
-{
-	t_token	*out;
-
-	out = ft_calloc(1, sizeof(t_token));
-	if (out == NULL)
-		return (NULL);
-	out->content = content;
-	out->type = type;
-	return (out);
-}
-
-t_token	*linker(char **tokens, char **metachars)
+void	set_type(t_token	*token, char **metachars, t_token **token_list)
 {
 	int		c;
-	int		type;
-	t_token	*token_list;
 
 	c = 0;
-	token_list = ft_calloc(1, sizeof(t_token));
-	while (tokens[c] != NULL)
+	token->type = T_WORD;
+	if (ft_strncmp(token->content, metachars[0]
+			, ft_strlen(token->content)) == 0)
+		token->type = T_PIPE;
+	else if (ft_strncmp(token->content, metachars[1]
+			, ft_strlen(token->content)) == 0)
+		token->type = T_RE_FROM;
+	else if (ft_strncmp(token->content, metachars[2]
+			, ft_strlen(token->content)) == 0)
+		token->type = T_RE_TO;
+	else if (ft_strncmp(token->content, metachars[3]
+			, ft_strlen(token->content)) == 0)
+		token->type = T_RE_FROM_HEREDOC;
+	else if (ft_strncmp(token->content, metachars[4]
+			, ft_strlen(token->content)) == 0)
+		token->type = T_RE_TO_APPEND;
+	token_add_back(token_list, token);
+}
+
+int	is_current_delim(t_defs defs, char *string)
+{
+	int	i;
+
+	i = 0;
+	while (defs.seperators[i] != NULL)
 	{
-		type = T_WORD;
-		if (ft_strncmp(tokens[c], metachars[0]
-				, ft_strlen(tokens[c])) == 0)
-			type = T_PIPE;
-		else if (ft_strncmp(tokens[c], metachars[1]
-				, ft_strlen(tokens[c])) == 0)
-			type = T_RE_FROM;
-		else if (ft_strncmp(tokens[c], metachars[2]
-				, ft_strlen(tokens[c])) == 0)
-			type = T_RE_TO;
-		else if (ft_strncmp(tokens[c], metachars[3]
-				, ft_strlen(tokens[c])) == 0)
-			type = T_RE_FROM_HEREDOC;
-		else if (ft_strncmp(tokens[c], metachars[4]
-				, ft_strlen(tokens[c])) == 0)
-			type = T_RE_TO_APPEND;
-		token_add_back(&token_list, new_token(tokens[c], type));
-		c++;
+		if (ft_memcmp(string, defs.seperators[i]
+				, ft_strlen(defs.seperators[i])) == 0)
+			return (ft_strlen(defs.seperators[i]));
+		i++;
 	}
-	return (token_list);
+	return (0);
+}
+
+void	pushcurrent_sub(t_sain *sain, char *string, t_token **list, t_defs defs)
+{
+	if (sain->substring[0] != '\0' && sain->substring[0]
+		!= ' ' && sain->substring[0] != '	')
+		set_type(new_token(sain->substring, 0), defs.metachars, list);
+	ft_bzero(sain->substring, ft_strlen(sain->substring));
+	sain->k = 0;
+	while (sain->k < sain->i)
+	{
+		sain->substring[sain->k] = string[sain->c];
+		sain->c += 1;
+		sain->k += 1;
+	}
+}
+
+void	seperate_arguments_into_nodes(char *string, t_defs defs, t_token **list)
+{
+	t_sain	*sain;
+
+	sain = ft_calloc(1, sizeof(t_sain));
+	sain->c = 0;
+	sain->j = 0;
+	sain->k = 0;
+	sain->substring = ft_calloc(ft_strlen(string) + 1, sizeof(char));
+	while (string[sain->c] != '\0')
+	{
+		sain->i = is_current_delim(defs, &string[sain->c]);
+		if (sain->i != 0)
+			pushcurrent_sub(sain, string, list, defs);
+		else
+		{
+			sain->i = is_current_delim(defs, sain->substring);
+			if (sain->i != 0)
+				pushcurrent_sub(sain, string, list, defs);
+			else
+				sain->substring[sain->k++] = string[sain->c++];
+		}
+	}
+	pushcurrent_sub(sain, string, list, defs);
+	free(sain->substring);
+	free(sain);
 }
 
 t_token	*lexer(char *in)
 {
-	char	**tokens;
 	t_defs	defs;
 	t_token	*token_list;
 
+	token_list = ft_calloc(1, sizeof(t_token));
 	defs = make_defs();
-	tokens = ft_split2(in, defs.seperators);
-	token_list = linker(tokens, defs.metachars);
+	seperate_arguments_into_nodes(in, defs, &token_list);
 	return (token_list);
 }
 
-int	main(void)
+int	main(int argc, char *argv[])
 {
-	t_token	*token_list;
+	static t_token	*token_list;
+	t_token	*temp;
 
-	token_list = lexer(">out  < in cat <in2");
-	while (token_list->next != NULL)
+	if (argc != 2)
 	{
-		ft_printf("content: %s	type: %d\n",token_list->content, token_list->type);
+		write(2, "wrong input\n", 12);
+		return (1);
+	}
+	token_list = lexer(argv[1]);
+	argc += 1;
+	while (token_list != NULL)
+	{
+		ft_printf("content: {%s}	type: {%d}\n",token_list->content, token_list->type);
+		free(token_list->content);
+		temp = token_list;
 		token_list = token_list->next;
+		free(temp);
 	}
 }

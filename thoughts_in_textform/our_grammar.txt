@@ -1,78 +1,64 @@
-<pipeline> 				::= <cmd> | <cmd> T_PIPE <pipeline>
-<cmd> 					::= T_WORD | T_WORD <cmd>
-
-<cmd>					::= T_WORD | <redir> <cmd> | <cmd> <redir> | <cmd> T_WORD
+<cmd>					::= T_WORD
+						| <redir> <cmd>
+						| <cmd> <redir>
+						| <cmd> T_WORD
 <redir>					::= T_RE_FROM T_WORD
 						| T_RE_TO T_WORD
 						| T_RE_FROM_HEREDOC T_WORD
 						| T_RE_TO_APPEND T_WORD
- 
-<pipeline>	::= <cmd> {T_PIPE <cmd>}
-<cmd>		::= T_WORD {T_WORD}
-
-
-ls -l | cat -e
-			
-				                  |
-Token list = START -> TWORD -> TWORD -> TPIPE -> TWORD -> TWORD
-
-parse_command()
-{
-	if(predict(T_WORD))
-	{
-		match(T_WORD);
-		parse_command;
-	}
-}
-
-parse_pipeline()
-{
-	parse_command();
-	if (predict(T_WORD))
-	{
-		match(T_PIPE);
-		parse_pipeline()
-	}
-	else
-	{
-		match(T_WORD);
-	}
-}
-
-
-
+<pipeline> 				::= <cmd> T_PIPE <cmd>
+						| <pipeline> T_PIPE <cmd>
 
 ls 		-l 		< 			infile | 		cat 	-e  	-g 		| 		echo  	"hi" 	"hello"	>		outfile
 T_WORD	T_WORD 	T_RE_FROM	T_WORD T_PIPE 	T_WORD 	T_WORD T_WORD 	T_PIPE 	T_WORD 	T_WORD 	T_WORD	T_RE_TO	T_WORD
+																	|
+1:	stack matches no rule in grammar, Shift.
+T_WORD
 
-1.
-ls
+2:	stack matches rule <cmd> in grammar, reduce.
+cmd
 
-2.
-ls -l
+3:	stack matches no rule in grammar, Shift
+cmd	T_WORD
 
-3.
-ls -l -m
+4:	stack matches rule <cmd> in grammar, reduce.
+cmd
 
-4.
-< infile ls -l -m
+5:	stack matches no rule in grammar, Shift
+cmd	T_RE_FROM
 
-5.
-ls -l -m < infile
+6:	stack matches no rule in grammar, Shift
+cmd	T_RE_FROM	T_WORD
 
-6. EXECUTION ERROR
+7:	stack matches rule <redir> in grammar, reduce.
+cmd redir
+
+8: stack matches rule <cmd> in grammar, reduce.
+cmd
+
+9:	stack matches no rule in grammar, shift
+cmd	T_PIPE
+
+10:	stack matches no rule in grammar, shift
+cmd	T_PIPE	T_WORD
+
+11: stack matches rule <cmd> in grammar, reduce.
+cmd	T_PIPE	cmd
+
+12: stack matches rule <pipeline> in grammar, reduce.
+pipeline
+
+13: stack matches no rule in grammar, shift
+pipeline T_WORD
+
+14: stack matches rule <cmd> in grammar, reduce.
+pipeline cmd
+
+15: stack matches no rule in grammar, shift
+pipeline cmd T_WORD
+
+16: stack matches rule <cmd> in grammar, reduce.
+pipeline cmd
+
+6. SYNTAX ERROR
 < ls -l -m
-
-
-
-match-predict-parser - recursive descent parser
-
-Token list = TWORD -> TWORD -> TPIPE -> TWORD
-
-match(TWORD)
-
-match(tokentype) checks if the token type is equal to current tokentype in the tokens stream 
-					if it does, it consumes the token, which means it advances the stream
-					if it doesnt it throws an error
-
-predict(tokentype) returns true or false if the next token in the stream matches the given tokentype
