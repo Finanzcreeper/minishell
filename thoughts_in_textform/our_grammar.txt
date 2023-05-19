@@ -1,5 +1,9 @@
+# Grammar 1: pipelines and commands only
+
 <pipeline> 				::= <cmd> | <cmd> T_PIPE <pipeline>
 <cmd> 					::= T_WORD | T_WORD <cmd>
+
+# Grammar 2: pipelines, commands and redirects
 
 <cmd>					::= T_WORD | <redir> <cmd> | <cmd> <redir> | <cmd> T_WORD
 <redir>					::= T_RE_FROM T_WORD
@@ -7,13 +11,21 @@
 						| T_RE_FROM_HEREDOC T_WORD
 						| T_RE_TO_APPEND T_WORD
  
-<pipeline>	::= <cmd> {T_PIPE <cmd>}
-<cmd>		::= T_WORD {T_WORD}
+# Grammar 3: ?!?
+
+<pipeline>	::= <cmd> {T_PIPE <cmd>} // cmd optionally followed by a pipe and another cmd
+<cmd>		::= T_WORD {T_WORD} // word optionally followed by another word
 
 
+EXAMPLE:
 ls -l | cat -e
-			
-				                  |
+
+
+# Shift-reduce parser
+
+
+# Match predict parser (luca's approach)
+							                  |
 Token list = START -> TWORD -> TWORD -> TPIPE -> TWORD -> TWORD
 
 parse_command()

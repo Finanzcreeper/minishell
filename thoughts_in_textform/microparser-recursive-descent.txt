@@ -1,0 +1,93 @@
+The simplest way to parse a simple Backus-Naur Form (BNF) grammar is to use a recursive descent parser. Recursive descent parsing is a top-down parsing technique where each non-terminal in the grammar is associated with a parsing function. Here's a step-by-step approach to parsing a simple BNF grammar using recursive descent:
+
+    Define the Grammar: Start by defining the BNF grammar for the language you want to parse. Keep it simple to facilitate the parsing process. The grammar should consist of production rules with non-terminal symbols and terminal symbols.
+
+    Tokenization: Tokenize the input source code to break it down into individual tokens. Each token represents a meaningful unit in the programming language, such as keywords, identifiers, operators, or literals.
+
+    Parsing Functions: Create a parsing function for each non-terminal symbol in the grammar. The parsing functions implement the parsing logic for each non-terminal by recursively invoking other parsing functions based on the grammar rules.
+
+    Start Symbol: Identify the start symbol of the grammar. This is typically the non-terminal symbol representing the top-level construct of the language.
+
+    Parsing Algorithm: Implement the parsing algorithm using the recursive descent approach:
+        Create a main parsing function corresponding to the start symbol of the grammar.
+        The main parsing function analyzes the input tokens and invokes the appropriate parsing functions based on the grammar rules.
+        Each parsing function handles the parsing logic for a specific non-terminal symbol by examining the current token and recursively invoking other parsing functions to match the grammar rules.
+        The parsing functions may also handle error conditions, such as encountering an unexpected token or failing to match a grammar rule.
+
+    Constructing the Parse Tree or AST: As the parsing functions are invoked and successfully match the grammar rules, you can construct a parse tree or an abstract syntax tree (AST) to represent the structure of the input code. The parse tree/AST can be built by creating appropriate nodes and linking them together based on the parsing logic.
+
+    Output: If the input source code is syntactically valid according to the BNF grammar, the parsing process will successfully generate a parse tree or AST. Otherwise, if there are syntax errors, the parsing functions may raise errors indicating the location and nature of the errors.
+
+Recursive descent parsing is a straightforward and intuitive approach suitable for simple grammars. However, it may face challenges with more complex grammars that involve left recursion or ambiguity. In such cases, other parsing techniques like LL parsing or LR parsing may be more appropriate.
+
+///
+
+// examples:
+// ls -l
+// ls -l | cat -e
+// ls -l | cat -e | ls -al
+
+// pipeline function
+// <pipeline>   ::= <cmd> {T_PIPE <cmd>}
+// three options:
+// 1. next node is NULL and we exit without error
+// 2. next node is of type T_PIPE
+// 3. next node is of a different type
+
+if (token->type == T_PIPE)
+    pipeline(token->next)}
+
+// cmd function
+// <cmd>        ::= T_WORD {T_WORD}
+// if token is NULL, return NULL
+// if token is of type T_WORD, pass the next token back into (cmd) function
+// if token is of any other type, ???
+
+// ls -l | cat -e
+
+// pass token 'ls' to pipeline function
+// pass token 'ls' to cmd function
+// in cmd function:
+// is 'ls' of type T_WORD, yes, then does next token exist? Yes, then pass next token '-l' back to cmd function
+// is -l' of type T_WORD, yes, then does next token exist? Yes, then pass next token '|' back to cmd function
+// is '|' of type T_WORD, no, then return this token to pipeline function
+// back in pipeline function:
+// is token NULL, no then continue
+// is '|' of type T_PIPE? yes, then pass next token to cmd function
+// in cmd function:
+// is 'cat' of type T_WORD, yes, then does next token exist? Yes, then pass next token '-e' back to cmd function
+// is '-e' of type T_WORD, yes, then does next token exist? No, then return NULL to pipeline function
+// back in pipeline function:
+// is token NULL, yes then exit correctly
+
+
+
+
+
+
+void    cmd(t_token *token)
+{
+    if (token-type == T_WORD)
+    {
+        if (!token->next)
+            return(NULL);
+        return(cmd(token->next));
+    }
+    else
+        printf("syntax-error\n");
+    return(token);
+}
+
+void    pipeline(t_token *token)
+{
+    token = cmd(token); // undefined
+    if (token == NULL)
+    {
+        printf("the-end"\n);
+        return ;
+    }
+    if (token->type = T_PIPE)
+        token = cmd(token->next);
+    else
+        printf("syntax-error\n");
+}
