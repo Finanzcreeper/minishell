@@ -8,7 +8,7 @@
 			"name": "(gdb) Launch",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/nicos_prototypes/a.out",
+			"program": "${workspaceFolder}/merged_code/a.out",
 			"args": [],
 			"stopAtEntry": true,
 			"cwd": "${fileDirname}",

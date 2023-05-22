@@ -62,6 +62,15 @@ typedef struct s_node
 	char			*filename_redir_to;
 }					t_node;
 
+typedef struct s_seperate_arguments_into_nodes
+{
+	char	*substring;
+	int		c;
+	int		i;
+	int		j;
+	int		k;
+}t_sain;
+
 t_token	*ms_tokenizer(char *line);
 t_node	*parse_pipeline(t_token *token);
 void	print_ast(t_node *ast);

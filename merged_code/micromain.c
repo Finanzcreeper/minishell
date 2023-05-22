@@ -32,6 +32,7 @@ void free_tokens(t_token *tokens_head)
 {
 	if (tokens_head == NULL)
 		return ;
+	free(tokens_head->content);
 	free_tokens(tokens_head->next);
 	free(tokens_head);
 }
@@ -39,9 +40,9 @@ void free_tokens(t_token *tokens_head)
 int main(int argc, char **argv, char **envp)
 {
 	t_token	*tokens;
-	// t_token	*tokens_head;
+	t_token	*tokens_head;
+	char	*line;
 	// t_node *ast;
-	char *line;
 
 	(void)argc;
 	(void)argv;
@@ -64,13 +65,13 @@ int main(int argc, char **argv, char **envp)
 				add_history(line);
 				tokens = lexer(line);
 				print_tokens(tokens);
-				// tokens_head = tokens;
+				tokens_head = tokens;
 				// ast = parse_pipeline(tokens);
 				// visit_and_execute(ast, envp);
+				free_tokens(tokens_head);
 			}
 		}
 		free(line);
 	}
-	// free_tokens(tokens_head);
 	return (0);
 }

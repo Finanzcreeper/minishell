@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 08:34:58 by nreher            #+#    #+#             */
-/*   Updated: 2023/05/22 11:25:05 by nreher           ###   ########.fr       */
+/*   Updated: 2023/05/22 13:33:15 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	pushcurrent_sub(t_sain *sain, char *string, t_token **list, t_defs defs)
 		set_type(new_token(sain->substring, 0), defs.metachars, list);
 	ft_bzero(sain->substring, ft_strlen(sain->substring));
 	sain->k = 0;
-	while (sain->k < sain->i)
+	while (sain->k < sain->i && string[sain->c] != '\0')
 	{
 		sain->substring[sain->k] = string[sain->c];
 		sain->c += 1;

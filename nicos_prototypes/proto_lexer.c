@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 08:34:58 by nreher            #+#    #+#             */
-/*   Updated: 2023/05/22 11:25:05 by nreher           ###   ########.fr       */
+/*   Updated: 2023/05/22 13:16:06 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ t_token	*lexer(char *in)
 // int	main(int argc, char *argv[])
 // {
 // 	static t_token	*token_list;
-// 	t_token	*temp;
+// 	t_token			*temp;
 
 // 	if (argc != 2)
 // 	{
@@ -119,7 +119,7 @@ t_token	*lexer(char *in)
 // 	argc += 1;
 // 	while (token_list != NULL)
 // 	{
-// 		ft_printf("content: {%s}	type: {%d}\n",token_list->content, token_list->type);
+// 		ft_printf("content: {%s}	type: {%d}\n", token_list->content, token_list->type);
 // 		free(token_list->content);
 // 		temp = token_list;
 // 		token_list = token_list->next;
