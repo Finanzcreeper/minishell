@@ -6,14 +6,14 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 08:42:24 by nreher            #+#    #+#             */
-/*   Updated: 2023/05/05 13:43:22 by nreher           ###   ########.fr       */
+/*   Updated: 2023/05/22 11:04:34 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PROTO_H
 # define PROTO_H
 
-# include "../Libft/libft.h"
+# include "../libft/libft.h"
 
 typedef enum e_token_type
 {
