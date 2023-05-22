@@ -1,4 +1,3 @@
-// microinterpreter
 // manually build an ast of the two forms of command handled in the grammar i.e. "ls" and "ls | wc"
 // traverse the tree, executing the commands in subshells
 // cc -Wall -Werror -Wextra -ILibft microinterpreter.c  Libft/libft.a -o microinterpreter && ./microinterpreter
@@ -10,86 +9,83 @@
 
 // Q: why is there no output?!?
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/wait.h>
-#include <string.h>
-#include "libft.h"
+#include "micro.h"
 
-#define STDIN_FD 0
-#define STDOUT_FD 1
-#define STDERR_FD 2
-
-#define ERR_CMD "Command not found!"
-#define ERR_FORK "Fork error!"
-
-#define ROOT -2
-
-// ast types begin from 0 and represent the types of the orange nodes in the diagram
-typedef enum e_ast_types
+// convert linked list of cmd arguments to an array (which execve expects)
+char **list_to_array(t_token *list_head)
 {
-	A_CMD_WORD,
-	A_PIPE_SEQUENCE,
-}	t_ast_types;
+	int l;
+	char **array;
+	int i;
 
-typedef struct s_node
-{
-	int				type;
-	char			*content;
-	struct s_node	*left;
-	struct s_node	*right;
-}					t_node;
+	t_token *list_head_cpy;
 
-void	execute_cmd2(char **paths, char **cmd_args, char **env)
+	list_head_cpy = list_head;
+	l = 0;
+	while(list_head)
+	{
+		list_head = list_head->next;
+		l++;
+	}
+	array = malloc(sizeof(char *) * (l + 1)); // TODO: how to free this? result is used in execve
+	i = 0;
+	while (i < l)
+	{
+		array[i] = list_head_cpy->content;
+		// fprintf(stderr, "%s\n", list_head_cpy->content);
+		list_head_cpy = list_head_cpy->next;
+		i++;
+	}
+	array[i] = NULL;
+	return (array);
+}
+
+void	execute_cmd2(char **paths, t_token *cmd, char **env)
 {
 	int		j;
 	char	*path_cmd;
+	char	**cmd_as_array;
 
 	j = 0;
 	while (paths[j])
 	{
-		path_cmd = ft_strjoin(ft_strjoin(paths[j++], "/"), cmd_args[0]);
+		path_cmd = ft_strjoin(ft_strjoin(paths[j++], "/"), cmd->content);
 		if (access(path_cmd, 0) == 0)
 		{
 			free(paths);
-			fprintf(stderr, "path: %s, arg1: %s, arg2: %s\n", path_cmd, cmd_args[0], cmd_args[1]);
-			if (execve(path_cmd, cmd_args, env) == -1)
+			cmd = cmd->next;
+			// fprintf(stderr, "%s ", path_cmd);
+			cmd_as_array = list_to_array(cmd);
+			if (execve(path_cmd, cmd_as_array, env) == -1)
 			{
 				perror("Execution error");
 				exit(127);
 			}
+			free(cmd_as_array);
 		}
 		free(path_cmd);
 	}
 }
 
-void	execute_cmd(char *cmd_args_str, char **env)
+void	execute_cmd(t_token *cmd, char **env)
 {
 	char	**paths;
-	char	**cmd_args;
 
 	while (ft_strncmp("PATH=", *env, 5))
 		env++;
 	paths = ft_split(*env + 5, ':');
-	if (!paths)
-	{
-		perror(ERR_CMD);
+	if (!paths) // what kind of error is this? when there is not environment? what error text should be printed?
 		exit(1);
-	}
-	cmd_args = ft_split(cmd_args_str, ' ');
-	execute_cmd2(paths, cmd_args, env);
+	execute_cmd2(paths, cmd, env);
 }
 
 // run the given command in a forked subprocess, returning the output (stdout) to the parent process (stdin)
 // pid == 0 is child, pid > 0 is parent, ip pipe goes child [out] -> parent [in]
-void	pipe_to_parent(char *cmd, char **env)
+void	pipe_to_parent(t_token *cmd, char **env)
 {
 	pid_t	pid;
 	int		io_fd[2];
 
-	printf("%s\n", cmd);
 	pipe(io_fd);
 	pid = fork();
 	if (pid == -1)
@@ -99,7 +95,7 @@ void	pipe_to_parent(char *cmd, char **env)
 		close(io_fd[0]);
 		dup2(io_fd[1], STDOUT_FD);
 		execute_cmd(cmd, env);
-		perror(ERR_CMD);
+		fprintf(stderr, "%s: %s\n", cmd->content, ERR_CMD);
 		exit(127);
 	}
 	else
@@ -110,86 +106,19 @@ void	pipe_to_parent(char *cmd, char **env)
 	}
 }
 
-// void visit_and_execute(t_node *node, char **env)
-// {
-// 	if (!node)
-// 		return ;
-// 	visit_and_execute(node->left, env);
-// 	visit_and_execute(node->right, env);
-
-// 	if (node->type == A_PIPE_SEQUENCE)
-// 	{
-// 		pipe_to_parent(node->left->content, env);
-// 		pipe_to_parent(node->right->content, env);
-// 		// free(node); // cut off this branch so that it isn't executed again i.e. stop browsing the left branch if we encounter another pipe
-// 	}
-// 	if (node->type == A_CMD_WORD)
-// 		pipe_to_parent(node->content, env);
-// }
-
 void visit_and_execute(t_node *node, char **env)
 {
 	if (!node)
 		return ;
-
-	if (node->type == A_PIPE_SEQUENCE)
+	if (node->type == N_PIPE)
 	{
 		visit_and_execute(node->left, env);
 		visit_and_execute(node->right, env);
+		free(node);
 	}
-	if (node->type == A_CMD_WORD)
-		pipe_to_parent(node->content, env);
-}
-
-// ls
-t_node *manually_make_tree1()
-{
-	t_node *node;
-
-	node = malloc(sizeof(t_node));
-	node->type = A_CMD_WORD;
-	node->content = "ls";
-	return (node);	
-}
-
-// // ls | wc
-t_node *manually_make_tree2()
-{
-	int i;
-	t_node *nodes[5];
-
-	i = 0;
-	while(i < 5)
+	if (node->type == N_CMD)
 	{
-		nodes[i] = malloc(sizeof(t_node));
-		i++;
+		pipe_to_parent(node->cmd, env);
+		free(node);
 	}
-	nodes[0]->type = A_PIPE_SEQUENCE;
-	nodes[1]->type = A_PIPE_SEQUENCE;	
-
-	nodes[2]->type = A_CMD_WORD;
-	nodes[2]->content = "wc";
-	nodes[3]->type = A_CMD_WORD;
-	nodes[3]->content = "wc";
-	nodes[4]->type = A_CMD_WORD;
-	nodes[4]->content = "ls";
-
-	nodes[0]->left = nodes[1];
-	nodes[0]->right = nodes[2];
-	nodes[1]->left = nodes[4];
-	nodes[1]->right = nodes[3];
-
-	return (nodes[0]);	
-}
-
-int main(int argc, char **argv, char **envp)
-{
-	t_node *root_node;
-
-	argc--;
-	argv++;
-	// root_node = manually_make_tree1();
-	root_node = manually_make_tree2();
-	visit_and_execute(root_node, envp);
-	return (0);
 }

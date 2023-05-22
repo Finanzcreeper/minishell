@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 08:42:24 by nreher            #+#    #+#             */
-/*   Updated: 2023/04/21 12:29:55 by nreher           ###   ########.fr       */
+/*   Updated: 2023/05/05 13:43:22 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,20 @@ typedef struct s_node
 typedef struct s_rule
 {
 	char			*lhs;
-	char			*rhs;
+	char			**rhs;
 	struct s_rule	*next_rule;
 }t_rule;
 
-char	**ft_split2(char const *a1, char **delim);
+typedef struct s_seperate_arguments_into_nodes
+{
+	char	*substring;
+	int		c;
+	int		i;
+	int		j;
+	int		k;
+}t_sain;
 
+t_defs	make_defs(void);
+void	token_add_back(t_token **token, t_token *new);
+t_token	*new_token(char *content, int type);
 #endif

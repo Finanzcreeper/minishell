@@ -1,34 +1,18 @@
 // microlexer v1
 // - take in a string representing a command line and output a linked list of tokens
 // cc -Wall -Werror -Wextra -ILibft microlexer.c Libft/ft_strncmp.c -o microlexer && ./microlexer "ls -l"
-// TODO: reimplement ms_tokenizer (not my code)
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "../Libft/libft.h"
-
-typedef enum e_token_types
-{
-	T_END = -2,
-	T_WORD = 0,
-	T_PIPE	
-}	t_token_types;
-
-typedef struct s_token
-{
-	int				type;
-	char			*content;
-	struct s_token	*prev;	
-	struct s_token	*next;
-}					t_token;
+#include "micro.h"
 
 t_token_types	catego_toketype(char *content)
 {
-	if (!content)
-		return (T_END);
 	if (!ft_strncmp(content, "|", 1))
 		return (T_PIPE);
-	else
+	else if (!ft_strncmp(content, "<", 1))
+		return (T_REFROM);
+	else if (!ft_strncmp(content, ">", 1))
+		return (T_RETO);
+	else	
 		return (T_WORD);
 }
 
@@ -42,12 +26,11 @@ void	ft_tokenadd_back(t_token **lst, t_token *new)
 		return ;
 	}
 	current = (*lst);
-	while (current->next != 0)
+	while (current->next)
 	{
 		current = current->next;
 	}
 	current->next = new;
-	current->next->prev = current; // enable ability to look back	
 }
 
 t_token	*ft_newtoken(void *content)
@@ -58,8 +41,8 @@ t_token	*ft_newtoken(void *content)
 	if (!re)
 		return (NULL);
 	re->content = content;
-	re->type = (int)catego_toketype(content);
-	re->next = 0;
+	re->type = catego_toketype(content);
+	re->next = NULL;
 	return (re);
 }
 
@@ -102,7 +85,6 @@ t_token	*check_each(int len, char *s)
 {
 	int		i;
 	char	*arr;
-
 	t_token	*current;
 
 	i = 0;
@@ -119,17 +101,15 @@ t_token	*check_each(int len, char *s)
 	return (current);
 }
 
+/*	Nicos version	*/
 t_token	*ms_tokenizer(char *line)
 {
 	t_token	*all;
 	t_token	*current;
 	int		len;
-
-	all = 0;
-
-	/*	Nicos version	*/
 	int	c;
-	
+
+	all = NULL;
 	c = 0;
 	while(line[c] != '\0')
 	{
@@ -142,19 +122,6 @@ t_token	*ms_tokenizer(char *line)
 		ft_tokenadd_back(&all, current);
 		c += len;
 	}
-	/*	Original Version	*/
-	// while (*line)
-	// {
-	// 	while (*line == ' ' && *line)
-	// 		line++;
-	// 	len = count_len(line);
-	// 	if (!len)
-	// 		break ;
-	// 	current = check_each(len, line);
-	// 	ft_tokenadd_back(&all, current);
-	// 	line = line + len;
-	// }
-	ft_tokenadd_back(&all, ft_newtoken(NULL));
 	return (all);
 }
 
@@ -163,27 +130,13 @@ char *tokentype_lookup(int type_num)
 	char *type_str;
 
 	type_str = NULL;
-	if (type_num == -2)
-		type_str = "T_END";
-	else if (type_num == 0)
+	if (type_num == 0)
 		type_str = "T_WORD";
 	else if (type_num == 1)
+		type_str = "T_REFROM";
+	else if (type_num == 2)
+		type_str = "T_RETO";
+	else if (type_num == 3)
 		type_str = "T_PIPE";
 	return(type_str);
-}
-
-// line = first argument of main (in quotes) e.g. "he >> ho || ha"
-int main(int argc, char **argv)
-{
-	t_token	*all;
-	
-	argc--;
-	argv++;
-	all = ms_tokenizer(*argv);
-	while(all)
-	{
-		printf("content: '%s'\n", all->content);
-		printf("type: %s\n", tokentype_lookup(all->type));
-		all=all->next;
-	}
 }
