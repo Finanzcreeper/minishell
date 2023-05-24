@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 08:34:58 by nreher            #+#    #+#             */
-/*   Updated: 2023/05/22 13:33:15 by nreher           ###   ########.fr       */
+/*   Updated: 2023/05/24 09:05:24 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	is_current_delim(t_defs defs, char *string)
 	return (0);
 }
 
-void	pushcurrent_sub(t_sain *sain, char *string, t_token **list, t_defs defs)
+void	pushcurrentsub(t_sain *sain, char *string, t_token **list, t_defs defs)
 {
 	if (sain->substring[0] != '\0' && sain->substring[0]
 		!= ' ' && sain->substring[0] != '	')
@@ -64,6 +64,7 @@ void	pushcurrent_sub(t_sain *sain, char *string, t_token **list, t_defs defs)
 		sain->c += 1;
 		sain->k += 1;
 	}
+	sain->i = 0;
 }
 
 void	seperate_arguments_into_nodes(char *string, t_defs defs, t_token **list)
@@ -77,19 +78,21 @@ void	seperate_arguments_into_nodes(char *string, t_defs defs, t_token **list)
 	sain->substring = ft_calloc(ft_strlen(string) + 1, sizeof(char));
 	while (string[sain->c] != '\0')
 	{
+		if (string[sain->c] == '"' || string[sain->c] == '\'')
+			quote_handler(sain, string, list, defs);
 		sain->i = is_current_delim(defs, &string[sain->c]);
 		if (sain->i != 0)
-			pushcurrent_sub(sain, string, list, defs);
+			pushcurrentsub(sain, string, list, defs);
 		else
 		{
 			sain->i = is_current_delim(defs, sain->substring);
 			if (sain->i != 0)
-				pushcurrent_sub(sain, string, list, defs);
+				pushcurrentsub(sain, string, list, defs);
 			else
 				sain->substring[sain->k++] = string[sain->c++];
 		}
 	}
-	pushcurrent_sub(sain, string, list, defs);
+	pushcurrentsub(sain, string, list, defs);
 	free(sain->substring);
 	free(sain);
 }
@@ -108,7 +111,7 @@ t_token	*lexer(char *in)
 // int	main(int argc, char *argv[])
 // {
 // 	static t_token	*token_list;
-// 	t_token	*temp;
+// 	t_token			*temp;
 
 // 	if (argc != 2)
 // 	{
@@ -119,7 +122,7 @@ t_token	*lexer(char *in)
 // 	argc += 1;
 // 	while (token_list != NULL)
 // 	{
-// 		ft_printf("content: {%s}	type: {%d}\n",token_list->content, token_list->type);
+// 		ft_printf("content: {%s}	type: {%d}\n", token_list->content, token_list->type);
 // 		free(token_list->content);
 // 		temp = token_list;
 // 		token_list = token_list->next;

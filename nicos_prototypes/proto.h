@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 08:42:24 by nreher            #+#    #+#             */
-/*   Updated: 2023/05/22 11:04:34 by nreher           ###   ########.fr       */
+/*   Updated: 2023/05/24 08:29:12 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,4 +71,8 @@ typedef struct s_seperate_arguments_into_nodes
 t_defs	make_defs(void);
 void	token_add_back(t_token **token, t_token *new);
 t_token	*new_token(char *content, int type);
+void	pushcurrentsub(t_sain *sain, char *string, t_token **list, t_defs defs);
+void	quote_handler(t_sain *sain, char *string, t_token **list, t_defs defs);
+void	single_quoter(t_sain *sain, char *string, t_token **list, t_defs defs);
+void	double_quoter(t_sain *sain, char *string, t_token **list, t_defs defs);
 #endif

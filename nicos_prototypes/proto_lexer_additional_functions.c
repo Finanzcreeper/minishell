@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:38:35 by nreher            #+#    #+#             */
-/*   Updated: 2023/05/24 08:06:39 by nreher           ###   ########.fr       */
+/*   Updated: 2023/05/24 08:18:49 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,20 +65,3 @@ t_token	*new_token(char *content, int type)
 	return (out);
 }
 
-void	quote_handler(t_sain sain, char *string)
-{
-	if (string[sain.c] == '"')
-	{
-		while (string[sain.c] != '"')
-		{
-
-		}
-	}
-	if (string[sain.c] == 39)
-	{
-		while (string[sain.c] != )
-		{
-
-		}
-	}
-}

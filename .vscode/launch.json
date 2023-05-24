@@ -9,7 +9,7 @@
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/merged_code/a.out",
-			"args": [],
+			"args": ["this is 'a <<' test"],
 			"stopAtEntry": true,
 			"cwd": "${fileDirname}",
 			"environment": [],

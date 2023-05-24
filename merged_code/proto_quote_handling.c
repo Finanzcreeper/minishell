@@ -5,8 +5,10 @@ void	double_quoter(t_sain *sain, char *string, t_token **list, t_defs defs)
 {
 	while (string[sain->c] != '"')
 	{
-		if (string[sain->c] == 39)
-			single_quoter(sain, string, list, defs);
+		if (strin[sain->c] == '$')
+		{
+		
+		}
 		sain->substring[sain->k++] = string[sain->c++];
 	}
 	sain->substring[sain->k++] = string[sain->c++];
@@ -17,8 +19,6 @@ void	single_quoter(t_sain *sain, char *string, t_token **list, t_defs defs)
 {
 	while (string[sain->c] != 39)
 	{
-		if (string[sain->c] == '"')
-			double_quoter(sain, string, list, defs);
 		sain->substring[sain->k++] = string[sain->c++];
 	}
 	sain->substring[sain->k++] = string[sain->c++];
