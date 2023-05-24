@@ -2,6 +2,16 @@ minishell:
 
 we have to interprete (human language like) inputs and execute them in a certain way.
 
+quote handling:
+i see two options for handling single and double quotes:
+1:	quotes get lexed as their own types (SINGLE_QUOTE and DOUBLE_QUOTE)
+	they get incorporated into the tree by the parser.
+	the interpreter, when finding a quote node, stops executing untill a closing quote or a allowed char is found ($ for double quotes)
+2:	the lexer handles everything after a quote as a T_WORD (exept $... for double quotes).
+
+
+
+
 Defininitions of the language (From Bash manual):
 -----------------------------------------------------------------------------------------
 The following definitions are used throughout the rest of this document.
