@@ -83,5 +83,5 @@ char	*tokentype_lookup(int type_num);
 t_defs	make_defs(void);
 void	token_add_back(t_token **token, t_token *new);
 t_token	*new_token(char *content, int type);
-t_token	*lexer(char *in);
+t_token	*lexer(char *in, char **envp);
 #endif

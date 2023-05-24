@@ -63,7 +63,7 @@ int main(int argc, char **argv, char **envp)
 			if (line[0] != '\0')
 			{
 				add_history(line);
-				tokens = lexer(line);
+				tokens = lexer(line, envp);
 				print_tokens(tokens);
 				tokens_head = tokens;
 				// ast = parse_pipeline(tokens);

@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 08:34:58 by nreher            #+#    #+#             */
-/*   Updated: 2023/05/24 09:05:24 by nreher           ###   ########.fr       */
+/*   Updated: 2023/05/24 20:29:20 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,24 +80,20 @@ void	seperate_arguments_into_nodes(char *string, t_defs defs, t_token **list)
 	{
 		if (string[sain->c] == '"' || string[sain->c] == '\'')
 			quote_handler(sain, string, list, defs);
+		if (string[sain->c] == '\0')
+			break ;
 		sain->i = is_current_delim(defs, &string[sain->c]);
 		if (sain->i != 0)
 			pushcurrentsub(sain, string, list, defs);
 		else
-		{
-			sain->i = is_current_delim(defs, sain->substring);
-			if (sain->i != 0)
-				pushcurrentsub(sain, string, list, defs);
-			else
-				sain->substring[sain->k++] = string[sain->c++];
-		}
+			fuck_norminete(sain, defs, list, string);
 	}
 	pushcurrentsub(sain, string, list, defs);
 	free(sain->substring);
 	free(sain);
 }
 
-t_token	*lexer(char *in)
+t_token	*lexer(char *in, char **env)
 {
 	t_defs	defs;
 	t_token	*token_list;
@@ -105,6 +101,7 @@ t_token	*lexer(char *in)
 	token_list = ft_calloc(1, sizeof(t_token));
 	defs = make_defs();
 	seperate_arguments_into_nodes(in, defs, &token_list);
+	expand_dollars(&token_list, env);
 	return (token_list);
 }
 

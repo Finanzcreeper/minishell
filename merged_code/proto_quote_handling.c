@@ -3,25 +3,23 @@
 
 void	double_quoter(t_sain *sain, char *string, t_token **list, t_defs defs)
 {
-	while (string[sain->c] != '"')
+	while (string[sain->c] != '"' && string[sain->c] != '\0')
 	{
-		if (strin[sain->c] == '$')
-		{
-		
-		}
 		sain->substring[sain->k++] = string[sain->c++];
 	}
-	sain->substring[sain->k++] = string[sain->c++];
+	if (string[sain->c] != '\0')
+		sain->substring[sain->k++] = string[sain->c++];
 	pushcurrentsub(sain, string, list, defs);
 }
 
 void	single_quoter(t_sain *sain, char *string, t_token **list, t_defs defs)
 {
-	while (string[sain->c] != 39)
+	while (string[sain->c] != 39 && string[sain->c] != '\0')
 	{
 		sain->substring[sain->k++] = string[sain->c++];
 	}
-	sain->substring[sain->k++] = string[sain->c++];
+	if (string[sain->c] != '\0')
+		sain->substring[sain->k++] = string[sain->c++];
 	pushcurrentsub(sain, string, list, defs);
 }
 

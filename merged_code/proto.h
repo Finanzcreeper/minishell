@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 08:42:24 by nreher            #+#    #+#             */
-/*   Updated: 2023/05/24 08:59:37 by nreher           ###   ########.fr       */
+/*   Updated: 2023/05/24 20:40:14 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,14 @@ typedef struct s_seperate_arguments_into_nodes
 t_defs	make_defs(void);
 void	token_add_back(t_token **token, t_token *new);
 t_token	*new_token(char *content, int type);
+void	expand_dollars(t_token **list, char **env);
 void	pushcurrentsub(t_sain *sain, char *string, t_token **list, t_defs defs);
 void	quote_handler(t_sain *sain, char *string, t_token **list, t_defs defs);
 void	single_quoter(t_sain *sain, char *string, t_token **list, t_defs defs);
 void	double_quoter(t_sain *sain, char *string, t_token **list, t_defs defs);
+void	dollar_found(char *searchterm, char **env, t_token *t, int c);
+int		search_dollar(t_token *t, char **env, char *searchterm);
+char	*insert_env(char *content, char *env, char *replaced, int dollar);
+void	fuck_norminete(t_sain *sain, t_defs defs, t_token **list, char *string);
+int		is_current_delim(t_defs defs, char *string);
 #endif
