@@ -25,14 +25,28 @@ void	single_quoter(t_sain *sain, char *string, t_token **list, t_defs defs)
 
 void	quote_handler(t_sain *sain, char *string, t_token **list, t_defs defs)
 {
-	pushcurrentsub(sain, string, list, defs);
+	int	c;
+
+	c = sain->c + 1;
 	if (string[sain->c] == '"')
 	{
+		while (string[c] != '"')
+		{
+			if (string[c++] == '\0')
+				return ;
+		}
+		pushcurrentsub(sain, string, list, defs);
 		sain->substring[sain->k++] = string[sain->c++];
 		double_quoter(sain, string, list, defs);
 	}
-	if (string[sain->c] == 39)
+	if (string[sain->c] == '\'')
 	{
+		while (string[c] != '\'')
+		{
+			if (string[c++] == '\0')
+				return ;
+		}
+		pushcurrentsub(sain, string, list, defs);
 		sain->substring[sain->k++] = string[sain->c++];
 		single_quoter(sain, string, list, defs);
 	}

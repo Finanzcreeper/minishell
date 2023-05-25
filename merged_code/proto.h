@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 08:42:24 by nreher            #+#    #+#             */
-/*   Updated: 2023/05/24 20:40:14 by nreher           ###   ########.fr       */
+/*   Updated: 2023/05/25 10:31:44 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,4 +82,6 @@ int		search_dollar(t_token *t, char **env, char *searchterm);
 char	*insert_env(char *content, char *env, char *replaced, int dollar);
 void	fuck_norminete(t_sain *sain, t_defs defs, t_token **list, char *string);
 int		is_current_delim(t_defs defs, char *string);
+void	fuck_the_norm(char *tempo, t_token *t, char *after, char *searchterm);
+char	*ftn(char **env, char *searchterm, t_token *t, int i);
 #endif

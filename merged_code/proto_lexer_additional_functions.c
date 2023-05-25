@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:38:35 by nreher            #+#    #+#             */
-/*   Updated: 2023/05/24 18:44:25 by nreher           ###   ########.fr       */
+/*   Updated: 2023/05/25 10:31:09 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,4 +63,13 @@ t_token	*new_token(char *content, int type)
 	out->content = ft_strdup(content);
 	out->type = type;
 	return (out);
+}
+
+char	*ftn(char **env, char *searchterm, t_token *t, int i)
+{
+	char	*tempo;
+
+	tempo = t->content;
+	t->content = ft_strjoin(tempo, env[i] + ft_strlen(searchterm));
+	return (tempo);
 }
