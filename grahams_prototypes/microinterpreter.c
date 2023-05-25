@@ -118,7 +118,7 @@ void visit_and_execute(t_node *node, char **env)
 	}
 	if (node->type == N_CMD)
 	{
-		pipe_to_parent(node->cmd, env);
+		pipe_to_parent(node->cmd_elements, env);
 		free(node);
 	}
 }

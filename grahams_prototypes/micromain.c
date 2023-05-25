@@ -6,10 +6,6 @@
 
 // cc -Wall -Werror -Wextra -Ilibft -lreadline microlexer.c microparser.c microinterpreter.c micromain.c libft/ft_strncmp.c libft/ft_strjoin.c libft/ft_split.c libft/ft_substr.c libft/ft_strlen.c
 
-// clear; cc -Wall -Werror -Wextra -Ilibft -lreadline microlexer.c microparser.c microinterpreter.c micromain.c libft/ft_strncmp.c libft/ft_strjoin.c libft/ft_split.c libft/ft_substr.c libft/ft_strlen.c && valgrind --leak-check=full ./a.out
-
-// clear; cc -Wall -Werror -Wextra -Ilibft -lreadline microlexer.c microparser.c microinterpreter.c micromain.c libft/ft_strncmp.c libft/ft_strjoin.c libft/ft_split.c libft/ft_substr.c libft/ft_strlen.c && ./a.out
-
 #include "micro.h"
 
 // https://www.geeksforgeeks.org/signals-c-language/
@@ -45,7 +41,6 @@ int main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-
 	(void)envp;
 	
 	signal(SIGINT, sigint_handler); // display new prompt on new line when CTRL + C pressed
@@ -63,9 +58,10 @@ int main(int argc, char **argv, char **envp)
 			{
 				add_history(line);
 				tokens = ms_tokenizer(line);
-				print_tokens(tokens);
+				// print_tokens(tokens);
 				// tokens_head = tokens;
-				// ast = parse_pipeline(tokens);
+				// ast = 
+				printf("%i\n", parse__pipeline(&tokens));
 				// visit_and_execute(ast, envp);
 			}
 		}
