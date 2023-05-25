@@ -8,6 +8,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <sys/ioctl.h>
+#include <stdbool.h>
 #include "libft.h"
 
 #define STDIN_FD 0
@@ -46,8 +47,8 @@ typedef struct s_node
 	struct s_node	*left;
 	struct s_node	*right;
 	t_token			*cmd;
-	char			*filename_redir_from;
-	char			*filename_redir_to;
+	char			*infile;
+	char			*outfile;
 }					t_node;
 
 t_token	*ms_tokenizer(char *line);

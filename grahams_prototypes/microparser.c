@@ -1,20 +1,14 @@
-// Create a parsing function for each non-terminal symbol in the grammar i.e. <pipeline> and <cmd>
+// <REDIRECTION>			::=  'T_RETO' 'T_WORD'
+//							|  'T_REFROM' 'T_WORD'
+// <SIMPLE-COMMAND-ELEMENT>	::= 'T_WORD'
+//							|  <REDIRECTION>
+// <SIMPLE-COMMAND>			::=  <SIMPLE-COMMAND-ELEMENT>
+// 							|  <SIMPLE-COMMAND> <SIMPLE-COMMAND-ELEMENT>
+// <PIPELINE> 				::=
+//							<PIPELINE> 'T_PIPE' <PIPELINE>
+//							|  <SIMPLE-COMMAND>
 
-// // <pipeline>	::= <cmd> {T_PIPE <cmd>}
-// // <cmd>		::= T_WORD {T_WORD}
-
-// Create a main parsing function corresponding to the start symbol of the grammar.
-// The start symbol represents the initial non-terminal symbol from which the parsing process begins.
-// (in my case <pipeline>)
-
-// nodes can be of type PIPE or CMD
-// but the problem is the left or right node can point to either a PIPE or CMD and we can't hold both
-// so I used one node type, containing variables than can represent either a PIPE or CMD
-// 		PIPE
-// 		/	\
-// 	PIPE	CMD
-//    /
-// CMD
+// cc -Wall -Werror -Wextra -Ilibft -lreadline microparser-standalone-new-grammar.c libft/ft_strncmp.c libft/ft_strjoin.c libft/ft_split.c libft/ft_substr.c libft/ft_strlen.c
 
 #include "micro.h"
 
@@ -39,8 +33,10 @@ t_node *create_cmd_node(t_token *cmd)
 	cmd_node = malloc(sizeof(t_node));
 	cmd_node->type = N_CMD;
 	cmd_node->left = NULL;
-	cmd_node->right = NULL;	
+	cmd_node->right = NULL;
 	cmd_node->cmd = cmd;
+	cmd_node->infile = NULL;
+	cmd_node->outfile = NULL;
 	return (cmd_node);
 }
 
@@ -53,6 +49,8 @@ t_node *create_pipe_node(t_node *left_node, t_node *right_node)
 	pipe_node->left = left_node;
 	pipe_node->right = right_node;
 	pipe_node->cmd = NULL;
+	pipe_node->infile = NULL;
+	pipe_node->outfile = NULL;
 	return (pipe_node);
 }
 
@@ -81,60 +79,89 @@ void print_ast(t_node *ast)
 		print_tokens(ast->cmd);
 }
 
-// implements the following line of the grammar: <cmd>		::= T_WORD {T_WORD}
-t_node *parse_cmd(t_token **token)
+bool parse__redirection(t_token **token)
 {
-	t_token *cmd; // linked list of one or more tokens representing the command ie in "ls -l"
-	t_node *cmd_node;
-
-	cmd = NULL;
-	if ((*token)->type != T_WORD)
+	if ((*token) && (*token)->type == T_RETO)
 	{
-		printf("syntax error-cmd\n");
-		return (NULL);
+		(*token) = (*token)->next;
+		if ((*token) && (*token)->type == T_WORD)
+		{
+			// set_redirect_to(*token);
+			return true;
+		}
+		return false;
 	}
-	while (*token && (*token)->type == T_WORD)
-	{	
-		ft_tokenadd_back(&cmd, ft_newtoken((*token)->content));
-		*token = (*token)->next;
+	else if ((*token) && (*token)->type == T_REFROM)
+	{
+		(*token) = (*token)->next;
+		if ((*token) && (*token)->type == T_WORD)
+		{
+			// set_redirect_from(*token);
+			return true;
+		}
+		return false;
 	}
-	cmd_node = create_cmd_node(cmd);
-	return (cmd_node);
+	return false;
 }
 
-// implements the following line of the grammar: <pipeline>	::= <cmd> {T_PIPE <cmd>}
-// approach is to only create the pipe_node once the left and right branch exist
-// (not as before when the right branch was initialised as NULL then right cmd created, then assigned to right branch of pipe)
-// left hand branches can be cmds or pipes, right hand branches are always commands
-t_node *parse_pipeline(t_token *token)
+bool parse__simple_command_element(t_token **token)
 {
-	t_node *cmd_node;
-	t_node *pipe_node;
-
-	cmd_node = parse_cmd(&token); // undefined behaviour
-	if (!cmd_node)
-		return (NULL);
-	if (!token)
-		return (cmd_node);
-	pipe_node = cmd_node;
-	while (token)
+	if ((*token) && (*token)->type == T_WORD)
 	{
-		if (token->type != T_PIPE)
-		{
-			printf("syntax-error-pipe1\n");
-			return (NULL);
-		}
-		token = token->next;
-		if (!token)
-		{
-			printf("syntax-error-pipe2\n");
-			return (NULL);
-		}
-		cmd_node = parse_cmd(&token);
-		if (!cmd_node)
-			return (NULL);
-		// create pipe node
-		pipe_node = create_pipe_node(pipe_node, cmd_node);
+		(*token) = (*token)->next;
+		return true;
 	}
-	return (pipe_node);
+	return(parse__redirection(token));
+}
+
+// prototype:
+bool parse__simple_command_tail(t_token **token);
+
+// <SIMPLE-COMMAND>      ::= <SIMPLE-COMMAND-ELEMENT> <SIMPLE-COMMAND-TAIL>
+bool parse__simple_command(t_token **token)
+{
+	if (parse__simple_command_element(token))
+	{
+		return(parse__simple_command_tail(token));
+	}
+	return false;
+}
+
+// <SIMPLE-COMMAND-TAIL> ::= <SIMPLE-COMMAND-ELEMENT> <SIMPLE-COMMAND-TAIL> | ε
+bool parse__simple_command_tail(t_token **token)
+{
+	if (parse__simple_command_element(token))
+	{
+		return(parse__simple_command_tail(token));
+	}
+	// if (*token)
+	// 	set_command(*token);
+	return true; // ε (empty production)
+}
+
+// prototype:
+bool parse__pipeline_tail(t_token **token);
+
+// <PIPELINE> 				::= <SIMPLE-COMMAND> <PIPELINE-TAIL>
+bool parse__pipeline(t_token **token)
+{
+	printf("%s\n", (*token)->content);
+	if (parse__simple_command(token))
+	{
+		return(parse__pipeline_tail(token));
+	}
+	return false;
+}
+
+// <PIPELINE-TAIL>			::= 'T_PIPE' <PIPELINE> | ε
+bool parse__pipeline_tail(t_token **token)
+{
+	if ((*token) && (*token)->type == T_PIPE)
+	{
+		(*token) = (*token)->next;
+		return(parse__pipeline(token));
+	}
+	// if (*token)
+	// 	set_pipeline(*token);
+	return true; // ε (empty production)
 }
