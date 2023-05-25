@@ -120,6 +120,7 @@ bool parse__redirection(t_token **token)
 		if ((*token) && (*token)->type == T_WORD)
 		{
 			set_redirect_to(*token);
+			(*token) = (*token)->next;
 			return true;
 		}
 		return false;
@@ -130,6 +131,7 @@ bool parse__redirection(t_token **token)
 		if ((*token) && (*token)->type == T_WORD)
 		{
 			set_redirect_from(*token);
+			(*token) = (*token)->next;
 			return true;
 		}
 		return false;
@@ -169,6 +171,7 @@ bool parse__simple_command_tail(t_token **token)
 	}
 	// if (*token)
 	// 	set_command(*token);
+	printf("command\n");
 	return true; // ε (empty production)
 }
 
@@ -195,5 +198,6 @@ bool parse__pipeline_tail(t_token **token)
 	}
 	// if (*token)
 	// 	set_pipeline(*token);
+	printf("pipeline\n");
 	return true; // ε (empty production)
 }

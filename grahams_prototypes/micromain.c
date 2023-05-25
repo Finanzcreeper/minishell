@@ -4,7 +4,7 @@
 // Q: exit when?
 // Q: how/when is get_next_line used? on output of readline?
 
-// cc -Wall -Werror -Wextra -Ilibft -lreadline microlexer.c microparser.c microinterpreter.c micromain.c libft/ft_strncmp.c libft/ft_strjoin.c libft/ft_split.c libft/ft_substr.c libft/ft_strlen.c
+// cc -Wall -Werror -Wextra -Ilibft -lreadline -g3 microlexer.c microparser.c microinterpreter.c micromain.c libft/ft_strncmp.c libft/ft_strjoin.c libft/ft_split.c libft/ft_substr.c libft/ft_strlen.c
 
 #include "micro.h"
 
