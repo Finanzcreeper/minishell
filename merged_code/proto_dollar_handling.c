@@ -56,20 +56,24 @@ void	dollar_found(char *searchterm, char **env, t_token *t, int c)
 	{
 		if (ft_strncmp(searchterm, env[i], ft_strlen(searchterm)) == 0)
 		{
-			tempo = t->content;
-			t->content = ft_strjoin(tempo, env[i] + ft_strlen(searchterm));
-			free(tempo);
-			tempo = t->content;
-			t->content = ft_strjoin(tempo, after);
-			free(after);
-			free(tempo);
-			free(searchterm);
+			tempo = ftn(env, searchterm, t, i);
+			fuck_the_norm(tempo, t, after, searchterm);
 			return ;
 		}
 		i++;
 	}
 	free(searchterm);
 	return ;
+}
+
+void	fuck_the_norm(char *tempo, t_token *t, char *after, char *searchterm)
+{
+	free(tempo);
+	tempo = t->content;
+	t->content = ft_strjoin(tempo, after);
+	free(after);
+	free(tempo);
+	free(searchterm);
 }
 
 void	fuck_norminete(t_sain *sain, t_defs defs, t_token **list, char *string)
