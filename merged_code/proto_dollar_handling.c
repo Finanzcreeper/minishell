@@ -1,86 +1,133 @@
 #include "proto.h"
 
-void	expand_dollars(t_token **list, char **env)
+char	*make_after(t_token *t, int c)
 {
-	char	*searchterm;
-	t_token	*temp;
+	char	*after;
+	int		i;
 
-	temp = *list;
-	if (temp->content == NULL)
-		temp = temp->next;
-	while (temp != NULL)
-	{
-		searchterm = ft_calloc(ft_strlen(temp->content) + 1, sizeof(char));
-		if (search_dollar(temp, env, searchterm) == 1)
-			return ;
-		temp = temp->next;
-		free(searchterm);
-	}
+	i = c;
+	while (t->content[c] != '\0')
+		c++;
+	after = ft_calloc(c - i + 1, sizeof(char));
+	c = 0;
+	while (t->content[i] != '\0')
+		after[c++] = t->content[i++];
+	return (after);
 }
 
-int	search_dollar(t_token *t, char **env, char *searchterm)
+char	*make_searched(t_token *t, int *c)
+{
+	char	*searched;
+	int		i;
+	int		j;
+
+	i = *c + 1;
+	while (t->content[i] != ' ' && t->content[i]
+		!= '	' && t->content[i] != '\0' && t->content[i] != '$')
+		i++;
+	searched = ft_calloc(i - *c + 1, sizeof(char));
+	(*c)++;
+	j = 0;
+	while (*c < i)
+		searched[j++] = t->content[(*c)++];
+	searched[j] = '=';
+	return (searched);
+}
+
+char	*make_before(t_token *t, int c)
+{
+	char	*before;
+	int		i;
+
+	before = ft_calloc(c + 1, sizeof(char));
+	i = 0;
+	while (i < c)
+	{
+		before[i] = t->content[i];
+		i++;
+	}
+	return (before);
+}
+
+int	is_in_single_quotes(t_token *t)
 {
 	int	c;
 
 	c = 0;
 	if (t->content[c] == '\'')
-		return (0);
-	while (t->content[c] != '\0')
 	{
-		if (t->content[c] == '$')
-		{
-			dollar_found(searchterm, env, t, c);
+		while (t->content[c] != '\0')
+			c++;
+		if (t->content[c - 1] == '\'')
 			return (1);
-		}
-		c++;
 	}
 	return (0);
 }
 
-void	dollar_found(char *searchterm, char **env, t_token *t, int c)
+void	expand_dollars(t_token **list, char **env)
 {
-	int		i;
-	char	*tempo;
-	char	*after;
+	t_token	*t;
+	int		c;
+	int		skip_this_one;
 
-	t->content[c] = '\0';
-	c++;
-	i = 0;
-	while (t->content[c] != ' ' && t->content[c] != '	'
-		&& t->content[c] != '"' && t->content[c] != '\0')
-		searchterm[i++] = t->content[c++];
-	searchterm[i] = '=';
-	after = ft_strdup(t->content + c);
-	i = 0;
-	while (env[i] != NULL)
+	t = *list;
+	if (t->content == NULL)
+		t = t->next;
+	while (t != NULL)
 	{
-		if (ft_strncmp(searchterm, env[i], ft_strlen(searchterm)) == 0)
+		skip_this_one = 0;
+		if (is_in_single_quotes(t) == 1)
+			skip_this_one = 1;
+		if (skip_this_one != 1)
 		{
-			tempo = ftn(env, searchterm, t, i);
-			fuck_the_norm(tempo, t, after, searchterm);
-			return ;
+			c = 0;
+			while (t->content[c] != '\0')
+			{
+				if (t->content[c] == '$')
+					dollar_spotted(t, env, c);
+				c++;
+			}
 		}
-		i++;
+		t = t->next;
 	}
-	free(searchterm);
 	return ;
 }
 
-void	fuck_the_norm(char *tempo, t_token *t, char *after, char *searchterm)
-{
-	free(tempo);
-	tempo = t->content;
-	t->content = ft_strjoin(tempo, after);
-	free(after);
-	free(tempo);
-	free(searchterm);
-}
 
-void	fuck_norminete(t_sain *sain, t_defs defs, t_token **list, char *string)
+/*int	main(int arc, char *argv[], char *env[])
 {
-	sain->i = is_current_delim(defs, sain->substring);
-	if (sain->i != 0)
-		pushcurrentsub(sain, string, list, defs);
-	else
-		sain->substring[sain->k++] = string[sain->c++];
-}
+	t_token	*token;
+
+	token = ft_calloc(1, sizeof(t_token));
+
+	token->content = ft_calloc(22, sizeof(char));
+	token->content[0] = 't';
+	token->content[1] = 'h';
+	token->content[2] = 'i';
+	token->content[3] = 's';
+	token->content[4] = 'i';
+	token->content[5] = 's';
+	token->content[6] = '$';
+	token->content[7] = 'U';
+	token->content[8] = 'S';
+	token->content[9] = 'E';
+	token->content[10] = 'R';
+	token->content[11] = '$';
+	token->content[12] = 'U';
+	token->content[13] = 'S';
+	token->content[14] = 'E';
+	token->content[15] = 'R';
+	token->content[16] = ' ';
+	token->content[17] = 't';
+	token->content[18] = 'e';
+	token->content[19] = 's';
+	token->content[20] = 't';
+	token->content[21] = '\0';
+
+	token->next = NULL;
+	expand_dollars(&token, env);
+	ft_printf("%s\n", token->content);
+	free(token->content);
+	free(token);
+	return (0);
+} */

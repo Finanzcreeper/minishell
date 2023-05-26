@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 08:42:24 by nreher            #+#    #+#             */
-/*   Updated: 2023/05/25 10:31:44 by nreher           ###   ########.fr       */
+/*   Updated: 2023/05/26 12:18:05 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,16 +72,24 @@ typedef struct s_seperate_arguments_into_nodes
 t_defs	make_defs(void);
 void	token_add_back(t_token **token, t_token *new);
 t_token	*new_token(char *content, int type);
-void	expand_dollars(t_token **list, char **env);
 void	pushcurrentsub(t_sain *sain, char *string, t_token **list, t_defs defs);
+int		search_dollar(t_token *t, char **env, char *searchterm);
+void	fuck_norminete(t_sain *sain, t_defs defs, t_token **list, char *string);
+int		is_current_delim(t_defs defs, char *string);
+
+//Quote Handling
 void	quote_handler(t_sain *sain, char *string, t_token **list, t_defs defs);
 void	single_quoter(t_sain *sain, char *string, t_token **list, t_defs defs);
 void	double_quoter(t_sain *sain, char *string, t_token **list, t_defs defs);
-void	dollar_found(char *searchterm, char **env, t_token *t, int c);
-int		search_dollar(t_token *t, char **env, char *searchterm);
-char	*insert_env(char *content, char *env, char *replaced, int dollar);
-void	fuck_norminete(t_sain *sain, t_defs defs, t_token **list, char *string);
-int		is_current_delim(t_defs defs, char *string);
-void	fuck_the_norm(char *tempo, t_token *t, char *after, char *searchterm);
-char	*ftn(char **env, char *searchterm, t_token *t, int i);
+
+//Dollar handling
+void	expand_dollars(t_token **list, char **env);
+int		is_in_single_quotes(t_token *t);
+void	dollar_spotted(t_token *t, char **env, int c);
+char	*make_before(t_token *t, int c);
+char	*make_searched(t_token *t, int *c);
+char	*make_after(t_token *t, int c);
+int		match_searched(char **env, char *searched);
+void	not_found(t_token *t, char *before, char *after, char *searched);
+void	found(t_token *t, char *before, char *after, char *searched);
 #endif
