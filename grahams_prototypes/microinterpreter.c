@@ -12,13 +12,14 @@
 #include "micro.h"
 
 // convert linked list of cmd arguments to an array (which execve expects)
-char **list_to_array(t_token *list_head)
+char **list_to_array(t_list *list_head)
+// check that t_list is handled correctly here!
 {
 	int l;
 	char **array;
 	int i;
 
-	t_token *list_head_cpy;
+	t_list *list_head_cpy;
 
 	list_head_cpy = list_head;
 	l = 0;
@@ -40,7 +41,8 @@ char **list_to_array(t_token *list_head)
 	return (array);
 }
 
-void	execute_cmd2(char **paths, t_token *cmd, char **env)
+void	execute_cmd2(char **paths, t_list *cmd, char **env)
+// check that t_list is handled correctly here!
 {
 	int		j;
 	char	*path_cmd;
@@ -67,7 +69,8 @@ void	execute_cmd2(char **paths, t_token *cmd, char **env)
 	}
 }
 
-void	execute_cmd(t_token *cmd, char **env)
+void	execute_cmd(t_list *cmd, char **env)
+// check that t_list is handled correctly here!
 {
 	char	**paths;
 
@@ -81,7 +84,8 @@ void	execute_cmd(t_token *cmd, char **env)
 
 // run the given command in a forked subprocess, returning the output (stdout) to the parent process (stdin)
 // pid == 0 is child, pid > 0 is parent, ip pipe goes child [out] -> parent [in]
-void	pipe_to_parent(t_token *cmd, char **env)
+void	pipe_to_parent(t_list *cmd, char **env)
+// check that t_list is handled correctly here!
 {
 	pid_t	pid;
 	int		io_fd[2];
@@ -95,7 +99,7 @@ void	pipe_to_parent(t_token *cmd, char **env)
 		close(io_fd[0]);
 		dup2(io_fd[1], STDOUT_FD);
 		execute_cmd(cmd, env);
-		fprintf(stderr, "%s: %s\n", cmd->content, ERR_CMD);
+		fprintf(stderr, "%s: %s\n", (char *)cmd->content, ERR_CMD);
 		exit(127);
 	}
 	else

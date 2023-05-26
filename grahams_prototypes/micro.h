@@ -46,13 +46,13 @@ typedef struct s_node
 	int				type;
 	struct s_node	*left;
 	struct s_node	*right;
-	t_token			*cmd_elements;
+	t_list			*cmd_elements;
 	char			*infile;
 	char			*outfile;
 }					t_node;
 
 t_token	*ms_tokenizer(char *line);
-bool	parse__pipeline(t_token **token);
+bool	parse__pipeline(t_token **token, t_node **ast_root);
 void	print_ast(t_node *ast);
 t_token	*ft_newtoken(void *content);
 void	ft_tokenadd_back(t_token **lst, t_token *new);

@@ -1,10 +1,9 @@
 // TODO: problem in visit_and_execute function: after any command, whether succesful or not, control returns correctly to parent process but readline reads an empty line - readline appears to read output from commands as if it is typed input
-// TODO: add redirections to grammar
 
 // Q: exit when?
 // Q: how/when is get_next_line used? on output of readline?
 
-// cc -Wall -Werror -Wextra -Ilibft -lreadline -g3 microlexer.c microparser.c microinterpreter.c micromain.c libft/ft_strncmp.c libft/ft_strjoin.c libft/ft_split.c libft/ft_substr.c libft/ft_strlen.c
+// clear && cc -Wall -Werror -Wextra -Ilibft -lreadline -g3 microlexer.c microparser.c microinterpreter.c micromain.c libft/ft_strncmp.c libft/ft_strjoin.c libft/ft_split.c libft/ft_substr.c libft/ft_strlen.c libft/ft_lstnew.c libft/ft_lstadd_back.c libft/ft_lstlast.c && ./a.out
 
 #include "micro.h"
 
@@ -24,6 +23,30 @@ void sigint_handler(int sig)
 	}
 }
 
+// used to print the elements of individual commands e.g. "ls -l"
+void	print_list(t_list *list)
+{
+	while(list)
+	{
+		printf("\"%s\"\n", (char *)list->content);
+		list = list->next;
+	}
+	printf("\n");
+}
+
+// to print the ast 
+void print_ast(t_node *ast)
+{
+	if (ast == NULL)
+		return ;
+	print_ast(ast->left);
+	if (ast->type == N_PIPE)
+		printf("|\n");
+	print_ast(ast->right);
+	if (ast->type == N_CMD)
+		print_list(ast->cmd_elements);
+}
+
 void free_tokens(t_token *tokens_head)
 {
 	if (tokens_head == NULL)
@@ -35,14 +58,13 @@ void free_tokens(t_token *tokens_head)
 int main(int argc, char **argv, char **envp)
 {
 	t_token	*tokens;
-	// t_token	*tokens_head;
-	// t_node *ast;
+	t_node *ast_root;
 	char *line;
 
+	ast_root = NULL;
 	(void)argc;
 	(void)argv;
 	(void)envp;
-	
 	signal(SIGINT, sigint_handler); // display new prompt on new line when CTRL + C pressed
 	signal(SIGQUIT, SIG_IGN); // override/ignore default behaviour of CTRL + '\'
 	while (1)
@@ -59,14 +81,14 @@ int main(int argc, char **argv, char **envp)
 				add_history(line);
 				tokens = ms_tokenizer(line);
 				// print_tokens(tokens);
-				// tokens_head = tokens;
-				// ast = 
-				printf("%i\n", parse__pipeline(&tokens));
+				parse__pipeline(&tokens, &ast_root);
+				// print_ast((*ast_root));
 				// visit_and_execute(ast, envp);
 			}
 		}
 		free(line);
 	}
+	// free_ast(ast_root);
 	// free_tokens(tokens_head);
 	return (0);
 }
