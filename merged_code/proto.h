@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 08:42:24 by nreher            #+#    #+#             */
-/*   Updated: 2023/05/26 12:18:05 by nreher           ###   ########.fr       */
+/*   Updated: 2023/05/26 16:11:50 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,9 @@ void	double_quoter(t_sain *sain, char *string, t_token **list, t_defs defs);
 
 //Dollar handling
 void	expand_dollars(t_token **list, char **env);
-int		is_in_single_quotes(t_token *t);
-void	dollar_spotted(t_token *t, char **env, int c);
+int		is_surrounded_by(t_token *t, char a);
+void	strip_quotes(t_token *t, char a); //quote handling exeption
+int		dollar_spotted(t_token *t, char **env, int c);
 char	*make_before(t_token *t, int c);
 char	*make_searched(t_token *t, int *c);
 char	*make_after(t_token *t, int c);

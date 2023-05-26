@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 08:42:24 by nreher            #+#    #+#             */
-/*   Updated: 2023/05/24 08:29:12 by nreher           ###   ########.fr       */
+/*   Updated: 2023/05/26 13:37:28 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,21 @@ t_defs	make_defs(void);
 void	token_add_back(t_token **token, t_token *new);
 t_token	*new_token(char *content, int type);
 void	pushcurrentsub(t_sain *sain, char *string, t_token **list, t_defs defs);
+
+//Quote Handling
 void	quote_handler(t_sain *sain, char *string, t_token **list, t_defs defs);
 void	single_quoter(t_sain *sain, char *string, t_token **list, t_defs defs);
 void	double_quoter(t_sain *sain, char *string, t_token **list, t_defs defs);
+
+//Dollar handling
+void	expand_dollars(t_token **list, char **env);
+int		is_in_single_quotes(t_token *t);
+int		dollar_spotted(t_token *t, char **env, int c);
+char	*make_before(t_token *t, int c);
+char	*make_searched(t_token *t, int *c);
+char	*make_after(t_token *t, int c);
+int		match_searched(char **env, char *searched);
+void	not_found(t_token *t, char *before, char *after, char *searched);
+void	found(t_token *t, char *before, char *after, char *searched);
+
 #endif
