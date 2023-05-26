@@ -58,10 +58,12 @@ void free_tokens(t_token *tokens_head)
 int main(int argc, char **argv, char **envp)
 {
 	t_token	*tokens;
-	t_node *ast_root;
+	t_node *pipe_node;
+	t_node *cmd_node;
 	char *line;
 
-	ast_root = NULL;
+	pipe_node = NULL;
+	cmd_node = NULL;
 	(void)argc;
 	(void)argv;
 	(void)envp;
@@ -81,8 +83,8 @@ int main(int argc, char **argv, char **envp)
 				add_history(line);
 				tokens = ms_tokenizer(line);
 				// print_tokens(tokens);
-				parse__pipeline(&tokens, &ast_root);
-				// print_ast((*ast_root));
+				parse__pipeline(&tokens, &pipe_node, &cmd_node);
+				print_ast(pipe_node);
 				// visit_and_execute(ast, envp);
 			}
 		}

@@ -52,7 +52,7 @@ typedef struct s_node
 }					t_node;
 
 t_token	*ms_tokenizer(char *line);
-bool	parse__pipeline(t_token **token, t_node **ast_root);
+bool	parse__pipeline(t_token **token, t_node **pipe_node, t_node **cmd_node);
 void	print_ast(t_node *ast);
 t_token	*ft_newtoken(void *content);
 void	ft_tokenadd_back(t_token **lst, t_token *new);

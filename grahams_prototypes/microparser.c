@@ -1,3 +1,6 @@
+// TODO: print ast properly (cmd are currently not printed, maybe because they have been null(ified))
+// TODO: handle case when left hand branch of pipe is not a cmd but instead another pipe
+
 // <REDIRECTION>			::=  'T_RETO' 'T_WORD'
 //							|  'T_REFROM' 'T_WORD'
 
@@ -53,18 +56,29 @@ void create_cmd_node(t_node **cmd_node)
 	(*cmd_node)->outfile = NULL;
 }
 
-void create_pipe_node(t_node **cmd_node)
+void nullify_cmd_node(t_node **cmd_node)
 {
-	t_node pipe_node;
+	printf("making cmd NULL\n");
+	*cmd_node = NULL;
+}
 
+void create_pipe_node(t_node **pipe_node, t_node **cmd_node)
+{
 	printf("creating pipe node and linking previous command to left branch\n");
-	pipe_node.type = N_PIPE;
-	pipe_node.left = *cmd_node;
-	pipe_node.right = NULL;
-	pipe_node.cmd_elements = NULL;
-	pipe_node.infile = NULL;
-	pipe_node.outfile = NULL;
-	*cmd_node = &pipe_node;
+	(*pipe_node) = malloc(sizeof(t_node));
+	(*pipe_node)->type = N_PIPE;
+	(*pipe_node)->left = *cmd_node;
+	(*pipe_node)->right = NULL;
+	(*pipe_node)->cmd_elements = NULL;
+	(*pipe_node)->infile = NULL;
+	(*pipe_node)->outfile = NULL;
+	nullify_cmd_node(cmd_node);
+}
+
+void link_pipe_node_right_branch(t_node **pipe_node, t_node **cmd_node)
+{
+	printf("linking command to right branch of pipe_node\n");
+	(*pipe_node)->right = *cmd_node;	
 }
 
 void assign_pipe_node_right_branch(t_node **pipe_node)
@@ -136,53 +150,56 @@ bool parse__simple_command_element(t_token **token, t_node **cmd_node)
 }
 
 // prototype:
-bool parse__simple_command_tail(t_token **token, t_node **ast_root);
+bool parse__simple_command_tail(t_token **token, t_node **pipe_node, t_node **cmd_node);
 
 // <SIMPLE-COMMAND>      ::= <SIMPLE-COMMAND-ELEMENT> <SIMPLE-COMMAND-TAIL>
-bool parse__simple_command(t_token **token, t_node **ast_root)
+bool parse__simple_command(t_token **token, t_node **pipe_node, t_node **cmd_node)
 {
-	if (parse__simple_command_element(token, ast_root))
+	if (parse__simple_command_element(token, cmd_node))
 	{
-		return(parse__simple_command_tail(token, ast_root));
+		return(parse__simple_command_tail(token, pipe_node, cmd_node));
 	}
 	return false;
 }
 
 // <SIMPLE-COMMAND-TAIL> ::= <SIMPLE-COMMAND-ELEMENT> <SIMPLE-COMMAND-TAIL> | ε
-bool parse__simple_command_tail(t_token **token, t_node **ast_root)
+bool parse__simple_command_tail(t_token **token, t_node **pipe_node, t_node **cmd_node)
 {
-	if (parse__simple_command_element(token, ast_root))
+	if (parse__simple_command_element(token, cmd_node))
 	{
-		return(parse__simple_command_tail(token, ast_root));
+		return(parse__simple_command_tail(token, pipe_node, cmd_node));
 	}
-	printf("finished parsing simple command\n");
-	if ((*ast_root)->type == N_PIPE)
-
+	if (*pipe_node)
+	{
+		link_pipe_node_right_branch(pipe_node, cmd_node);
+		nullify_cmd_node(cmd_node);
+	}
+	printf("finished parsing simple command\n\n");
 	return true; // ε (empty production)
 }
 
 // prototype:
-bool parse__pipeline_tail(t_token **token, t_node **ast_root);
+bool parse__pipeline_tail(t_token **token, t_node **pipe_node, t_node **cmd_node);
 
 // <PIPELINE> 				::= <SIMPLE-COMMAND> <PIPELINE-TAIL>
-bool parse__pipeline(t_token **token, t_node **ast_root)
+bool parse__pipeline(t_token **token, t_node **pipe_node, t_node **cmd_node)
 {
-	if (parse__simple_command(token, ast_root))
+	if (parse__simple_command(token, pipe_node, cmd_node))
 	{
-		return(parse__pipeline_tail(token, ast_root));
+		return(parse__pipeline_tail(token, pipe_node, cmd_node));
 	}
 	return false;
 }
 
 // <PIPELINE-TAIL>			::= 'T_PIPE' <PIPELINE> | ε
-bool parse__pipeline_tail(t_token **token, t_node **ast_root)
+bool parse__pipeline_tail(t_token **token, t_node **pipe_node, t_node **cmd_node)
 {
 	if ((*token) && (*token)->type == T_PIPE)
 	{
 		(*token) = (*token)->next;
-		if (ast_root) // only create the pipe node if a previous command exists i.e. not if there's just one command
-			create_pipe_node(ast_root);
-		return(parse__pipeline(token, ast_root));
+		if (*cmd_node) // only create the pipe node if a previous command exists i.e. not if there's just one command
+			create_pipe_node(pipe_node, cmd_node);
+		return(parse__pipeline(token, pipe_node, cmd_node));
 	}
 	printf("finished parsing pipeline\n");
 	return true; // ε (empty production)
