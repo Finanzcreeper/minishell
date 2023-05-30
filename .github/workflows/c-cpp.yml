@@ -10,9 +10,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: goto_merged
-      run: cd merged_code
     - name: make
+      working-directory: merged_code
       run: make
     - name: test
       run: ls -a | grep g
