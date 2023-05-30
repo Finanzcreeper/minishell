@@ -10,8 +10,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: goto merged
-    - run: cd merged_code
+    - name: goto_merged
+      run: cd merged_code
     - name: make
       run: make
     - name: test
