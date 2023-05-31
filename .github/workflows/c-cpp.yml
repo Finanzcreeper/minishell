@@ -16,6 +16,8 @@ jobs:
       run: sudo apt-get install lib32readline8
     - name: install readline-dev
       run: sudo apt-get install lib32readline-dev
+    - name: restart services
+      run: sudo needrestart -r a
     - name: check for readline
       run: find /usr | grep readline
       
