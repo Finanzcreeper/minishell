@@ -19,7 +19,7 @@ jobs:
     - name: restart services
       run: sudo needrestart -r a
     - name: check for readline
-      run: find /usr | grep readline
+      run: find /usr | grep readline | grep 32
       
     - uses: actions/cache@v1.2.1
       with:
