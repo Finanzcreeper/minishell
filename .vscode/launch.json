@@ -8,7 +8,7 @@
 			"name": "(gdb) Launch",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/grahams_prototypes/a.out",
+			"program": "${workspaceFolder}/merged_code/a.out",
 			"args": ["this is 'a <<' test"],
 			"stopAtEntry": true,
 			"cwd": "${fileDirname}",

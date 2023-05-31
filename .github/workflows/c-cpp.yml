@@ -1,0 +1,23 @@
+name: C/C++ CI
+
+on:
+  push:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: pingtest
+      run: ping 52.252.75.106 80
+    - uses: actions/checkout@v3
+    - name: install nextline
+      run: sudo apt-get install lib32readline8 lib32readline-dev
+    - name: fix dependencies
+      run: --fix mising
+    - name: make
+      working-directory: merged_code
+      run: make e
+    - name: test
+      run: ls -a | grep g
