@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -g3 -lreadline
+CFLAGS = -g3 /usr/share/doc/lib32readline-dev -lreadline
 CFULLFLAGS =-Wall -Werror -Wextra 
 MAKEFLAGS = --no-print-directory
 SRC = $(wildcard *.c)
@@ -18,3 +18,6 @@ e :
 libft :
 	make -C ../libft
 	make clean -C ../libft
+
+clean :
+	rm a.out
