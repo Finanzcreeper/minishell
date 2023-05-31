@@ -28,10 +28,9 @@ void	print_list(t_list *list)
 {
 	while(list)
 	{
-		printf("\"%s\"\n", (char *)list->content);
+		printf("\"%s\" ", (char *)list->content);
 		list = list->next;
 	}
-	printf("\n");
 }
 
 // to print the ast 
@@ -41,10 +40,12 @@ void print_ast(t_node *ast)
 		return ;
 	print_ast(ast->left);
 	if (ast->type == N_PIPE)
-		printf("|\n");
+		printf("| ");
 	print_ast(ast->right);
 	if (ast->type == N_CMD)
+	{
 		print_list(ast->cmd_elements);
+	}
 }
 
 void free_tokens(t_token *tokens_head)
@@ -84,7 +85,9 @@ int main(int argc, char **argv, char **envp)
 				tokens = ms_tokenizer(line);
 				// print_tokens(tokens);
 				parse__pipeline(&tokens, &pipe_node, &cmd_node);
+				printf("\nPRINTING AST:\n");
 				print_ast(pipe_node);
+				printf("\n");
 				// visit_and_execute(ast, envp);
 			}
 		}

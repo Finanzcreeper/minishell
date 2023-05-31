@@ -58,13 +58,13 @@ void create_cmd_node(t_node **cmd_node)
 
 void nullify_cmd_node(t_node **cmd_node)
 {
-	printf("making cmd NULL\n");
+	printf("NULLifying command node - without this the next command node won't be created\n");
 	*cmd_node = NULL;
 }
 
 void create_pipe_node(t_node **pipe_node, t_node **cmd_node)
 {
-	printf("creating pipe node and linking previous command to left branch\n");
+	printf("creating pipe node and linking previous command node to left branch\n");
 	(*pipe_node) = malloc(sizeof(t_node));
 	(*pipe_node)->type = N_PIPE;
 	(*pipe_node)->left = *cmd_node;
@@ -77,7 +77,7 @@ void create_pipe_node(t_node **pipe_node, t_node **cmd_node)
 
 void link_pipe_node_right_branch(t_node **pipe_node, t_node **cmd_node)
 {
-	printf("linking command to right branch of pipe_node\n");
+	printf("linking command node to right branch of pipe_node\n");
 	(*pipe_node)->right = *cmd_node;	
 }
 
@@ -98,10 +98,10 @@ void assign_redirection_to(t_node **cmd_node, char *filename)
 	(*cmd_node)->outfile = filename;
 }
 
-void add_command_element(t_list *cmd, char *content)
+void add_command_element(t_node **cmd_node, char *content)
 {
 	printf("adding \"%s\" to cmd_elements list of command node\n", content);
-	ft_lstadd_back(&cmd, ft_lstnew(content));
+	ft_lstadd_back(&(*cmd_node)->cmd_elements, ft_lstnew(content));
 }
 
 // parsing:
@@ -142,7 +142,7 @@ bool parse__simple_command_element(t_token **token, t_node **cmd_node)
 	{
 		if (!(*cmd_node))
 			create_cmd_node(cmd_node);
-		add_command_element((*cmd_node)->cmd_elements, (*token)->content);
+		add_command_element(cmd_node, (*token)->content);
 		(*token) = (*token)->next;
 		return true;
 	}
