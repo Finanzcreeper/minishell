@@ -10,11 +10,10 @@ jobs:
     name: test minishell
     steps:
     - uses: actions/checkout@v3
-    - name: pathcheck
-      run: $PATH
     - uses: actions/cache@v1.2.1
       with:
         packages: lib32readline8 lib32readline-dev
+        path: /home/runner/.local/bin
     - name: make
       working-directory: merged_code
       run: make e
