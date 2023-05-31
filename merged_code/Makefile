@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -g3 /usr/share/doc/lib32readline-dev -lreadline
+CFLAGS = -g3 -L/usr/share/doc/lib32readline-dev -lreadline
 CFULLFLAGS =-Wall -Werror -Wextra 
 MAKEFLAGS = --no-print-directory
 SRC = $(wildcard *.c)
