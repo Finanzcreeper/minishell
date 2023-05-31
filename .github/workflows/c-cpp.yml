@@ -10,9 +10,9 @@ jobs:
     name: test minishell
     steps:
     - uses: actions/checkout@v3
-    - uses: awalsh128/cache-apt-pkgs-action@latest
-      with:
-        packages: lib32readline8 lib32readline-dev
+   # - uses: awalsh128/cache-apt-pkgs-action@latest
+   #   with:
+   #     packages: lib32readline8 lib32readline-dev
     - name: make
       working-directory: merged_code
       run: make e
