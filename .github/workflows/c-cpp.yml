@@ -13,7 +13,7 @@ jobs:
     - name: install readline8
       run: sudo apt-get install lib32readline8
     - name: install readline-dev
-      run: sudo apt-get install lib32readline8-dev
+      run: sudo apt-get update lib32readline-dev
       
     - uses: actions/cache@v1.2.1
       with:
