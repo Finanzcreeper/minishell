@@ -7,11 +7,12 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    name: test minishell
     steps:
     - uses: actions/checkout@v3
-    - name: install readline
-      run: sudo apt-get install lib32readline8 lib32readline-dev
+    - uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: lib32readline8 lib32readline-dev
     - name: fix dependencies
       run: --fix mising
     - name: make
