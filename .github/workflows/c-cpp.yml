@@ -17,7 +17,7 @@ jobs:
     - name: install readline-dev
       run: sudo apt-get install lib32readline-dev
     - name: check for readline
-      run: apt-cache search readline | grep 32
+      run: find /usr | grep readline
       
     - uses: actions/cache@v1.2.1
       with:
