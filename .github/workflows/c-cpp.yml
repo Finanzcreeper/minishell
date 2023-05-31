@@ -17,4 +17,4 @@ jobs:
       working-directory: merged_code
       run: make e
     - name: test
-      run: ls -a | grep g
+      run: this is a test
