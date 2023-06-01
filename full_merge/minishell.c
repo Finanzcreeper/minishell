@@ -10,7 +10,7 @@
 // https://www.geeksforgeeks.org/signals-c-language/
 // allowed functions (signals): signal, sigaction, sigemptyset, sigaddset, kill
 
-void sigint_handler(int sig)
+void	sigint_handler(int sig)
 {
 	if (sig == SIGINT) // ctrl + C
 	{
@@ -26,7 +26,7 @@ void sigint_handler(int sig)
 // used to print the elements of individual commands e.g. "ls -l"
 void	print_list(t_list *list)
 {
-	while(list)
+	while (list)
 	{
 		printf("\"%s\" ", (char *)list->content);
 		list = list->next;
@@ -34,7 +34,7 @@ void	print_list(t_list *list)
 }
 
 // to print the ast 
-void print_ast(t_node *ast)
+void	print_ast(t_node *ast)
 {
 	if (ast == NULL)
 		return ;
@@ -48,7 +48,7 @@ void print_ast(t_node *ast)
 	}
 }
 
-void free_tokens(t_token *tokens_head)
+void	free_tokens(t_token *tokens_head)
 {
 	if (tokens_head == NULL)
 		return ;
@@ -56,12 +56,12 @@ void free_tokens(t_token *tokens_head)
 	free(tokens_head);
 }
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
 	t_token	*tokens;
-	t_node *pipe_node;
-	t_node *cmd_node;
-	char *line;
+	t_node	*pipe_node;
+	t_node	*cmd_node;
+	char	*line;
 
 	pipe_node = NULL;
 	cmd_node = NULL;
@@ -84,7 +84,7 @@ int main(int argc, char **argv, char **envp)
 				add_history(line);
 				tokens = lexer(line, envp);
 				print_tokens(tokens);
-				parse__pipeline(&tokens, &pipe_node, &cmd_node);
+				parse__pipeline(&tokens->next, &pipe_node, &cmd_node);
 				printf("\nPRINTING AST:\n");
 				print_ast(pipe_node);
 				printf("\n");
