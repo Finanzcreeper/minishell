@@ -10,9 +10,21 @@ jobs:
     name: test minishell
     steps:
     - uses: actions/checkout@v3
-    - uses: awalsh128/cache-apt-pkgs-action@latest
+    - name: update apt-get
+      run: sudo apt-get update
+    - name: install readline8
+      run: sudo apt-get install lib32readline8
+    - name: install readline-dev
+      run: sudo apt-get install lib32readline-dev
+    - name: restart services
+      run: sudo needrestart -r a
+    - name: check for readline
+      run: find /usr | grep readline | grep 32
+      
+    - uses: actions/cache@v1.2.1
       with:
-        packages: lib32readline8 lib32readline-dev
+        path: /home/runner/.local/bin
+        key: test
     - name: make
       working-directory: merged_code
       run: make e
