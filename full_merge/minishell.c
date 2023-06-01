@@ -19,7 +19,7 @@ void	sigint_handler(int sig)
 		rl_on_new_line(); // Tell update functions we have moved onto a new (empty) line
 		rl_replace_line("", 0); // Replace the contents of rl_line_buffer with text
 		rl_on_new_line(); // Tell the update routines that we have moved onto a new (empty) line, usually after ouputting a newline
-		rl_redisplay(); // Change what’s displayed on the screen to reflect the current contents of rl_line_buffer. 
+		rl_redisplay();// Change what’s displayed on the screen to reflect the current contents of rl_line_buffer. 
 	}
 }
 

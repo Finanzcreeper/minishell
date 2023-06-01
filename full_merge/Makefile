@@ -15,6 +15,11 @@ $(NAME) :
 e :
 	$(CC) $(CFLAGS) $(SRC) $(LIB)
 
+clean :
+	- rm minishell
+
+re : clean $(NAME)
+
 libft :
 	make -C ../libft
 	make clean -C ../libft
