@@ -5,6 +5,9 @@ int	main(int argc, char *argv[], char *env[])
 {
 	t_node	*_ast;
 
+	(void)argc;
+	(void)argv;
+
 	_ast = ft_calloc(3, sizeof(t_node));
 	_ast[0].type = N_PIPE;
 	_ast[1].type = N_CMD;

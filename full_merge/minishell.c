@@ -34,17 +34,17 @@ void	print_list(t_list *list)
 }
 
 // to print the ast 
-void	print_ast(t_node *ast)
+void	print_ast(t_node **ast)
 {
-	if (ast == NULL)
+	if ((*ast) == NULL)
 		return ;
-	print_ast(ast->left);
-	if (ast->type == N_PIPE)
+	print_ast(&(*ast)->left);
+	if ((*ast)->type == N_PIPE)
 		printf("| ");
-	print_ast(ast->right);
-	if (ast->type == N_CMD)
+	print_ast(&(*ast)->right);
+	if ((*ast)->type == N_CMD)
 	{
-		print_list(ast->cmd_elements);
+		print_list((*ast)->command_elements);
 	}
 }
 
@@ -59,12 +59,11 @@ void	free_tokens(t_token *tokens_head)
 int	main(int argc, char **argv, char **envp)
 {
 	t_token	*tokens;
-	t_node	*pipe_node;
-	t_node	*cmd_node;
+	t_node	**ast_head;
 	char	*line;
 
-	pipe_node = NULL;
-	cmd_node = NULL;
+	// ast_head = malloc(1 * sizeof(t_node *));
+	ast_head = NULL;
 	(void)argc;
 	(void)argv;
 	(void)envp;
@@ -84,11 +83,12 @@ int	main(int argc, char **argv, char **envp)
 				add_history(line);
 				tokens = lexer(line, envp);
 				print_tokens(tokens);
-				parse__pipeline(&tokens->next, &pipe_node, &cmd_node);
+				parse__pipeline(&tokens->next, &ast_head);
 				printf("\nPRINTING AST:\n");
-				print_ast(pipe_node);
+				print_ast(ast_head);
 				printf("\n");
 				// visit_and_execute(ast, envp);
+				*ast_head = NULL;
 			}
 		}
 		free(line);

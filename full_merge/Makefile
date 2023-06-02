@@ -17,6 +17,7 @@ e :
 
 clean :
 	- rm minishell
+	- rm a.out
 
 re : clean $(NAME)
 

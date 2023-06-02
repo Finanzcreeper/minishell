@@ -58,7 +58,7 @@ typedef struct s_node
 	int				type;
 	struct s_node	*left;
 	struct s_node	*right;
-	t_list			*cmd_elements;
+	t_list			*command_elements;
 	char			*infile;
 	char			*outfile;
 }					t_node;
@@ -80,8 +80,8 @@ typedef struct s_rule
 }t_rule;
 
 t_token	*ms_tokenizer(char *line);
-bool 	parse__pipeline(t_token **token, t_node **pipe_node, t_node **cmd_node);
-void	print_ast(t_node *ast);
+bool	parse__pipeline(t_token **token, t_node ***ast_head);
+void	print_ast(t_node **ast);
 t_token	*ft_newtoken(void *content);
 void	ft_tokenadd_back(t_token **lst, t_token *new);
 void 	visit_and_execute(t_node *node, char **env);
