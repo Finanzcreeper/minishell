@@ -1,0 +1,78 @@
+// TODO: print ast properly (cmd are currently not printed, maybe because they have been null(ified))
+// TODO: handle case when left hand branch of pipe is not a cmd but instead another pipe
+
+// <REDIRECTION>			::=  'T_RETO' 'T_WORD'
+//							|  'T_REFROM' 'T_WORD'
+
+// <SIMPLE-COMMAND-ELEMENT>	::= 'T_WORD'
+//							|  <REDIRECTION>
+
+// <SIMPLE-COMMAND>			::=  <SIMPLE-COMMAND-ELEMENT>
+// 							|  <SIMPLE-COMMAND> <SIMPLE-COMMAND-ELEMENT>
+
+// <PIPELINE> 				::=
+//							<SIMPLE-COMMAND> 'T_PIPE' <SIMPLE-COMMAND>
+//							|	'T_WORD'
+//								| 	'T_RETO' 'T_WORD'
+//									|  'T_REFROM' 'T_WORD'
+
+// 								|  <SIMPLE-COMMAND> 'T_WORD'
+//													|  <'T_RETO' 'T_WORD'
+//														|  'T_REFROM' 'T_WORD'
+
+
+
+
+
+
+// <REDIRECTION>			::=  'T_RETO' 'T_WORD'
+//							|  'T_REFROM' 'T_WORD'
+
+// <SIMPLE-COMMAND-ELEMENT>	::= 'T_WORD'
+//							|  <REDIRECTION>
+
+// <SIMPLE-COMMAND>			::=  <SIMPLE-COMMAND-ELEMENT>
+// 							|  <SIMPLE-COMMAND> <SIMPLE-COMMAND-ELEMENT>
+
+// <PIPELINE> 				::= <SIMPLE-COMMAND> // go here if only one token
+//							|  <SIMPLE-COMMAND> 'T_PIPE' <PIPELINE>
+							
+ls			|		wc			|		grep
+T_WORD -> T_PIPE -> T_WORD -> T_PIPE -> T_WORD -> T_WORD -> NULL
+										!
+0: t_list *command_elements
+
+1: T_WORD :
+	CALLS
+	- PIPELINE								create: nothing
+	- SIMPLE-COMMAND					✅	create: t_node *command_node (type = CMD) link command_elements to command_node, make next command_elements. if (pipe_node with free right side exists) link command_node to right side of pipe_node.
+	- SIMPLE-COMMAND-ELEMENT -> T_WORD 	✅	listaddback(command_elements,"ls")
+	- SIMPLE-COMMAND-ELEMENT -> T_WORD	❌
+
+2: T_PIPE :
+	are in PIPELINE
+	CALLS
+	- T_PIPE == T_PIPE					✅	create: (new)pipe_node, if((prev) pipe_node exists)link (prev) pipe_node to left side of (new)pipe_node; else link prev node to left side of (new)pipe_node
+
+3: T_WORD :
+	are in PIPELINE	
+	CALLS
+	- PIPELINE
+	- SIMPLE-COMMAND					✅	create: t_node *command_node (type = CMD) link command_elements to command_node, make next command_elements. if (pipe_node with free right side exists) link command_node to right side of pipe_node.
+	- SIMPLE-COMMAND-ELEMENT -> T_WORD 	✅	listaddback(command_elements,"wc")
+	- SIMPLE-COMMAND-ELEMENT -> T_WORD	❌
+	
+4: T_PIPE :
+	are in PIPELINE
+	CALLS
+	- T_PIPE == T_PIPE					✅	create: pipe_node, if((prev) pipe_node exists)link (prev) pipe_node to left side of (new)pipe_node; else link prev node to left side of (new)pipe_node
+
+5: T_WORD
+	are in PIPELINE
+	CALLS
+	- PIPELINE
+	- SIMPLE-COMMAND					✅ create: t_node *command_node (type = CMD) link command_elements to command_node, make next command_elements. if (pipe_node with free right side exists) link command_node to right side of pipe_node.
+	- SIMPLE-COMMAND-ELEMENT - T_WORD	✅ listaddback(command_elements,"grep")
+	- SIMPLE-COMMAND-ELEMENT -> T_WORD	❌	 
+...
+
