@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/03 17:56:50 by nreher            #+#    #+#             */
-/*   Updated: 2022/12/22 12:45:02 by nreher           ###   ########.fr       */
+/*   Updated: 2023/06/02 11:57:38 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 typedef struct s_list
 {
-	void			*content;
+	char			*content;
 	struct s_list	*next;
 }t_list;
 
