@@ -1,5 +1,9 @@
 // clear; cc -Wall -Werror -Wextra interpreter_newbuild.c libft/ft_lstnew.c libft/ft_lstadd_back.c libft/ft_lstlast.c libft/ft_split.c libft/ft_strjoin.c libft/ft_substr.c libft/ft_strncmp.c libft/ft_strlen.c libft/ft_calloc.c libft/ft_bzero.c && ./a.out
 
+// TODO: fix hangs with single commands
+// TODO: add << >> support (infile, outfile)
+// TODO: add builtins
+
 // order of operations:
 // traverse tree, if P encountered and left branch is C, execute ls in child process, give result back to parent
 // now traverse right branch of P, execute wc in child process, give result back to parent
