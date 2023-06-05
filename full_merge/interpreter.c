@@ -1,24 +1,43 @@
-// manually build an ast of the two forms of command handled in the grammar i.e. "ls" and "ls | wc"
-// traverse the tree, executing the commands in subshells
-// cc -Wall -Werror -Wextra -ILibft microinterpreter.c  Libft/libft.a -o microinterpreter && ./microinterpreter
-// - everytime we encounter a pipe (or the root node) in the tree, we
-//	- fork off a child process, setup read end of the pipe
-//	- in parent process, setup write end of the pipe
-// the root node is treated like a pipe, so that there is a watchover process to exit to
-// this way things should work nicely even when there is no pipe in the ast
+// TODO: fix hangs with single commands
+// TODO: add << >> support (infile, outfile)
+// TODO: add builtins
+// Q: if a command is not found, do we stop there or do we continue piping?
 
-// Q: why is there no output?!?
+// approach: check a valid path for the command is found in env, and ONLY THEN create the pipe and execute the command in the child process
+// special case for the last command or single command, which will be executed without piping (as there is no interprocess communication in this case)
+
+// EXAMPLE AST:
+//		 		P0
+// 			/		\
+//	 		P1		C2
+// 		/		\	| 
+// 		P3		C4	head -n 2
+// 	/		\	|
+// C5		C6	sort
+// |		|
+// ls 	grep micro
 
 #include "minishell.h"
 
+void	print_array(char **array)
+{
+	int i;
+
+	i = 0;
+	while (array[i])
+	{
+		fprintf(stderr, "%s ", array[i]);
+		i++;
+	}
+	fprintf(stderr, "\n");
+}
+
 // convert linked list of cmd arguments to an array (which execve expects)
 char **list_to_array(t_list *list_head)
-// check that t_list is handled correctly here!
 {
 	int l;
 	char **array;
 	int i;
-
 	t_list *list_head_cpy;
 
 	list_head_cpy = list_head;
@@ -28,101 +47,141 @@ char **list_to_array(t_list *list_head)
 		list_head = list_head->next;
 		l++;
 	}
-	array = malloc(sizeof(char *) * (l + 1)); // TODO: how to free this? result is used in execve
+	array = malloc(sizeof(char *) * (l + 1));
 	i = 0;
 	while (i < l)
 	{
 		array[i] = list_head_cpy->content;
-		// fprintf(stderr, "%s\n", list_head_cpy->content);
 		list_head_cpy = list_head_cpy->next;
 		i++;
 	}
-	array[i] = NULL;
 	return (array);
 }
 
-void	execute_cmd2(char **paths, t_list *cmd, char **env)
-// check that t_list is handled correctly here!
-{
-	int		j;
-	char	*path_cmd;
-	char	**cmd_as_array;
-
-	j = 0;
-	while (paths[j])
-	{
-		path_cmd = ft_strjoin(ft_strjoin(paths[j++], "/"), cmd->content);
-		if (access(path_cmd, 0) == 0)
-		{
-			free(paths);
-			cmd = cmd->next;
-			// fprintf(stderr, "%s ", path_cmd);
-			cmd_as_array = list_to_array(cmd);
-			if (execve(path_cmd, cmd_as_array, env) == -1)
-			{
-				perror("Execution error");
-				exit(127);
-			}
-			free(cmd_as_array);
-		}
-		free(path_cmd);
-	}
-}
-
-void	execute_cmd(t_list *cmd, char **env)
-// check that t_list is handled correctly here!
+char	**get_path(t_list *command_elements, char **env)
 {
 	char	**paths;
+	int		i;
+	char	*path_cmd;
 
 	while (ft_strncmp("PATH=", *env, 5))
 		env++;
-	paths = ft_split(*env + 5, ':');
-	if (!paths) // what kind of error is this? when there is not environment? what error text should be printed?
-		exit(1);
-	execute_cmd2(paths, cmd, env);
+	paths = ft_split(*env + 5, ':'); // don't need to check if paths doesn't return
+
+	i = 0;
+	while (paths[i])
+	{
+		path_cmd = ft_strjoin(ft_strjoin(paths[i], "/"), command_elements->content);
+		if (access(path_cmd, F_OK | X_OK) == 0) // if file exists and is executable
+		{
+			free(paths);
+			command_elements->content = path_cmd;
+			return (list_to_array(command_elements));
+		}
+		free(path_cmd);
+		i++;
+	}
+	return (NULL);	
 }
 
-// run the given command in a forked subprocess, returning the output (stdout) to the parent process (stdin)
-// pid == 0 is child, pid > 0 is parent, ip pipe goes child [out] -> parent [in]
-void	pipe_to_parent(t_list *cmd, char **env)
-// check that t_list is handled correctly here!
+void execute_cmd(t_list *command_elements, char **env)
+{
+	char **cmd_as_array;
+
+	cmd_as_array = get_path(command_elements, env);
+	if (cmd_as_array == NULL)
+	{
+		fprintf(stderr, "%s\n", ERR_CMD);
+		return ;
+	}
+	print_array(cmd_as_array);
+	if (execve(cmd_as_array[0], cmd_as_array, env) == -1)
+	{
+		fprintf(stderr, "%s\n", ERR_EXEC);
+		free(cmd_as_array);
+		exit(1); // 0 = success, non-zero = different types of failures
+	}
+}
+
+void	pipe_to_parent(t_list *command_elements, char **env)
 {
 	pid_t	pid;
 	int		io_fd[2];
+	int		exit_status;
 
-	pipe(io_fd);
+	pipe(io_fd); // TODO: pipe errors
 	pid = fork();
 	if (pid == -1)
-		perror(ERR_FORK);
+	{
+		fprintf(stderr, "%s\n", ERR_FORK);
+		exit(1);
+	}
 	if (pid == 0)
 	{
+		// printf("child!\n");
 		close(io_fd[0]);
 		dup2(io_fd[1], STDOUT_FD);
-		execute_cmd(cmd, env);
-		fprintf(stderr, "%s: %s\n", (char *)cmd->content, ERR_CMD);
-		exit(127);
+		execute_cmd(command_elements, env);
 	}
 	else
 	{
+		// printf("parent!\n");
 		close(io_fd[1]);
 		dup2(io_fd[0], STDIN_FD);
-		waitpid(pid, NULL, 0);
+		waitpid(pid, &exit_status, 0);
+		// if (exit_status == 0)
+		// 	fprintf(stderr, "child process exited successfully\n");
+		// else
+		// 	fprintf(stderr, "child process exited abnormally with status %i\n", exit_status);
 	}
 }
 
-void visit_and_execute(t_node *node, char **env)
+void	traverse_ast2(t_node *head, t_node *current, char **env)
 {
-	if (!node)
-		return ;
-	if (node->type == N_PIPE)
+	if (current->type == N_CMD)
 	{
-		visit_and_execute(node->left, env);
-		visit_and_execute(node->right, env);
-		free(node);
+		if (current == head)
+		{
+			//printf("found cmd, executing in parent process\n");
+			printf("[CP]\n");
+			execute_cmd(current->command_elements, env);
+		}
+		else
+		{
+			//printf("found cmd, executing in subprocess\n");
+			printf("[CS]\n");
+			pipe_to_parent(current->command_elements, env);
+		}
 	}
-	if (node->type == N_CMD)
+	else
 	{
-		pipe_to_parent(node->command_elements, env);
-		free(node);
+		//printf("going down\n");
+		traverse_ast2(head, current->left, env);
+		//printf("coming back up\n");
+		if (current->type == N_PIPE)
+		{
+			if (current == head)
+			{
+				// printf("found pipe: executing right branch cmd in parent process\n");
+				printf("[PP]\n");
+				execute_cmd(current->right->command_elements, env);
+			}
+			else
+			{
+				//printf("found pipe: executing right branch cmd in subprocess\n");
+				printf("[PS]\n");
+				pipe_to_parent(current->right->command_elements, env);
+			}
+		}
 	}
+}
+
+void	traverse_ast(t_node *root, char **env)
+{
+	t_node *head;
+
+	head = ft_calloc(1, sizeof(t_node));
+	head = root;
+	traverse_ast2(head, root, env);
+	// free(head); // why is this a double free?
 }
