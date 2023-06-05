@@ -62,5 +62,5 @@ int main(int argc, char **argv, char **env)
 	
 	// traverse_ast(&nodes[6], env); // second command only HANGS
 	// traverse_ast(&nodes[4], env); // third command only HANGS
-	traverse_ast(&nodes[2], env); // fourth command only HANGS
+	// traverse_ast(&nodes[2], env); // fourth command only HANGS
 }

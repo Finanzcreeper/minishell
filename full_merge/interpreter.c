@@ -147,34 +147,34 @@ void	traverse_ast2(t_node *head, t_node *current, char **env)
 	{
 		if (current == head)
 		{
-			//printf("found cmd, executing in parent process\n");
-			printf("[CP]\n");
+			printf("N_CMD at head:\n");
+			printf("	at last command: execute it in a subprocess, but not to a pipe\n");
 			execute_cmd(current->command_elements, env);
 		}
 		else
 		{
-			//printf("found cmd, executing in subprocess\n");
-			printf("[CS]\n");
+			printf("N_CMD not at head:\n");
+			printf("	before last command: execute it in a subprocess, but to a pipe\n");
 			pipe_to_parent(current->command_elements, env);
 		}
 	}
 	else
 	{
-		//printf("going down\n");
+		printf("going down\n");
 		traverse_ast2(head, current->left, env);
-		//printf("coming back up\n");
+		printf("coming back up\n");
 		if (current->type == N_PIPE)
 		{
 			if (current == head)
 			{
-				// printf("found pipe: executing right branch cmd in parent process\n");
-				printf("[PP]\n");
+				printf("N_PIPE at head:\n");
+				printf("	at last pipe: execute right branch cmd in a subprocess, but not to a pipe\n");
 				execute_cmd(current->right->command_elements, env);
 			}
 			else
 			{
-				//printf("found pipe: executing right branch cmd in subprocess\n");
-				printf("[PS]\n");
+				printf("N_PIPE not at head:\n");
+				printf("	before last pipe: execute right branch cmd in a subprocess, but to a pipe\n");
 				pipe_to_parent(current->right->command_elements, env);
 			}
 		}
