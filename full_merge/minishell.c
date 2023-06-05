@@ -84,10 +84,10 @@ int	main(int argc, char **argv, char **envp)
 				tokens = lexer(line, envp);
 				print_tokens(tokens);
 				parse__pipeline(&tokens->next, &ast_head);
-				printf("\nPRINTING AST:\n");
+				ft_printf("\nPRINTING AST:\n");
 				print_ast(ast_head);
-				printf("\n");
-				// visit_and_execute(ast, envp);
+				ft_printf("\n");
+				traverse_ast(*ast_head, envp);
 				ast_head = NULL;
 			}
 		}
