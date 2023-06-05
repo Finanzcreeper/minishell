@@ -58,7 +58,7 @@ char **list_to_array(t_list *list_head)
 	return (array);
 }
 
-char	**get_path(t_list *command_elements, char **env)
+char	*get_path(char **cmd_as_array, char **env)
 {
 	char	**paths;
 	int		i;
@@ -71,24 +71,29 @@ char	**get_path(t_list *command_elements, char **env)
 	i = 0;
 	while (paths[i])
 	{
-		path_cmd = ft_strjoin(ft_strjoin(paths[i], "/"), command_elements->content);
+		path_cmd = ft_strjoin(ft_strjoin(paths[i], "/"), cmd_as_array[0]);
 		if (access(path_cmd, F_OK | X_OK) == 0) // if file exists and is executable
 		{
 			free(paths);
-			command_elements->content = path_cmd;
-			return (list_to_array(command_elements));
+			return (path_cmd);
 		}
 		free(path_cmd);
 		i++;
 	}
-	return (NULL);	
+	return (NULL);
 }
 
 void execute_cmd(t_list *command_elements, char **env)
 {
 	char **cmd_as_array;
 
-	cmd_as_array = get_path(command_elements, env);
+	cmd_as_array = list_to_array(command_elements);
+	if (check_for_builtin(cmd_as_array[0]) == true)
+	{
+		run_builtin(cmd_as_array, env);
+		return ;
+	}
+	cmd_as_array[0] = get_path(cmd_as_array, env);
 	if (cmd_as_array == NULL)
 	{
 		fprintf(stderr, "%s\n", ERR_CMD);

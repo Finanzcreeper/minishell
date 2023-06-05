@@ -2,7 +2,7 @@
 
 // env (with no options or arguments)
 // print a list of environment variables (in order of creation?)
-int	builtin_env(int num_args, char **args, char **envp)
+int	builtin_env(int num_args, char **args, char **env)
 {
 	int	i;
 
@@ -12,9 +12,9 @@ int	builtin_env(int num_args, char **args, char **envp)
 		return (1);
 	}
 	i = 0;
-	while (envp[i])
+	while (env[i])
 	{
-		printf("%s\n", envp[i]);
+		printf("%s\n", env[i]);
 		i++;
 	}
 	return (0);
@@ -66,20 +66,42 @@ int	builtin_exit(int num_args, char arg[])
 	return (0);
 }
 
-void	run_builtin(char *command, int num_args, char *args[], char **envp)
+bool	check_for_builtin(char *command)
 {
-	if (ft_strncmp(command, "echo", ft_strlen(command)) == 0)
-		builtin_echo(num_args, args);
-	else if (ft_strncmp(command, "cd", ft_strlen(command)) == 0)
-		builtin_cd(num_args, args);
-	else if (ft_strncmp(command, "pwd", ft_strlen(command)) == 0)
+	if ((ft_strncmp(command, "echo", ft_strlen(command)) == 0) ||
+		(ft_strncmp(command, "cd", ft_strlen(command)) == 0) ||
+		(ft_strncmp(command, "pwd", ft_strlen(command)) == 0) ||
+		(ft_strncmp(command, "export", ft_strlen(command)) == 0) ||
+		(ft_strncmp(command, "unset", ft_strlen(command)) == 0) ||
+		(ft_strncmp(command, "env", ft_strlen(command)) == 0) ||
+		(ft_strncmp(command, "exit", ft_strlen(command)) == 0))
+		return true;
+	return false;
+}
+
+void	run_builtin(char **cmd_as_array, char **env)
+{
+	char			*cmd;
+	char			**args;
+	unsigned int	argc;
+
+	cmd = cmd_as_array[0];
+	args = cmd_as_array++;
+	argc = 0;
+	while (args[argc])
+		argc++;
+	if (ft_strncmp(cmd, "echo", ft_strlen(cmd)) == 0)
+		builtin_echo(argc, args);
+	else if (ft_strncmp(cmd, "cd", ft_strlen(cmd)) == 0)
+		builtin_cd(argc, args);
+	else if (ft_strncmp(cmd, "pwd", ft_strlen(cmd)) == 0)
 		builtin_pwd();
-	else if (ft_strncmp(command, "export", ft_strlen(command)) == 0)
-		builtin_export(num_args, args, envp);
-	else if (ft_strncmp(command, "unset", ft_strlen(command)) == 0)
-		builtin_unset(args, envp);
-	else if (ft_strncmp(command, "env", ft_strlen(command)) == 0)
-		builtin_env(num_args, args, envp);
-	else if (ft_strncmp(command, "exit", ft_strlen(command)) == 0)
-		builtin_exit(num_args, args[0]);
+	else if (ft_strncmp(cmd, "export", ft_strlen(cmd)) == 0)
+		builtin_export(argc, args, env);
+	else if (ft_strncmp(cmd, "unset", ft_strlen(cmd)) == 0)
+		builtin_unset(args, env);
+	else if (ft_strncmp(cmd, "env", ft_strlen(cmd)) == 0)
+		builtin_env(argc, args, env);
+	else if (ft_strncmp(cmd, "exit", ft_strlen(cmd)) == 0)
+		builtin_exit(argc, args[0]);
 }

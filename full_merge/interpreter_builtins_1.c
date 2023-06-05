@@ -1,10 +1,10 @@
 #include "minishell.h"
 
-// extract key from envp line (all chars before first equals sign)
+// extract key from env line (all chars before first equals sign)
 // used by 'export' and 'unset'
 // approach here works but maybe better to
 // allocate a new block of memory and copy across
-char	**remove_key_from_envp(char **envp, char *key_to_remove)
+char	**remove_key_from_env(char **env, char *key_to_remove)
 {
 	int		j;
 	bool	bunch_up;
@@ -14,23 +14,23 @@ char	**remove_key_from_envp(char **envp, char *key_to_remove)
 
 	j = 0;
 	bunch_up = false;
-	while (envp[j])
+	while (env[j])
 	{	
-		from_equals = ft_strchr(envp[j], '=');
-		line_key_len = ft_strlen(envp[j]) - ft_strlen(from_equals);
-		line_key = ft_substr(envp[j], 0, line_key_len);
+		from_equals = ft_strchr(env[j], '=');
+		line_key_len = ft_strlen(env[j]) - ft_strlen(from_equals);
+		line_key = ft_substr(env[j], 0, line_key_len);
 		if (ft_strncmp(key_to_remove, line_key, ft_strlen(key_to_remove)) == 0)
 			bunch_up = true;
 		if (bunch_up == true)
 		{
-			if (envp[j + 1])
-				envp[j] = envp[j + 1];
+			if (env[j + 1])
+				env[j] = env[j + 1];
 			else
-				envp[j] = NULL;
+				env[j] = NULL;
 		}
 		j++;
 	}
-	return (envp);
+	return (env);
 }
 
 // echo (with option -n)

@@ -21,16 +21,16 @@ int	builtin_pwd(void)
 // NOTE: performs bubble sort 
 // NOTE: arguments are variable names without $
 // NOTE: no error message even if unsuccessful
-void	builtin_export_no_args(char **envp)
+void	builtin_export_no_args(char **env)
 {
 	int		c;
 	int		i;
 	int		j;
 	char	*temp;
 
-	envp = remove_key_from_envp(envp, "_");
+	env = remove_key_from_env(env, "_");
 	c = 0;
-	while (envp[c])
+	while (env[c])
 		c++;
 	i = 0;
 	while (i < c)
@@ -38,12 +38,12 @@ void	builtin_export_no_args(char **envp)
 		j = 0;
 		while (j < c - 1 - i)
 		{
-			printf("%s\n", envp[j]);
-			if (ft_strncmp(envp[j], envp[j + 1], 1) > 0) // which one to ft_strlen? the longest?
+			printf("%s\n", env[j]);
+			if (ft_strncmp(env[j], env[j + 1], 1) > 0) // which one to ft_strlen? the longest?
 			{				
-				temp = envp[j];
-				envp[j] = envp[j + 1];
-				envp[j + 1] = temp;
+				temp = env[j];
+				env[j] = env[j + 1];
+				env[j + 1] = temp;
 			}
 			j++;
 		}
@@ -51,12 +51,12 @@ void	builtin_export_no_args(char **envp)
 	}
 }
 
-void builtin_export_args(char **args, char **envp)
+void builtin_export_args(char **args, char **env)
 {
 	int		c;
 	int		i;
 	int		j;
-	char	**new_envp;
+	char	**new_env;
 
 	i = 0;
 	while (args[i])
@@ -64,43 +64,43 @@ void builtin_export_args(char **args, char **envp)
 		c = 0;
 		if (ft_memchr(args[i], '=', ft_strlen(args[i])) != NULL)
 		{
-			while (envp[c])
+			while (env[c])
 				c++;
-			new_envp = malloc((c + 1) * sizeof(char *));
+			new_env = malloc((c + 1) * sizeof(char *));
 			j = 0;
 			while (j < c)
 			{
-				new_envp[j] = envp[j];
+				new_env[j] = env[j];
 				j++;
 			}
-			new_envp[c] = args[i];
+			new_env[c] = args[i];
 		}
 		i++;
 	}
 }
 
-int	builtin_export(int num_args, char **args, char **envp)
+int	builtin_export(int num_args, char **args, char **env)
 {
 	if (num_args == 0)
 	{
-		builtin_export_no_args(envp);
+		builtin_export_no_args(env);
 		return (0);
 	}
-	builtin_export_args(args, envp);
+	builtin_export_args(args, env);
 	return (0);
 }
 
 // unset (with no options)
-// remove item from envp by name
+// remove item from env by name
 // NOTE: unsetting a not-previously-set variable does not abort or give an error
-int	builtin_unset(char **args, char **envp)
+int	builtin_unset(char **args, char **env)
 {
 	int	i;
 
 	i = 0;
 	while (args[i])
 	{
-		envp = remove_key_from_envp(envp, args[i]);
+		env = remove_key_from_env(env, args[i]);
 		i++;
 	}
 	return (0);

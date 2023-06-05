@@ -1,14 +1,14 @@
-// clear; cc -Wall -Werror -Wextra -Ilibft interpreter.c interpreter_test_main.c ../libft/ft_lstnew.c ../libft/ft_lstadd_back.c ../libft/ft_lstlast.c ../libft/ft_split.c ../libft/ft_strjoin.c ../libft/ft_substr.c ../libft/ft_strncmp.c ../libft/ft_strlen.c ../libft/ft_calloc.c ../libft/ft_bzero.c ../libft/ft_strtrim.c ../libft/ft_memset.c && ./a.out
+// clear; cc -Wall -Werror -Wextra -Ilibft interpreter.c interpreter_test_main.c interpreter_builtins_1.c interpreter_builtins_2.c interpreter_builtins_3.c ../libft/ft_lstnew.c ../libft/ft_lstadd_back.c ../libft/ft_lstlast.c ../libft/ft_split.c ../libft/ft_strjoin.c ../libft/ft_substr.c ../libft/ft_strncmp.c ../libft/ft_strlen.c ../libft/ft_calloc.c ../libft/ft_bzero.c ../libft/ft_strtrim.c ../libft/ft_memset.c ../libft/ft_strchr.c ../libft/ft_strlcpy.c ../libft/ft_strlcat.c ../libft/ft_memchr.c && ./a.out
 
 #include "minishell.h"
 
 int main(int argc, char **argv, char **env)
 {
-	t_node nodes[7];
-	t_list *command_elements1;
-	t_list *command_elements2;
-	t_list *command_elements3;
-	t_list *command_elements4;
+	t_node	nodes[7];
+	t_list	*command_elements1;
+	t_list	*command_elements2;
+	t_list	*command_elements3;
+	t_list	*command_elements4;
 
 	(void)argc;
 	(void)argv;
@@ -22,7 +22,7 @@ int main(int argc, char **argv, char **env)
 	ft_lstadd_back(&command_elements2, ft_lstnew("grep"));
 	ft_lstadd_back(&command_elements2, ft_lstnew("micro"));
 	ft_lstadd_back(&command_elements3, ft_lstnew("sort"));
-	ft_lstadd_back(&command_elements3, ft_lstnew("-r"));	
+	ft_lstadd_back(&command_elements3, ft_lstnew("-r"));
 	ft_lstadd_back(&command_elements4, ft_lstnew("wc"));
 	ft_lstadd_back(&command_elements4, ft_lstnew("-l"));
 
@@ -39,7 +39,7 @@ int main(int argc, char **argv, char **env)
 	nodes[1].left = &nodes[3];
 	nodes[1].right = &nodes[4];
 	nodes[3].left = &nodes[5];
-	nodes[3].right = &nodes[6];		
+	nodes[3].right = &nodes[6];
 
 	nodes[2].left = NULL;
 	nodes[2].right = NULL;
@@ -49,7 +49,7 @@ int main(int argc, char **argv, char **env)
 	nodes[5].right = NULL;
 	nodes[6].left = NULL;
 	nodes[6].right = NULL;
-			
+
 	nodes[5].command_elements = command_elements1;
 	nodes[6].command_elements = command_elements2;
 	nodes[4].command_elements = command_elements3;
