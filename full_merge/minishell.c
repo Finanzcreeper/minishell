@@ -88,7 +88,7 @@ int	main(int argc, char **argv, char **envp)
 				print_ast(ast_head);
 				printf("\n");
 				// visit_and_execute(ast, envp);
-				*ast_head = NULL;
+				ast_head = NULL;
 			}
 		}
 		free(line);

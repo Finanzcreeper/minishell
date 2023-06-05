@@ -67,13 +67,13 @@ t_node	*create_cmd_node(void)
 {
 	t_node	*cmd_node;
 
-	cmd_node = malloc(sizeof(t_node));
+	cmd_node = ft_calloc(1, sizeof(t_node));
 	cmd_node->type = N_CMD;
-	cmd_node->left = NULL;
-	cmd_node->right = NULL;
-	cmd_node->command_elements = NULL;
-	cmd_node->infile = NULL;
-	cmd_node->outfile = NULL;
+	// cmd_node->left = NULL;
+	// cmd_node->right = NULL;
+	// cmd_node->command_elements = NULL;
+	// cmd_node->infile = NULL;
+	// cmd_node->outfile = NULL;
 	return (cmd_node);
 }
 
@@ -87,13 +87,13 @@ t_node	*create_pipe_node(void)
 {
 	t_node	*pipe_node;
 
-	pipe_node = malloc(sizeof(t_node));
+	pipe_node = ft_calloc(1, sizeof(t_node));
 	pipe_node->type = N_PIPE;
-	pipe_node->left = NULL;
-	pipe_node->right = NULL;
-	pipe_node->command_elements = NULL;
-	pipe_node->infile = NULL;
-	pipe_node->outfile = NULL;
+	// pipe_node->left = NULL;
+	// pipe_node->right = NULL;
+	// pipe_node->command_elements = NULL;
+	// pipe_node->infile = NULL;
+	// pipe_node->outfile = NULL;
 	return (pipe_node);
 }
 
@@ -155,8 +155,7 @@ bool	parse__simple_command_tail(t_token **token, t_node ***ast_head, t_list **co
 bool	parse__simple_command(t_token **token, t_node ***ast_head)
 {
 	t_list	*command_elements;
-	
-	command_elements = NULL;
+		command_elements = NULL;
 	if (parse__simple_command_element(token, ast_head, &command_elements))
 	{
 		return (parse__simple_command_tail(token, ast_head, &command_elements));
