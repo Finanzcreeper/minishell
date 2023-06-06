@@ -117,24 +117,13 @@ int	main(int argc, char **argv, char **envp)
 	t_token	*tokens;
 	t_token	*token_head;
 	t_node	**ast_head;
-
-	ast_head = NULL;
-	tokens = lexer(line, envp);
-	print_tokens(tokens);
-	parse__pipeline(&tokens->next, &ast_head);
-	// ft_printf("\nPRINTING AST:\n");
-	// print_ast(ast_head);
-	// ft_printf("\n");
-	traverse_ast(*ast_head, envp);
-	ast_head = NULL;
-	// free_ast(ast_root);
-	// free_tokens(tokens_head);
-}
-
-void	read_line_by_line(char **envp)
-{
 	char	*line;
 
+	// ast_head = malloc(1 * sizeof(t_node *));
+	ast_head = NULL;
+	(void)argc;
+	(void)argv;
+	(void)envp;
 	signal(SIGINT, sigint_handler); // display new prompt on new line when CTRL + C pressed
 	signal(SIGQUIT, SIG_IGN); // override/ignore default behaviour of CTRL + '\'
 	while (1)
@@ -164,17 +153,8 @@ void	read_line_by_line(char **envp)
 		}
 		free(line);
 	}
-
-}
-
-int	main(int argc, char **argv, char **envp)
-{
-	if (argc == 1)
-		read_line_by_line(envp);
-	else if (argc == 2)
-		read_single_line(argv[1], envp);
-	else
-		fprintf(stderr, ERR_ARGS);
+	// free_ast(ast_root);
+	// free_tokens(tokens_head);
 	return (0);
 }
 
