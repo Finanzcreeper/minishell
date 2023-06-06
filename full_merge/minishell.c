@@ -91,6 +91,11 @@ void	free_ast_node(t_node *temp)
 		free(temp->right);
 		temp->right = NULL;
 	}
+	if (temp->left != NULL)
+	{
+		free(temp->left);
+		temp->left = NULL;
+	}
 	free(temp);
 }
 
