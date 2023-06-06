@@ -8,7 +8,7 @@
 			"name": "(gdb) Launch",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/full_merge/minishell",
+			"program": "${workspaceFolder}/parser_leak_testing/minishell",
 			"args": ["this is 'a <<' test"],
 			"stopAtEntry": true,
 			"cwd": "${fileDirname}",

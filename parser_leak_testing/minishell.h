@@ -92,20 +92,22 @@ void	print_tokens(t_token *token);
 char	*tokentype_lookup(int type_num);
 void	traverse_ast(t_node *root, char **env);
 
+
 // interpreter builtins
 int		builtin_cd(int num_args, char **args);
 void	builtin_echo(int num_args, char **args);
-int		builtin_export(int num_args, char **args, char **envp);
-int		builtin_unset(char **args, char **envp);
-char	**remove_key_from_envp(char **envp, char *key_to_remove);
+int		builtin_export(int num_args, char **args, char **env);
+int		builtin_unset(char **args, char **env);
+char	**remove_key_from_env(char **env, char *key_to_remove);
 int		builtin_pwd(void);
-void	run_builtin(char *command, int num_args, char *args[], char **envp);
+void	run_builtin(char **cmd_as_array, char **env);
+bool	check_for_builtin(char *command);
 
 // nicos stuff
 t_defs	make_defs(void);
 void	token_add_back(t_token **token, t_token *new);
 t_token	*new_token(char *content, int type);
-t_token	*lexer(char *in, char **envp);
+t_token	*lexer(char *in, char **env);
 
 t_defs	make_defs(void);
 void	token_add_back(t_token **token, t_token *new);
