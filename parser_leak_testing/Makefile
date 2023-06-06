@@ -1,6 +1,6 @@
 CC = cc
 CFLAGS = -g3 -lreadline
-CFULLFLAGS =-Wall -Werror -Wextra 
+CFULLFLAGS =-Wall -Werror -Wextra
 MAKEFLAGS = --no-print-directory
 SRC = $(wildcard *.c)
 LIB = ../libft/libft.a

@@ -56,9 +56,66 @@ void	free_tokens(t_token *tokens_head)
 	free(tokens_head);
 }
 
-void read_single_line(char *line, char **envp)
+void	lex_freedman(t_token *tokens)
+{
+	t_token	*temp;
+
+	while (tokens != NULL)
+	{
+		temp = tokens;
+		tokens = tokens->next;
+		free(temp->content);
+		free(temp);
+	}
+}
+
+void	free_ast_node(t_node *temp)
+{
+	if (temp->command_elements != NULL)
+	{
+		free(temp->command_elements);
+		temp->command_elements = NULL;
+	}
+	if (temp->infile != NULL)
+	{
+		free(temp->infile);
+		temp->infile = NULL;
+	}
+	if (temp->outfile != NULL)
+	{
+		free(temp->outfile);
+		temp->outfile = NULL;
+	}
+	if (temp->right != NULL)
+	{
+		free(temp->right);
+		temp->right = NULL;
+	}
+	free(temp);
+}
+
+void	free_ast(t_node *ast)
+{
+	if (ast == NULL)
+		return ;
+	if (ast->left != NULL)
+	{
+		free_ast(ast->left);
+		ast->left = NULL;
+	}
+	if (ast->right != NULL)
+	{
+		free_ast(ast->right);
+		ast->right = NULL;
+	}
+	free_ast_node(ast);
+	return ;
+}
+
+int	main(int argc, char **argv, char **envp)
 {
 	t_token	*tokens;
+	t_token	*token_head;
 	t_node	**ast_head;
 
 	ast_head = NULL;
@@ -92,7 +149,17 @@ void	read_line_by_line(char **envp)
 			if (line[0] != '\0')
 			{
 				add_history(line);
-				read_single_line(line, envp);
+				token_head = lexer(line, envp);
+				tokens = token_head->next;
+				print_tokens(tokens);
+				parse__pipeline(&tokens, &ast_head);
+				// ft_printf("\nPRINTING AST:\n");
+				// print_ast(ast_head);
+				// ft_printf("\n");
+				// traverse_ast(*ast_head, envp);
+				free_ast(*ast_head);
+				ast_head = NULL;
+				lex_freedman(token_head);
 			}
 		}
 		free(line);
@@ -110,3 +177,4 @@ int	main(int argc, char **argv, char **envp)
 		fprintf(stderr, ERR_ARGS);
 	return (0);
 }
+
