@@ -23,7 +23,7 @@ int main(int argc, char **argv, char **env)
 	ft_lstadd_back(&command_elements2, ft_lstnew("micro"));
 	ft_lstadd_back(&command_elements3, ft_lstnew("sort"));
 	ft_lstadd_back(&command_elements3, ft_lstnew("-r"));
-	ft_lstadd_back(&command_elements4, ft_lstnew("wc"));
+	ft_lstadd_back(&command_elements4, ft_lstnew("ls"));
 	ft_lstadd_back(&command_elements4, ft_lstnew("-l"));
 
 	nodes[0].type = N_PIPE;
@@ -62,5 +62,5 @@ int main(int argc, char **argv, char **env)
 	
 	// traverse_ast(&nodes[6], env); // second command only HANGS
 	// traverse_ast(&nodes[4], env); // third command only HANGS
-	// traverse_ast(&nodes[2], env); // fourth command only HANGS
+	traverse_ast(&nodes[2], env); // fourth command only HANGS
 }

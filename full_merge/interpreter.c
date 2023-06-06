@@ -6,12 +6,15 @@
 // approach: check a valid path for the command is found in env, and ONLY THEN create the pipe and execute the command in the child process
 // special case for the last command or single command, which will be executed without piping (as there is no interprocess communication in this case)
 
+// when running as minishell, the LAST COMMAND should be run as a subprocess so as not to take over the main minishell process, but we do not need its piped output(so no pipe)
+// whereas on the tester we just return to the command line
+
 // EXAMPLE AST:
 //		 		P0
 // 			/		\
 //	 		P1		C2
 // 		/		\	| 
-// 		P3		C4	head -n 2
+// 		P3		C4	wc -l
 // 	/		\	|
 // C5		C6	sort
 // |		|
@@ -93,6 +96,7 @@ void execute_cmd(t_list *command_elements, char **env)
 		run_builtin(cmd_as_array, env);
 		return ;
 	}
+
 	cmd_as_array[0] = get_path(cmd_as_array, env);
 	if (cmd_as_array == NULL)
 	{
@@ -116,6 +120,7 @@ void	pipe_to_parent(t_list *command_elements, char **env)
 
 	pipe(io_fd); // TODO: pipe errors
 	pid = fork();
+	// fprintf(stderr, "1: %i\n", pid);
 	if (pid == -1)
 	{
 		fprintf(stderr, "%s\n", ERR_FORK);
@@ -130,14 +135,17 @@ void	pipe_to_parent(t_list *command_elements, char **env)
 	}
 	else
 	{
-		// printf("parent!\n");
+		printf("parent!\n");
 		close(io_fd[1]);
 		dup2(io_fd[0], STDIN_FD);
-		waitpid(pid, &exit_status, 0);
-		// if (exit_status == 0)
-		// 	fprintf(stderr, "child process exited successfully\n");
-		// else
-		// 	fprintf(stderr, "child process exited abnormally with status %i\n", exit_status);
+		printf("blocking parent!\n");
+		fprintf(stderr, "2: %i\n", pid);
+		wait(&exit_status); // this blocks forever!
+		printf("parent unblocked!\n");
+		if (exit_status == 0)
+			fprintf(stderr, "child process exited successfully\n");
+		else
+			fprintf(stderr, "child process exited abnormally with status %i\n", exit_status);
 	}
 }
 
@@ -147,34 +155,35 @@ void	traverse_ast2(t_node *head, t_node *current, char **env)
 	{
 		if (current == head)
 		{
-			printf("N_CMD at head:\n");
-			printf("	at last command: execute it in a subprocess, but not to a pipe\n");
+			//printf("N_CMD at head:\n");
+			//printf("	at last command: execute it in a subprocess, but not to a pipe\n");
+			//pipe_to_parent(current->command_elements, env);
 			execute_cmd(current->command_elements, env);
 		}
 		else
 		{
-			printf("N_CMD not at head:\n");
-			printf("	before last command: execute it in a subprocess, but to a pipe\n");
+			//printf("N_CMD not at head:\n");
+			//printf("	before last command: execute it in a subprocess, but to a pipe\n");
 			pipe_to_parent(current->command_elements, env);
 		}
 	}
 	else
 	{
-		printf("going down\n");
+		//printf("going down\n");
 		traverse_ast2(head, current->left, env);
-		printf("coming back up\n");
+		//printf("coming back up\n");
 		if (current->type == N_PIPE)
 		{
 			if (current == head)
 			{
-				printf("N_PIPE at head:\n");
-				printf("	at last pipe: execute right branch cmd in a subprocess, but not to a pipe\n");
+				//printf("N_PIPE at head:\n");
+				//printf("	at last pipe: execute right branch cmd in a subprocess, but not to a pipe\n");
 				execute_cmd(current->right->command_elements, env);
 			}
 			else
 			{
-				printf("N_PIPE not at head:\n");
-				printf("	before last pipe: execute right branch cmd in a subprocess, but to a pipe\n");
+				//printf("N_PIPE not at head:\n");
+				//printf("	before last pipe: execute right branch cmd in a subprocess, but to a pipe\n");
 				pipe_to_parent(current->right->command_elements, env);
 			}
 		}
