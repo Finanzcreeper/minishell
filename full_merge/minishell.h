@@ -20,6 +20,7 @@
 # define STDOUT_FD 1
 # define STDERR_FD 2
 
+# define ERR_ARGS "Too many arguments - provide full line in double quotes\n"
 # define ERR_CMD "Command Not Found"
 # define ERR_FORK "Fork error!"
 # define ERR_EXEC "Execution error!"

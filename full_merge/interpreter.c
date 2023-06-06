@@ -112,13 +112,15 @@ void execute_cmd(t_list *command_elements, char **env)
 	}
 }
 
-void	pipe_to_parent(t_list *command_elements, char **env)
+// when is_last_command == true we skip the pipe create and just go to standard out
+void	pipe_to_parent(t_list *command_elements, char **env, bool is_last_command)
 {
 	pid_t	pid;
 	int		io_fd[2];
 	int		exit_status;
 
-	pipe(io_fd); // TODO: pipe errors
+	if (!is_last_command)
+		pipe(io_fd); // TODO: pipe errors
 	pid = fork();
 	// fprintf(stderr, "1: %i\n", pid);
 	if (pid == -1)
@@ -129,15 +131,21 @@ void	pipe_to_parent(t_list *command_elements, char **env)
 	if (pid == 0)
 	{
 		// printf("child!\n");
-		close(io_fd[0]);
-		dup2(io_fd[1], STDOUT_FD);
+		if (!is_last_command)
+		{
+			close(io_fd[0]);
+			dup2(io_fd[1], STDOUT_FD);
+		}
 		execute_cmd(command_elements, env);
 	}
 	else
 	{
 		printf("parent!\n");
-		close(io_fd[1]);
-		dup2(io_fd[0], STDIN_FD);
+		if (!is_last_command)
+		{
+			close(io_fd[1]);
+			dup2(io_fd[0], STDIN_FD);
+		}
 		printf("blocking parent!\n");
 		fprintf(stderr, "2: %i\n", pid);
 		wait(&exit_status); // this blocks forever!
@@ -155,16 +163,15 @@ void	traverse_ast2(t_node *head, t_node *current, char **env)
 	{
 		if (current == head)
 		{
-			//printf("N_CMD at head:\n");
-			//printf("	at last command: execute it in a subprocess, but not to a pipe\n");
-			//pipe_to_parent(current->command_elements, env);
-			execute_cmd(current->command_elements, env);
+			// at last command: execute cmd to standard out replacing current process (no pipe)
+			pipe_to_parent(current->command_elements, env, true);
+			// do this when in non-interactive mode
+			// execute_cmd(current->command_elements, env, true);
 		}
 		else
 		{
-			//printf("N_CMD not at head:\n");
-			//printf("	before last command: execute it in a subprocess, but to a pipe\n");
-			pipe_to_parent(current->command_elements, env);
+			// not at last command: execute it in a subprocess, but to a pipe
+			pipe_to_parent(current->command_elements, env, false);
 		}
 	}
 	else
@@ -176,15 +183,13 @@ void	traverse_ast2(t_node *head, t_node *current, char **env)
 		{
 			if (current == head)
 			{
-				//printf("N_PIPE at head:\n");
-				//printf("	at last pipe: execute right branch cmd in a subprocess, but not to a pipe\n");
-				execute_cmd(current->right->command_elements, env);
+				// at last pipe: execute right branch cmd in a subprocess, but not to a pipe
+				pipe_to_parent(current->right->command_elements, env, true);
 			}
 			else
 			{
-				//printf("N_PIPE not at head:\n");
-				//printf("	before last pipe: execute right branch cmd in a subprocess, but to a pipe\n");
-				pipe_to_parent(current->right->command_elements, env);
+				// before last pipe: execute right branch cmd in a subprocess, but to a pipe
+				pipe_to_parent(current->right->command_elements, env, false);
 			}
 		}
 	}
