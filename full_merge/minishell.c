@@ -140,8 +140,8 @@ int	main(int argc, char **argv, char **envp)
 				// ft_printf("\nPRINTING AST:\n");
 				// print_ast(ast_head);
 				// ft_printf("\n");
-				// traverse_ast(*ast_head, envp);
-				free_ast(*ast_head);
+				traverse_ast(*ast_head, envp);
+				// free_ast(*ast_head); // issues here!
 				ast_head = NULL;
 				lex_freedman(token_head);
 			}

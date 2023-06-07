@@ -21,9 +21,12 @@
 # define STDERR_FD 2
 
 # define ERR_ARGS "Too many arguments - provide full line in double quotes\n"
-# define ERR_CMD "Command Not Found"
-# define ERR_FORK "Fork error!"
-# define ERR_EXEC "Execution error!"
+# define ERR_CMD "Command Not Found\n"
+# define ERR_FORK "Fork error!\n"
+# define ERR_EXEC "Execution error!\n"
+# define ERR_READ "Error reading from file\n"
+# define ERR_WRITE "Error writing to file\n"
+# define ERR_HEREDOC "Error reading from heredoc file\n"
 
 # define ROOT -2
 
@@ -65,6 +68,9 @@ typedef struct s_node
 	t_list			*command_elements;
 	char			*infile;
 	char			*outfile;
+	bool			read_from_heredoc;
+	char			*limiter;
+	bool			append_when_writing;
 }					t_node;
 
 typedef struct s_seperate_arguments_into_nodes

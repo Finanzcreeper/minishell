@@ -1,6 +1,7 @@
-// TODO: add << >> support (infile, outfile)
+// DONE: add << >> support (infile, outfile) - test more fully
 // TODO: remove fprintf's (replace with writes?)
 // TODO: fix issue that minishell exits before allowing next line to be captured (it's fine with a single command)
+
 // - when we do ls | ls, output of ls is treated as input to minishell because it goes to std_out
 // Q: if a command is not found, do we stop there or do we continue piping? A: we continue piping but next command receives no input
 
@@ -8,17 +9,6 @@
 // special case for the last command or single command, which will be executed without piping (as there is no interprocess communication in this case)
 // when running as minishell, the LAST COMMAND should be run as a subprocess so as not to take over the main minishell process, but we do not need its piped output(so no pipe)
 // whereas on the tester we just return to the command line
-
-// EXAMPLE AST:
-//		 		P0
-// 			/		\
-//	 		P1		C2
-// 		/		\	| 
-// 		P3		C4	wc -l
-// 	/		\	|
-// C5		C6	sort
-// |		|
-// ls 	grep micro
 
 #include "minishell.h"
 
@@ -86,6 +76,62 @@ char	*get_path(char **cmd_as_array, char **env)
 	return (NULL);
 }
 
+int	make_heredoc(char *limiter)
+{
+	int		heredoc_fd;
+	char	*next_line;
+
+	fprintf(stderr, "lmt:%s\n", limiter);
+	heredoc_fd = open(".heredoc_tmp", O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (heredoc_fd < 0)
+		fprintf(stderr, "%s", ERR_HEREDOC);
+	while (1)
+	{
+		write(STDOUT_FD, "pipe heredoc> ", 14);
+		next_line = get_next_line(STDIN_FD);
+		next_line[ft_strlen(next_line) - 1] = '\0';
+		if (ft_strncmp(next_line, limiter, ft_strlen(limiter)) == 0)
+			break ;
+		write(heredoc_fd, next_line, ft_strlen(next_line));
+		write(heredoc_fd, "\n", 1);
+		free(next_line);
+	}
+	free(next_line);
+	close(heredoc_fd);
+	heredoc_fd = open(".heredoc_tmp", O_RDONLY);
+	return (heredoc_fd);
+}
+
+int	open_and_redirect_from_infile(t_node *cmd)
+{
+	int in_fd;
+
+	if(!cmd->infile)
+		return (STDIN_FD);
+	if (cmd->read_from_heredoc)
+		in_fd = make_heredoc(cmd->limiter);
+	else
+		in_fd = open(cmd->infile, O_RDONLY);
+	if (in_fd != -1)
+		dup2(in_fd, STDIN_FD);
+	return (in_fd);
+}
+
+int	open_and_redirect_to_outfile(t_node *cmd)
+{
+	int out_fd;
+
+	if(!cmd->outfile)
+		return (STDOUT_FD);
+	if (cmd->append_when_writing == true)
+		out_fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
+	else
+		out_fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (out_fd != -1)
+		dup2(out_fd, STDOUT_FD);
+	return (out_fd);
+}
+
 void execute_cmd(t_list *command_elements, char **env)
 {
 	char **cmd_as_array;
@@ -96,35 +142,49 @@ void execute_cmd(t_list *command_elements, char **env)
 		run_builtin(cmd_as_array, env);
 		return ;
 	}
-
 	cmd_as_array[0] = get_path(cmd_as_array, env);
 	if (cmd_as_array == NULL)
 	{
-		fprintf(stderr, "%s\n", ERR_CMD);
+		fprintf(stderr, "%s", ERR_CMD);
 		return ;
 	}
 	// print_array(cmd_as_array);
 	if (execve(cmd_as_array[0], cmd_as_array, env) == -1)
 	{
-		fprintf(stderr, "%s\n", ERR_EXEC);
+		fprintf(stderr, "%s", ERR_EXEC);
 		free(cmd_as_array);
 		exit(1); // 0 = success, non-zero = different types of failures
 	}
 }
 
+
 // when is_last_command == true we skip the pipe create and just go to standard out
-void	pipe_to_parent(t_list *command_elements, char **env, bool is_last_command)
+void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 {
 	pid_t	pid;
 	int		io_fd[2];
 	int		exit_status;
+	int		in_fd;
+	int		out_fd;
 
+	in_fd = open_and_redirect_from_infile(cmd_node);
+	if (in_fd == -1)
+	{
+		fprintf(stderr, "%s", ERR_READ);
+		return ;
+	}
+	out_fd = open_and_redirect_to_outfile(cmd_node);
+	if (out_fd == -1)
+	{
+		fprintf(stderr, "%s", ERR_WRITE);
+		return ;
+	}			
 	if (!is_last_command)
 		pipe(io_fd); // TODO: pipe errors
 	pid = fork();
 	if (pid == -1)
 	{
-		fprintf(stderr, "%s\n", ERR_FORK);
+		fprintf(stderr, "%s", ERR_FORK);
 		exit(1);
 	}
 	if (pid == 0)
@@ -134,7 +194,7 @@ void	pipe_to_parent(t_list *command_elements, char **env, bool is_last_command)
 			close(io_fd[0]);
 			dup2(io_fd[1], STDOUT_FD);
 		}
-		execute_cmd(command_elements, env);
+		execute_cmd(cmd_node->command_elements, env);
 	}
 	else
 	{
@@ -144,8 +204,14 @@ void	pipe_to_parent(t_list *command_elements, char **env, bool is_last_command)
 			dup2(io_fd[0], STDIN_FD);
 		}
 		wait(&exit_status);
-		// if (exit_status != 0)
-		// 	fprintf(stderr, "child process exited abnormally with status %i\n", exit_status);
+		if (exit_status != 0)
+			fprintf(stderr, "child process exited abnormally with status %i\n", exit_status);
+		if (in_fd != STDIN_FD)
+			close(in_fd);
+		if (out_fd != STDOUT_FD)
+			close(out_fd);
+		if (cmd_node->read_from_heredoc == true)
+			unlink(".heredoc_tmp");		
 	}
 }
 
@@ -154,9 +220,9 @@ void	traverse_ast2(t_node *head, t_node *current, char **env)
 	if (current->type == N_CMD)
 	{
 		if (current == head) // at last command: execute cmd to standard out replacing current process (no pipe)
-			pipe_to_parent(current->command_elements, env, true);
+			pipe_to_parent(current, env, true);
 		else // not at last command: execute it in a subprocess, but to a pipe
-			pipe_to_parent(current->command_elements, env, false);
+			pipe_to_parent(current, env, false);
 	}
 	else
 	{
@@ -164,9 +230,9 @@ void	traverse_ast2(t_node *head, t_node *current, char **env)
 		if (current->type == N_PIPE)
 		{
 			if (current == head) // at last pipe: execute right branch cmd in a subprocess, but not to a pipe
-				pipe_to_parent(current->right->command_elements, env, true);
+				pipe_to_parent(current->right, env, true);
 			else // before last pipe: execute right branch cmd in a subprocess, but to a pipe
-				pipe_to_parent(current->right->command_elements, env, false);
+				pipe_to_parent(current->right, env, false);
 		}
 	}
 }
