@@ -63,7 +63,7 @@ void read_single_line(char *line, char **envp)
 
 	ast_head = NULL;
 	tokens = lexer(line, envp);
-	print_tokens(tokens);
+	// print_tokens(tokens);
 	parse__pipeline(&tokens->next, &ast_head);
 	// ft_printf("\nPRINTING AST:\n");
 	// print_ast(ast_head);
@@ -82,7 +82,7 @@ void	read_line_by_line(char **envp)
 	signal(SIGQUIT, SIG_IGN); // override/ignore default behaviour of CTRL + '\'
 	while (1)
 	{
-		line = readline("microshell% ");
+		line = readline("minishell% ");
 		if (!line) // using this to detect CTRL D, which sends EOF (what if line is actually NULL?)
 			break ;
 		if (ft_strncmp(line, "clear", 5) == 0)
