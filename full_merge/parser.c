@@ -168,6 +168,11 @@ void	link_next_command_node_into_tree(t_node ***ast_head, t_node *node_to_link)
 	if ((*ast_head) == NULL)
 	{
 		(*ast_head) = &node_to_link;
+// /*		*/printf("---------------------%p\n",ast_head);
+// /*		*/printf("---------------------%p\n",*ast_head);
+// /*		*/printf("---------------------%p\n",**ast_head);
+// /*		*/printf("---------------------%p\n",(**ast_head)->left);
+// /*		*/printf("---------------------%p\n",(**ast_head)->right);
 		return ;
 	}
 	else
@@ -175,6 +180,9 @@ void	link_next_command_node_into_tree(t_node ***ast_head, t_node *node_to_link)
 		(**ast_head)->right = node_to_link;
 		return ;
 	}
+
+
+
 	// while((*ast_head)->left != NULL)
 	// {
 	// 	if ((*ast_head)->type == N_PIPE && (*ast_head)->right == NULL)
@@ -195,10 +203,15 @@ bool	parse__simple_command_tail(t_token **token, t_node ***ast_head, t_list **co
 	{
 		return (parse__simple_command_tail(token, ast_head, command_elements));
 	}
-	node_to_link = create_cmd_node(); // create: t_node *command_node (type = CMD) 
+	node_to_link = create_cmd_node(); // create: t_node *command_node (type = CMD)
 	node_to_link->command_elements = *command_elements; // link command_elements to command_node
 	*command_elements = NULL; // make next command_elements.
 	link_next_command_node_into_tree(ast_head, node_to_link); // if (pipe_node with free right side exists) link command_node to right side of pipe_node.
+// /*		*/printf("=======================%p\n",ast_head);
+// /*		*/printf("=======================%p\n",*ast_head);
+// /*		*/printf("=======================%p\n",**ast_head);
+// /*		*/printf("=======================%p\n",(**ast_head)->left);
+// /*		*/printf("=======================%p\n",(**ast_head)->right);
 	return (true); // ε (empty production)
 } 
 

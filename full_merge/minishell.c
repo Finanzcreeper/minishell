@@ -1,14 +1,4 @@
-// TODO: problem in visit_and_execute function: after any command, whether succesful or not, control returns correctly to parent process but readline reads an empty line - readline appears to read output from commands as if it is typed input
-
-// Q: exit when?
-// Q: how/when is get_next_line used? on output of readline?
-
-// clear && cc -Wall -Werror -Wextra -Ilibft -lreadline -g3 microlexer.c microparser.c microinterpreter.c micromain.c libft/ft_strncmp.c libft/ft_strjoin.c libft/ft_split.c libft/ft_substr.c libft/ft_strlen.c libft/ft_lstnew.c libft/ft_lstadd_back.c libft/ft_lstlast.c && ./a.out
-
 #include "minishell.h"
-
-// https://www.geeksforgeeks.org/signals-c-language/
-// allowed functions (signals): signal, sigaction, sigemptyset, sigaddset, kill
 
 void	sigint_handler(int sig)
 {
@@ -56,28 +46,79 @@ void	free_tokens(t_token *tokens_head)
 	free(tokens_head);
 }
 
-void read_single_line(char *line, char **envp)
+void	lex_freedman(t_token *tokens)
 {
-	t_token	*tokens;
-	t_node	**ast_head;
+	t_token	*temp;
 
-	ast_head = NULL;
-	tokens = lexer(line, envp);
-	// print_tokens(tokens);
-	parse__pipeline(&tokens->next, &ast_head);
-	// ft_printf("\nPRINTING AST:\n");
-	// print_ast(ast_head);
-	// ft_printf("\n");
-	traverse_ast(*ast_head, envp);
-	ast_head = NULL;
-	// free_ast(ast_root);
-	// free_tokens(tokens_head);
+	while (tokens != NULL)
+	{
+		temp = tokens;
+		tokens = tokens->next;
+		free(temp->content);
+		free(temp);
+	}
 }
 
-void	read_line_by_line(char **envp)
+void	free_ast_node(t_node *temp)
 {
+	if (temp->command_elements != NULL)
+	{
+		free(temp->command_elements);
+		temp->command_elements = NULL;
+	}
+	if (temp->infile != NULL)
+	{
+		free(temp->infile);
+		temp->infile = NULL;
+	}
+	if (temp->outfile != NULL)
+	{
+		free(temp->outfile);
+		temp->outfile = NULL;
+	}
+	if (temp->right != NULL)
+	{
+		free(temp->right);
+		temp->right = NULL;
+	}
+	if (temp->left != NULL)
+	{
+		free(temp->left);
+		temp->left = NULL;
+	}
+	free(temp);
+}
+
+void	free_ast(t_node *ast)
+{
+	if (ast == NULL)
+		return ;
+	if (ast->left != NULL)
+	{
+		free_ast(ast->left);
+		ast->left = NULL;
+	}
+	if (ast->right != NULL)
+	{
+		free_ast(ast->right);
+		ast->right = NULL;
+	}
+	free_ast_node(ast);
+	return ;
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	t_token	*tokens;
+	t_token	*token_head;
+	t_node	**ast_head;
 	char	*line;
 
+	// ast_head = malloc(1 * sizeof(t_node *));
+	ast_head = NULL;
+	(void)argc;
+	(void)argv;
+	(void)envp;
 	signal(SIGINT, sigint_handler); // display new prompt on new line when CTRL + C pressed
 	signal(SIGQUIT, SIG_IGN); // override/ignore default behaviour of CTRL + '\'
 	while (1)
@@ -92,21 +133,23 @@ void	read_line_by_line(char **envp)
 			if (line[0] != '\0')
 			{
 				add_history(line);
-				read_single_line(line, envp);
+				token_head = lexer(line, envp);
+				tokens = token_head->next;
+				print_tokens(tokens);
+				parse__pipeline(&tokens, &ast_head);
+				// ft_printf("\nPRINTING AST:\n");
+				// print_ast(ast_head);
+				// ft_printf("\n");
+				// traverse_ast(*ast_head, envp);
+				free_ast(*ast_head);
+				ast_head = NULL;
+				lex_freedman(token_head);
 			}
 		}
 		free(line);
 	}
-
-}
-
-int	main(int argc, char **argv, char **envp)
-{
-	if (argc == 1)
-		read_line_by_line(envp);
-	else if (argc == 2)
-		read_single_line(argv[1], envp);
-	else
-		fprintf(stderr, ERR_ARGS);
+	// free_ast(ast_root);
+	// free_tokens(tokens_head);
 	return (0);
 }
+
