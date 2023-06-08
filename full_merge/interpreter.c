@@ -135,6 +135,7 @@ int	open_and_redirect_to_outfile(t_node *cmd)
 void execute_cmd(t_list *command_elements, char **env)
 {
 	char **cmd_as_array;
+	char *path;
 
 	cmd_as_array = list_to_array(command_elements);
 	if (check_for_builtin(cmd_as_array[0]) == true)
@@ -142,12 +143,13 @@ void execute_cmd(t_list *command_elements, char **env)
 		run_builtin(cmd_as_array, env);
 		return ;
 	}
-	cmd_as_array[0] = get_path(cmd_as_array, env);
-	if (cmd_as_array == NULL)
+	path = get_path(cmd_as_array, env);
+	if (path == NULL)
 	{
-		fprintf(stderr, "%s", ERR_CMD);
+		fprintf(stderr, "%s%s", cmd_as_array[0], ERR_CMD);
 		return ;
 	}
+	cmd_as_array[0] = path;
 	// print_array(cmd_as_array);
 	if (execve(cmd_as_array[0], cmd_as_array, env) == -1)
 	{
@@ -170,13 +172,13 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 	in_fd = open_and_redirect_from_infile(cmd_node);
 	if (in_fd == -1)
 	{
-		fprintf(stderr, "%s", ERR_READ);
+		fprintf(stderr, "bash: %s%s", cmd_node->infile, ERR_READ);
 		return ;
 	}
 	out_fd = open_and_redirect_to_outfile(cmd_node);
-	if (out_fd == -1)
+	if (out_fd == -1) // TODO: how can this error occur, files not found are made, file that are found are appended
 	{
-		fprintf(stderr, "%s", ERR_WRITE);
+		fprintf(stderr, "bash: %s%s", cmd_node->outfile, ERR_WRITE);
 		return ;
 	}			
 	if (!is_last_command)

@@ -71,7 +71,7 @@ int	main(int argc, char **argv, char **envp)
 	signal(SIGQUIT, SIG_IGN); // override/ignore default behaviour of CTRL + '\'
 	while (1)
 	{
-		line = readline("microshell% ");
+		line = readline("microshelf% ");
 		if (!line) // using this to detect CTRL D, which sends EOF (what if line is actually NULL?)
 			break ;
 		if (ft_strncmp(line, "clear", 5) == 0)

@@ -21,12 +21,13 @@
 # define STDERR_FD 2
 
 # define ERR_ARGS "Too many arguments - provide full line in double quotes\n"
-# define ERR_CMD "Command Not Found\n"
+# define ERR_CMD ": command not found\n"
 # define ERR_FORK "Fork error!\n"
 # define ERR_EXEC "Execution error!\n"
-# define ERR_READ "Error reading from file\n"
+# define ERR_READ ": No such file or directory\n"
 # define ERR_WRITE "Error writing to file\n"
 # define ERR_HEREDOC "Error reading from heredoc file\n"
+# define ERR_PRG_ARGS "In non-interactive mode, minishell should take a single argument in quotes representing the line e.g \"ls -l | wc -c\"\n"
 
 # define ROOT -2
 

@@ -107,18 +107,45 @@ void	free_ast(t_node *ast)
 	return ;
 }
 
-int	main(int argc, char **argv, char **envp)
+void	lexparseinterpret_line(char *line, t_node	**ast_head, char **env)
 {
 	t_token	*tokens;
 	t_token	*token_head;
+
+	token_head = lexer(line, env);
+	tokens = token_head->next;
+	print_tokens(tokens);
+	if (parse__pipeline(&tokens, &ast_head) == false)
+	{
+		ft_printf("syntax error!\n");
+		return ;
+	}
+	// ft_printf("\nPRINTING AST:\n");
+	// print_ast(ast_head);
+	// ft_printf("\n");
+	traverse_ast(*ast_head, env);
+	// free_ast(*ast_head); // issues here!
+	ast_head = NULL;
+	lex_freedman(token_head);
+	return ;
+}
+
+int	main(int argc, char **argv, char **env)
+{
 	t_node	**ast_head;
 	char	*line;
 
-	// ast_head = malloc(1 * sizeof(t_node *));
 	ast_head = NULL;
-	(void)argc;
-	(void)argv;
-	(void)envp;
+	if (argc == 2)
+	{
+		lexparseinterpret_line(argv[1], ast_head, env);
+		return (0);
+	}
+	if (argc > 2)
+	{
+		printf(ERR_PRG_ARGS);
+		return (0);
+	}
 	signal(SIGINT, sigint_handler); // display new prompt on new line when CTRL + C pressed
 	signal(SIGQUIT, SIG_IGN); // override/ignore default behaviour of CTRL + '\'
 	while (1)
@@ -133,17 +160,7 @@ int	main(int argc, char **argv, char **envp)
 			if (line[0] != '\0')
 			{
 				add_history(line);
-				token_head = lexer(line, envp);
-				tokens = token_head->next;
-				print_tokens(tokens);
-				parse__pipeline(&tokens, &ast_head);
-				// ft_printf("\nPRINTING AST:\n");
-				// print_ast(ast_head);
-				// ft_printf("\n");
-				traverse_ast(*ast_head, envp);
-				// free_ast(*ast_head); // issues here!
-				ast_head = NULL;
-				lex_freedman(token_head);
+				lexparseinterpret_line(line, ast_head, env);
 			}
 		}
 		free(line);
