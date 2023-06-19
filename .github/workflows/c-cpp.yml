@@ -25,6 +25,7 @@ jobs:
       working-directory: full_merge
       run: make testing
     - name: start minishell
+      working-directory: full_merge
       run: ./a.out
     - name: test
       run: ls
