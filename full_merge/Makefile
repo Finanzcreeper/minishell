@@ -26,4 +26,4 @@ re : clean $(NAME)
 
 libft :
 	make -C ../libft
-	make clean -C ../libft
+	make clean -C ../libft 
