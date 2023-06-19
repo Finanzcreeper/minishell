@@ -16,10 +16,8 @@ jobs:
       run: sudo apt-get install lib32readline8
     - name: install readline-dev
       run: sudo apt-get install lib32readline-dev
-    - name: restart services
-      run: sudo needrestart -r a
     - name: check for readline
-      run: find /usr | grep readline | grep 32
+      run: find /usr | grep readline | grep 32git
       
     - uses: actions/cache@v1.2.1
       with:
@@ -29,4 +27,4 @@ jobs:
       working-directory: merged_code
       run: make e
     - name: test
-      run: this is a test
+      run: this is a tes

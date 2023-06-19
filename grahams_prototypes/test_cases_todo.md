@@ -49,6 +49,19 @@ ls -l
 ls -l -h
 ls -l -a -h
 
+### with executables (single, multiple incorrect args)
+
+ls -fwefw
+ls -fwefw -fwef
+ls -ewwg -wgef -wef
+
+### with executables (single, multiple incorrect and correct args)
+
+ls -fwefw -a
+ls -a -fwefw
+ls -fwefw -a -fwef
+ls -ewwg -wgef -a -wef
+
 ## single builtins (no args, args)
 (see builtin tester file for more tests on this)
 
