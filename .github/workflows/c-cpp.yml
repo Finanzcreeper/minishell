@@ -25,6 +25,6 @@ jobs:
         key: test
     - name: make
       working-directory: full_merge
-      run: make e
+      run: make testing
     - name: test
       run: this is a tes
