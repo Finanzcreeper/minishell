@@ -24,10 +24,12 @@ jobs:
     - name: make
       working-directory: full_merge
       run: make testing
-    - name: start minishell
+    - name: test1
+      working-directory: full_merge
+      run: ./a.out "ls"
+    - name: test2
+      working-directory: full_merge
+      run: ./a.out "ls -a"
+    - name: test3
       working-directory: full_merge
       run: ./a.out "ls | grep i"
-    - name: test
-      run: ls
-    - name: test
-      run: blah
