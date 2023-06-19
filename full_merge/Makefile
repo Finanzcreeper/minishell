@@ -16,7 +16,7 @@ e :
 	$(CC) $(CFLAGS) $(SRC) $(LIB)
 
 testing :
-	$(CC) $(CFLAGS) $(SRC) $(LIB)
+	$(CC) -L/usr/local/lib -I/usr/local/include $(CFLAGS) $(SRC) $(LIB)
 
 clean :
 	- rm minishell
