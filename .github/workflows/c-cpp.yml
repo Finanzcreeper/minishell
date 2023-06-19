@@ -32,4 +32,4 @@ jobs:
       run: ./a.out "ls -a"
     - name: test3
       working-directory: full_merge
-      run: ./a.out "ls | grep i"
+      run: ./a.out "ls | grep p"
