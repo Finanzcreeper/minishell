@@ -26,7 +26,7 @@ jobs:
       run: make testing
     - name: start minishell
       working-directory: full_merge
-      run: ./a.out "ls"
+      run: ./a.out ls | grep i
     - name: test
       run: ls
     - name: test
