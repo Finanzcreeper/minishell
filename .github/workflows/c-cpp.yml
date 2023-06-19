@@ -24,6 +24,8 @@ jobs:
     - name: make
       working-directory: full_merge
       run: make testing
+    - name: start minishell
+      run: ./a.out
     - name: test
       run: ls
     - name: test
