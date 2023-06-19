@@ -24,7 +24,7 @@ jobs:
         path: /home/runner/.local/bin
         key: test
     - name: make
-      working-directory: merged_code
+      working-directory: full_merge
       run: make e
     - name: test
       run: this is a tes
