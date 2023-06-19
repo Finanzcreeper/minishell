@@ -1,7 +1,6 @@
 CC = cc
 CFLAGS = -g3 -lreadline
 CFULLFLAGS = -Wall -Werror -Wextra
-ACTIONFLAGS = -fPIE
 MAKEFLAGS = --no-print-directory
 SRC = $(wildcard *.c)
 LIB = ../libft/libft.a
@@ -17,7 +16,7 @@ e :
 	$(CC) $(CFLAGS) $(SRC) $(LIB)
 
 testing :
-	clang $(CFLAGS) $(SRC) $(LIB)
+	$(CC) $(CFLAGS) $(SRC) $(LIB)
 
 clean :
 	- rm minishell
