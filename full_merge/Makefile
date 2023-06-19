@@ -17,7 +17,7 @@ e :
 	$(CC) $(CFLAGS) $(SRC) $(LIB)
 
 testing :
-	gcc $(CFLAGS) $(SRC) $(LIB) $(ACTIONFLAGS)
+	gcc $(CFLAGS) $(SRC) $(ACTIONFLAGS) $(LIB)
 
 clean :
 	- rm minishell
