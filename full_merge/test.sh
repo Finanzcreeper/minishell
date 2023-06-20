@@ -62,3 +62,101 @@ echo "###############################################
 ./t.sh $1 "ls -fwef"
 ./t.sh $1 "man fwfeasdf"
 ./t.sh $1 "rm nothing"
+
+
+### with executables (single, multiple incorrect and correct args)
+
+ls -fwefw -a
+ls -a -fwefw
+ls -fwefw -a -fwef
+ls -ewwg -wgef -a -wef
+
+echo "
+###############################################"
+echo "single builtins (no args, args)"
+echo "###############################################
+"
+## see builtin tester file for more pptential tests
+## listed in order specified in subject
+./t.sh $1 "echo one 2 three";
+./t.sh $1 "echo -n one 2 three";
+./t.sh $1 "echo"; # in bash we just get a carriage return
+./t.sh $1 "echo -n"; # control returns to prompt, no carriage return
+
+./t.sh $1 "cd"; # cd alone in bash just goes to home dir
+./t.sh $1 "cd ." # stay in same dir
+./t.sh $1 "cd foldertest";
+./t.sh $1 "cd /tmp";
+./t.sh $1 "cd /test";
+./t.sh $1 "cd unknown_folder";
+./t.sh $1 "cd /test this";
+
+./t.sh $1 "pwd"; # only possible case
+./t.sh $1 "pwd one two"; # arguments should be ignored
+
+./t.sh $1 "export TEST=this";
+./t.sh $1 "echo $TEST"; # this check is needed to see if the export worked
+./t.sh $1 "export PWD";
+./t.sh $1 "echo $PWD"; # this check is needed to see if the export worked
+
+./t.sh $1 "unset PWD";
+./t.sh $1 "echo $PWD";
+./t.sh $1 "unset PWD HOME USER"; # unset with multiple args should be possible
+./t.sh $1 "echo $PWD $HOME $USER"; # this check is needed to see if the export worked
+./t.sh $1 "unset"; # does nothing control returns to prompt
+
+./t.sh $1 "env";
+./t.sh $1 "env unwantedArg unwantedArg2"; # not expected to reproduce bash behaviour - arguments should be ignored or give error
+# ./t.sh $1 "exit" # only possible case - exit not yet implemented
+
+# echo "
+# ###############################################"
+# echo "single pipe with executables"
+# echo "###############################################
+# "
+
+# ./t.sh $1 "ls | wc"
+# ./t.sh $1 "ls -l | wc -l -w -c"
+
+# echo "
+# ###############################################"
+# echo "single pipe with builtins"
+# echo "###############################################
+# "
+
+# echo "
+# ###############################################"
+# echo "single pipe with executables and builtins together"
+# echo "###############################################
+# "
+
+# double pipes
+
+# ### 
+
+# echo 1 2 3 | wc -l
+# pwd | wc -c
+# env | grep PATH
+# env | sort -r | head -n 5
+# env | head -n 5 | wc -l
+
+# ## redirection only
+
+# < infile cat
+# cat < infile
+# echo 1 2 3 > outfile
+# > outfile echo 1 2 3
+# echo 1 2 3 >> outfile [append]
+# >> outfile echo 1 2 3 [append]
+# << END cat >> outfile
+# << END > outfile
+
+# ## pipes + redirection together
+
+# < infile cat | grep test
+# < infile cat | grep test | wc -l
+# ls -l | grep a > outfile
+
+# ## big mix ups (later)
+
+# pwd > outfile
