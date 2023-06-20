@@ -1,0 +1,23 @@
+name: cache_maker
+
+on:
+  push:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: update apt-get
+      run: sudo apt-get update
+    - name: install readline8
+      run: sudo apt-get install lib32readline8
+    - name: install readline-dev
+      run: sudo apt-get install lib32readline-dev
+    - uses: actions/cache/save@v3
+      id: cache
+      with:
+        path: /usr/share/doc
+        key: readline
