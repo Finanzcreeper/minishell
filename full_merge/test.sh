@@ -1,12 +1,5 @@
 #!/bin/bash
 
-if [ "$1" ]; then
-    if [ "$1" != "-v" ]; then
-        echo "wrong args"
-        exit
-    fi
-fi
-
 if [ "$2" ]; then
     echo "too many args"
     exit
