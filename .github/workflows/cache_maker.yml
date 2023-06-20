@@ -1,7 +1,10 @@
-name: C/C++ CI
+name: cache_maker
 
-  jobs:
-    build:
+on:
+  push:
+
+jobs:
+  build:
 
     runs-on: ubuntu-latest
 
@@ -13,3 +16,8 @@ name: C/C++ CI
       run: sudo apt-get install lib32readline8
     - name: install readline-dev
       run: sudo apt-get install lib32readline-dev
+    - uses: actions/cache/save@v3
+      id: cache
+      with:
+        path: /usr
+        key: readline
