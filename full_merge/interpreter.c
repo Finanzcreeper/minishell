@@ -149,9 +149,9 @@ void execute_cmd(t_list *command_elements, char **env)
 		fprintf(stderr, "%s%s", cmd_as_array[0], ERR_CMD);
 		return ;
 	}
-	cmd_as_array[0] = path;
+	//cmd_as_array[0] = path;
 	// print_array(cmd_as_array);
-	if (execve(cmd_as_array[0], cmd_as_array, env) == -1)
+	if (execve(path, cmd_as_array, env) == -1)
 	{
 		fprintf(stderr, "%s", ERR_EXEC);
 		free(cmd_as_array);
