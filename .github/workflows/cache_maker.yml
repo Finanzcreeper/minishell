@@ -19,5 +19,5 @@ jobs:
     - uses: actions/cache/save@v3
       id: cache
       with:
-        path: /usr
+        path: /usr/share/doc
         key: readline
