@@ -1,0 +1,15 @@
+name: C/C++ CI
+
+  jobs:
+    build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: update apt-get
+      run: sudo apt-get update
+    - name: install readline8
+      run: sudo apt-get install lib32readline8
+    - name: install readline-dev
+      run: sudo apt-get install lib32readline-dev
