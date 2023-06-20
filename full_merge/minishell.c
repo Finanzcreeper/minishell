@@ -114,7 +114,7 @@ void	lexparseinterpret_line(char *line, t_node	**ast_head, char **env)
 
 	token_head = lexer(line, env);
 	tokens = token_head->next;
-	print_tokens(tokens);
+	// print_tokens(tokens);
 	if (parse__pipeline(&tokens, &ast_head) == false)
 	{
 		ft_printf("syntax error!\n");

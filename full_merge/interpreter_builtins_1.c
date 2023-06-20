@@ -51,10 +51,10 @@ void	builtin_echo(int num_args, char **args)
 		print_newline = false;
 		args++;
 	}
-	i = 0;
+	i = 1;
 	while (args[i])
 	{
-		if (i != 0)
+		if (i != 1)
 			printf(" ");
 		printf("%s", args[i]);
 		i++;

@@ -207,7 +207,7 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 		}
 		wait(&exit_status);
 		if (exit_status != 0)
-			fprintf(stderr, "child process exited abnormally with status %i\n", exit_status);
+			//fprintf(stderr, "child process exited abnormally with status %i\n", exit_status);
 		if (in_fd != STDIN_FD)
 			close(in_fd);
 		if (out_fd != STDOUT_FD)

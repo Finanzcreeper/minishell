@@ -1,56 +1,64 @@
 #!/bin/bash
 
-compare_output() {
-    local actual_output="$1"
-    local expected_output="$2"
-
-    if [ "$actual_output" = "$expected_output" ]; then
-        echo -e "\e[32mPASS\e[0m"
-    else
-        echo -e "\e[31mFAIL\e[0m"
+if [ "$1" ]; then
+    if [ "$1" != "-v" ]; then
+        echo "wrong args"
+        exit
     fi
-    echo "------------------------------------"
-}
+fi
 
-test()
-{
-	local command="$1"
-	local expected_output="$2"
+if [ "$2" ]; then
+    echo "too many args"
+    exit
+fi
 
-	echo -e "ACTUAL:"
-	actual_output=$(./minishell "$command")
-	echo -e "EXPECTED:\n$expected_output"
-	compare_output "$actual_output" "$expected_output"
-}
+echo "
+###############################################"
+echo "syntax errors:"
+echo "###############################################
+"
+./t.sh $1 "|" "syntax error!"
+./t.sh $1 "|" "syntax error!"
+./t.sh $1 "| |" "syntax error!"
+./t.sh $1 "||" "syntax error!" 
+./t.sh $1 "wc |" "syntax error!"
+./t.sh $1 "wc | |" "syntax error!"
+./t.sh $1 "wc ||" "syntax error!"
+./t.sh $1 ">" "syntax error!"
+./t.sh $1 "<" "syntax error!"
+./t.sh $1 ">>" "syntax error!"
+./t.sh $1 "<<" "syntax error!"
+./t.sh $1 ">> >" "syntax error!"
+./t.sh $1 "< <<" "syntax error!"
+./t.sh $1 "< >" "syntax error!"
+./t.sh $1 "| <" "syntax error!"
 
-## syntax errors
-# test "|" "syntax error!"
-# test "|" "syntax error!"
-# test "| |" "syntax error!"
-# test "||" "syntax error!" 
-# test "wc |" "syntax error!"
-# test "wc | |" "syntax error!"
-# test "wc ||" "syntax error!"
-# test ">" "syntax error!"
-# test "<" "syntax error!"
-# test ">>" "syntax error!"
-# test "<<" "syntax error!"
-# test ">> >" "syntax error!"
-# test "< <<" "syntax error!"
-# test "< >" "syntax error!"
-# test "| <" "syntax error!"
+echo "
+###############################################"
+echo "command not found:"
+echo "###############################################
+"
+./t.sh $1 "blah" "blah: command not found"
+./t.sh $1 "ls | notacommand" "notacommand: command not found"
+./t.sh $1 "ls | notacommand | wc" "notacommand: command not found
+      0       0       0"
+#[wc called with no input resulting in 0 0 0]
 
-## command not found
-#test "blah" "blah: command not found"
-#test "ls | notacommand" "not_a_command: command not found"
-#test "ls | notacommand | wc"
-##[wc called with no input resulting in 0 0 0]
+echo "
+###############################################"
+echo "single executables (no args, single arg, multiple args)"
+echo "###############################################
+"
+./t.sh $1 "ls"
+./t.sh $1 "ls -l -h"
+./t.sh $1 "ls -l -a -h"
+./t.sh $1 "echo 123"
 
-## single executables (no args, single arg, multiple args)
-#test "man" man
-#test "man" readline
-#ls -l -h
-#ls -l -a -h
-
-### with executables (single, multiple incorrect args)
-# test "ls -z" ls -z
+echo "
+###############################################"
+echo "with executables (single, multiple incorrect args)"
+echo "###############################################
+"
+./t.sh $1 "ls -fwef"
+./t.sh $1 "man fwfeasdf"
+./t.sh $1 "rm nothing"
