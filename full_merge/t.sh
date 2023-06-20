@@ -12,7 +12,7 @@ compare_with_executable() {
 
     if [ "$executable_output" = "$expected_output" ]; then
 		if [ $mute_passes = false ]; then
-        	echo -e "\e[32mPASS\e[0m"
+        	echo -e "\e[32mPASS\e[0m "$1
 		    if [ "$verbose" = true ]; then
     		    echo "Bash Command Output:"
     		    echo "$command_output"
@@ -20,19 +20,21 @@ compare_with_executable() {
     		    echo "Executable Output:"
     		    echo "$executable_output"
     		fi
+			echo "=========================================================="
 		fi
 	else
-        echo -e "\e[31mFAIL\e[0m"
+        echo -e "\e[31mFAIL\e[0m "$1
 		echo "Expected Output:"
     	echo "$expected_output"
     	echo "----------------------------------------------------------"
         echo "Executable Output:"
         echo "$executable_output"
+		echo "=========================================================="
     fi
 }
 
 # Check if a flag is provided
-if [[ "$1" == *"-"* ]]; then
+if [[ "$1" == *","* ]]; then
 	if [[ "$1" == *"v"* ]]; then
 	    verbose=true
 	fi
@@ -54,7 +56,7 @@ else
 
     if [ -z "$diff_output" ]; then
 		if [ $mute_passes = false ]; then
-        	echo -e "\e[32mPASS\e[0m"
+        	echo -e "\e[32mPASS\e[0m "$1
     		if [ "$verbose" = true ]; then
         		echo "Bash Command Output:"
         		echo "$command_output"
@@ -62,13 +64,17 @@ else
         		echo "Executable Output:"
         		echo "$executable_output"
     		fi
+			echo "=========================================================="
 		fi
 	else
-        echo -e "\e[31mFAIL\e[0m\nDifferences found:"
+        echo -e "\e[31mFAIL\e[0m "$1
         echo "----------------------------------------------------------"
-        echo "$diff_output"
+        echo "Bash Command Output:"
+        echo "$command_output"
+        echo "----------------------------------------------------------"
+        echo "Executable Output:"
+        echo "$executable_output"
+		echo "=========================================================="
     fi
 fi
-if [ $mute_passes = false ]; then
-	echo "=========================================================="
-fi
+
