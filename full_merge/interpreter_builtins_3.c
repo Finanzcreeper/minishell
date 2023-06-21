@@ -8,7 +8,7 @@ int	builtin_env(int num_args, char **args, char **env)
 
 	if (num_args != 1)
 	{
-		ft_printf("env: ‘%s’: No such file or directory\n", args[0]);
+		ft_printf("env: ‘%s’: No such file or directory\n", args[1]);
 		return (1);
 	}
 	i = 0;
