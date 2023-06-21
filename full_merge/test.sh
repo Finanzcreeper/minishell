@@ -83,7 +83,7 @@ echo "###############################################
 ./t.sh $1 "cd ." # stay in same dir
 ./t.sh $1 "cd foldertest" "bash: cd: foldertest: No such file or directory";
 ./t.sh $1 "cd /tmp";
-./t.sh $1 "cd /tmp this";
+./t.sh $1 "cd /tmp this" "cd: too many arguments";
 
 ./t.sh $1 "pwd"; # only possible case
 ./t.sh $1 "pwd one two"; # arguments should be ignored
