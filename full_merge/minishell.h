@@ -98,7 +98,7 @@ void	ft_tokenadd_back(t_token **lst, t_token *new);
 void	visit_and_execute(t_node *node, char **env);
 void	print_tokens(t_token *token);
 char	*tokentype_lookup(int type_num);
-void	traverse_ast(t_node *root, char **env);
+void	traverse_ast(t_node **root, char **env);
 
 
 // interpreter builtins
@@ -141,5 +141,16 @@ char	*make_after(t_token *t, int c);
 int		match_searched(char **env, char *searched);
 void	not_found(t_token *t, char *before, char *after, char *searched);
 void	found(t_token *t, char *before, char *after, char *searched);
+
+// Parser
+bool	parse__redirection(t_token **token, t_node ***ast_head);
+bool	parse__simple_command_element(t_token **token, t_node ***ast_head, t_list **command_elements);
+void	link_next_command_node_into_tree(t_node ***ast_head, t_node *node_to_link);
+bool	parse__simple_command_tail(t_token **token, t_node ***ast_head, t_list **command_elements);
+bool	parse__simple_command(t_token **token, t_node ***ast_head);
+bool	parse__pipeline(t_token **token, t_node ***ast_head);
+bool	parse__pipeline_tail(t_token **token, t_node ***ast_head);
+
+
 
 #endif

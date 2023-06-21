@@ -13,7 +13,7 @@ $(NAME) :
 	$(CC) $(CFULLFLAGS) $(CFLAGS) $(SRC) $(LIB) -o $(NAME)
 
 e :
-	$(CC) $(CFLAGS) $(SRC) $(LIB)
+	$(CC) $(CFLAGS) $(SRC) $(LIB) -o $(NAME)
 
 testing :
 	$(CC) $(SRC) $(LIB) $(CFLAGS)

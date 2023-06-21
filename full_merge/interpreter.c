@@ -239,12 +239,11 @@ void	traverse_ast2(t_node *head, t_node *current, char **env)
 	}
 }
 
-void	traverse_ast(t_node *root, char **env)
+void	traverse_ast(t_node **root, char **env)
 {
 	t_node *head;
 
-	head = ft_calloc(1, sizeof(t_node));
-	head = root;
-	traverse_ast2(head, root, env);
+	head = *root;
+	traverse_ast2(head, *root, env);
 	// free(head); // why is this a double free?
 }

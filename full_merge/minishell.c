@@ -123,8 +123,8 @@ void	lexparseinterpret_line(char *line, t_node	**ast_head, char **env)
 	// ft_printf("\nPRINTING AST:\n");
 	// print_ast(ast_head);
 	// ft_printf("\n");
-	traverse_ast(*ast_head, env);
-	// free_ast(*ast_head); // issues here!
+	traverse_ast(ast_head, env);
+	free_ast(*ast_head); // issues here!
 	ast_head = NULL;
 	lex_freedman(token_head);
 	return ;
