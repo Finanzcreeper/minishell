@@ -28,7 +28,8 @@ bool	parse__redirection(t_token **token, t_node ***ast_head)
 	return (false);
 }
 
-bool	parse__simple_command_element(t_token **token, t_node ***ast_head, t_list **command_elements)
+bool	parse__simple_command_element(t_token **token,
+	t_node ***ast_head, t_list **command_elements)
 {
 	if ((*token) && (*token)->type == T_WORD)
 	{
@@ -39,7 +40,8 @@ bool	parse__simple_command_element(t_token **token, t_node ***ast_head, t_list *
 	return (parse__redirection(token, ast_head));
 }
 
-void	link_next_command_node_into_tree(t_node ***ast_head, t_node *node_to_link)
+void	link_next_command_node_into_tree(t_node ***ast_head,
+	t_node *node_to_link)
 {
 	if ((*ast_head) == NULL)
 	{
@@ -53,7 +55,8 @@ void	link_next_command_node_into_tree(t_node ***ast_head, t_node *node_to_link)
 	}
 }
 
-bool	parse__simple_command_tail(t_token **token, t_node ***ast_head, t_list **command_elements)
+bool	parse__simple_command_tail(t_token **token,
+	t_node ***ast_head, t_list **command_elements)
 {
 	t_node	*node_to_link;
 
