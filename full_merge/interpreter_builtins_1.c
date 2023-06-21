@@ -35,32 +35,32 @@ char	**remove_key_from_env(char **env, char *key_to_remove)
 
 // echo (with option -n)
 // display a line of text passed as an argument
-void	builtin_echo(int num_args, char **args)
+void	builtin_echo(int num_elements, char **elements)
 {
 	bool	print_newline;
 	int		i;
 
-	if (num_args == 0)
+	if (num_elements == 0)
 	{
-		printf("\n");
+		ft_printf("\n");
 		return ;
 	}
 	print_newline = true;
-	if (ft_strncmp(args[0], "-n", ft_strlen(args[0])) == 0)
+	if (ft_strncmp(elements[1], "-n", ft_strlen(elements[1])) == 0)
 	{
 		print_newline = false;
-		args++;
+		elements++;
 	}
 	i = 1;
-	while (args[i])
+	while (elements[i])
 	{
 		if (i != 1)
-			printf(" ");
-		printf("%s", args[i]);
+			ft_printf(" ");
+		ft_printf("%s", elements[i]);
 		i++;
 	}
 	if (print_newline)
-		printf("\n");
+		ft_printf("\n");
 }
 
 // cd (with only a relative or absolute path)
@@ -72,7 +72,7 @@ int	builtin_cd_absolute(char *path)
 	status = chdir(path);
 	if (status != 0)
 	{
-		printf("bash: cd: %s: No such file or directory\n", path);
+		ft_printf("bash: cd: %s: No such file or directory\n", path);
 		return (1);
 	}
 	return (0);
@@ -86,14 +86,14 @@ int	builtin_cd_relative(char *path)
 
 	if (getcwd(buf_cwd, sizeof(buf_cwd)) != NULL)
 	{
-		char relative_path[ft_strlen(buf_cwd) + ft_strlen(path) + 2];
+		char	relative_path[ft_strlen(buf_cwd) + ft_strlen(path) + 2];
 		ft_strlcpy(relative_path, buf_cwd, ft_strlen(relative_path));
 		ft_strlcat(relative_path, "/", 1);
 		ft_strlcat(relative_path, path, ft_strlen(path));
 		status = chdir(path);
 		if (status != 0)
 		{
-			printf("bash: cd: %s: No such file or directory\n", path);
+			ft_printf("bash: cd: %s: No such file or directory\n", path);
 			return (1);
 		}
 		return (0);
@@ -102,18 +102,21 @@ int	builtin_cd_relative(char *path)
 	return (1);
 }
 
-int	builtin_cd(int num_args, char **args)
+int	builtin_cd(int num_elements, char **elements)
 {
 	char	*path;
 
-	if (num_args == 0)
-		return (1);
-	if (num_args > 1)
+	if (num_elements > 2)
 	{
-		printf("cd: too many arguments\n");
+		ft_printf("cd: too many arguments\n");
 		return (1);
 	}
-	path = args[0];
+	if (num_elements == 1)
+	{
+		chdir("~");
+		return (0);
+	}
+	path = elements[1];
 	if (path[0] == '/')
 		return (builtin_cd_absolute(path));
 	return (builtin_cd_relative(path));

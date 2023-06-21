@@ -14,7 +14,7 @@
 
 void	print_array(char **array)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (array[i])
@@ -25,17 +25,16 @@ void	print_array(char **array)
 	fprintf(stderr, "\n");
 }
 
-// convert linked list of cmd arguments to an array (which execve expects)
-char **list_to_array(t_list *list_head)
+char	**list_to_array(t_list *list_head)
 {
-	int l;
-	char **array;
-	int i;
-	t_list *list_head_cpy;
+	int		l;
+	char	**array;
+	int		i;
+	t_list	*list_head_cpy;
 
 	list_head_cpy = list_head;
 	l = 0;
-	while(list_head)
+	while (list_head)
 	{
 		list_head = list_head->next;
 		l++;
@@ -59,13 +58,12 @@ char	*get_path(char **cmd_as_array, char **env)
 
 	while (ft_strncmp("PATH=", *env, 5))
 		env++;
-	paths = ft_split(*env + 5, ':'); // don't need to check if paths doesn't return
-
+	paths = ft_split(*env + 5, ':');
 	i = 0;
 	while (paths[i])
 	{
 		path_cmd = ft_strjoin(ft_strjoin(paths[i], "/"), cmd_as_array[0]);
-		if (access(path_cmd, F_OK | X_OK) == 0) // if file exists and is executable
+		if (access(path_cmd, F_OK | X_OK) == 0)
 		{
 			free(paths);
 			return (path_cmd);
@@ -104,9 +102,9 @@ int	make_heredoc(char *limiter)
 
 int	open_and_redirect_from_infile(t_node *cmd)
 {
-	int in_fd;
+	int	in_fd;
 
-	if(!cmd->infile)
+	if (!cmd->infile)
 		return (STDIN_FD);
 	if (cmd->read_from_heredoc)
 		in_fd = make_heredoc(cmd->limiter);
@@ -119,9 +117,9 @@ int	open_and_redirect_from_infile(t_node *cmd)
 
 int	open_and_redirect_to_outfile(t_node *cmd)
 {
-	int out_fd;
+	int	out_fd;
 
-	if(!cmd->outfile)
+	if (!cmd->outfile)
 		return (STDOUT_FD);
 	if (cmd->append_when_writing == true)
 		out_fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
@@ -132,10 +130,10 @@ int	open_and_redirect_to_outfile(t_node *cmd)
 	return (out_fd);
 }
 
-void execute_cmd(t_list *command_elements, char **env)
+void	execute_cmd(t_list *command_elements, char **env)
 {
-	char **cmd_as_array;
-	char *path;
+	char	**cmd_as_array;
+	char	*path;
 
 	cmd_as_array = list_to_array(command_elements);
 	if (check_for_builtin(cmd_as_array[0]) == true)
@@ -149,18 +147,14 @@ void execute_cmd(t_list *command_elements, char **env)
 		fprintf(stderr, "%s%s", cmd_as_array[0], ERR_CMD);
 		return ;
 	}
-	//cmd_as_array[0] = path;
-	// print_array(cmd_as_array);
 	if (execve(path, cmd_as_array, env) == -1)
 	{
 		fprintf(stderr, "%s", ERR_EXEC);
 		free(cmd_as_array);
-		exit(1); // 0 = success, non-zero = different types of failures
+		exit(1);
 	}
 }
 
-
-// when is_last_command == true we skip the pipe create and just go to standard out
 void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 {
 	pid_t	pid;
@@ -176,13 +170,13 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 		return ;
 	}
 	out_fd = open_and_redirect_to_outfile(cmd_node);
-	if (out_fd == -1) // TODO: how can this error occur, files not found are made, file that are found are appended
+	if (out_fd == -1)
 	{
 		fprintf(stderr, "bash: %s%s", cmd_node->outfile, ERR_WRITE);
 		return ;
 	}			
 	if (!is_last_command)
-		pipe(io_fd); // TODO: pipe errors
+		pipe(io_fd);
 	pid = fork();
 	if (pid == -1)
 	{
@@ -207,43 +201,40 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 		}
 		wait(&exit_status);
 		if (exit_status != 0)
-			//fprintf(stderr, "child process exited abnormally with status %i\n", exit_status);
-		if (in_fd != STDIN_FD)
-			close(in_fd);
+		{
+			if (in_fd != STDIN_FD)
+				close(in_fd);
+		}
 		if (out_fd != STDOUT_FD)
 			close(out_fd);
 		if (cmd_node->read_from_heredoc == true)
-			unlink(".heredoc_tmp");		
+			unlink(".heredoc_tmp");
 	}
 }
 
-void	traverse_ast2(t_node *head, t_node *current, char **env)
+void	traverse_ast2(t_node *ast, char **env)
 {
-	if (current->type == N_CMD)
+	if (ast->type == N_CMD)
 	{
-		if (current == head) // at last command: execute cmd to standard out replacing current process (no pipe)
-			pipe_to_parent(current, env, true);
-		else // not at last command: execute it in a subprocess, but to a pipe
-			pipe_to_parent(current, env, false);
+		if (ast->top_node == true)
+			pipe_to_parent(ast, env, true);
+		else
+			pipe_to_parent(ast, env, false);
 	}
 	else
 	{
-		traverse_ast2(head, current->left, env);
-		if (current->type == N_PIPE)
+		traverse_ast2(ast->left, env);
+		if (ast->type == N_PIPE)
 		{
-			if (current == head) // at last pipe: execute right branch cmd in a subprocess, but not to a pipe
-				pipe_to_parent(current->right, env, true);
-			else // before last pipe: execute right branch cmd in a subprocess, but to a pipe
-				pipe_to_parent(current->right, env, false);
+			if (ast->top_node == true)
+				pipe_to_parent(ast->right, env, true);
+			else
+				pipe_to_parent(ast->right, env, false);
 		}
 	}
 }
 
-void	traverse_ast(t_node **root, char **env)
+void	traverse_ast(t_node **ast, char **env)
 {
-	t_node *head;
-
-	head = *root;
-	traverse_ast2(head, *root, env);
-	// free(head); // why is this a double free?
+	traverse_ast2(*ast, env);
 }

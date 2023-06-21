@@ -29,7 +29,7 @@ bool	parse__redirection(t_token **token, t_node ***ast_head)
 }
 
 bool	parse__simple_command_element(t_token **token,
-	t_node ***ast_head, t_list **command_elements)
+t_node ***ast_head, t_list **command_elements)
 {
 	if ((*token) && (*token)->type == T_WORD)
 	{
@@ -38,21 +38,6 @@ bool	parse__simple_command_element(t_token **token,
 		return (true);
 	}
 	return (parse__redirection(token, ast_head));
-}
-
-void	link_next_command_node_into_tree(t_node ***ast_head,
-	t_node *node_to_link)
-{
-	if ((*ast_head) == NULL)
-	{
-		(*ast_head) = &node_to_link;
-		return ;
-	}
-	else
-	{
-		(**ast_head)->right = node_to_link;
-		return ;
-	}
 }
 
 bool	parse__simple_command_tail(t_token **token,
@@ -67,25 +52,30 @@ bool	parse__simple_command_tail(t_token **token,
 	node_to_link = ft_calloc(1, sizeof(t_node));
 	node_to_link->command_elements = *command_elements;
 	*command_elements = NULL;
-	link_next_command_node_into_tree(ast_head, node_to_link);
+	if ((*ast_head) == NULL)
+	{
+		(*ast_head) = &node_to_link;
+	}
+	else
+	{
+		(**ast_head)->right = node_to_link;
+	}
 	return (true);
 }
 
-bool	parse__simple_command(t_token **token, t_node ***ast_head)
+bool	parse__pipeline(t_token **token, t_node ***ast_head)
 {
+	bool	test;
 	t_list	*command_elements;
 
 	command_elements = NULL;
 	if (parse__simple_command_element(token, ast_head, &command_elements))
 	{
-		return (parse__simple_command_tail(token, ast_head, &command_elements));
+		test = parse__simple_command_tail(token, ast_head, &command_elements);
 	}
-	return (false);
-}
-
-bool	parse__pipeline(t_token **token, t_node ***ast_head)
-{
-	if (parse__simple_command(token, ast_head))
+	else
+		test = false;
+	if (test == true)
 	{
 		return (parse__pipeline_tail(token, ast_head));
 	}

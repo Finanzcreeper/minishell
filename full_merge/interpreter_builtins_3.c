@@ -8,13 +8,13 @@ int	builtin_env(int num_args, char **args, char **env)
 
 	if (num_args != 0)
 	{
-		printf("env: ‘%s’: No such file or directory\n", args[0]);
+		ft_printf("env: ‘%s’: No such file or directory\n", args[0]);
 		return (1);
 	}
 	i = 0;
 	while (env[i])
 	{
-		printf("%s\n", env[i]);
+		ft_printf("%s\n", env[i]);
 		i++;
 	}
 	return (0);
@@ -31,7 +31,7 @@ int	builtin_exit(int num_args, char arg[])
 
 	if (num_args > 1)
 	{
-		printf("exit: too many arguments\n");
+		ft_printf("exit: too many arguments\n");
 		return (1);
 	}
 	else if (num_args == 1)
@@ -42,7 +42,7 @@ int	builtin_exit(int num_args, char arg[])
 		{
 			if (!isdigit(arg[i]))
 			{
-				printf("ERROR: argument is not a valid integer\n");
+				ft_printf("ERROR: argument is not a valid integer\n");
 				return (1);
 			}
 			i++;
@@ -55,7 +55,7 @@ int	builtin_exit(int num_args, char arg[])
 		}
 		else
 		{
-			printf("ERROR: exit status is not in range (0 - 127)\n");
+			ft_printf("ERROR: exit status is not in range (0 - 127)\n");
 		}
 	}
 	else

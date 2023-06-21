@@ -120,6 +120,7 @@ void	lexparseinterpret_line(char *line, t_node	**ast_head, char **env)
 		ft_printf("syntax error!\n");
 		return ;
 	}
+	(*ast_head)->top_node = true;
 	// ft_printf("\nPRINTING AST:\n");
 	// print_ast(ast_head);
 	// ft_printf("\n");

@@ -4,6 +4,7 @@ executable_path="./minishell"
 verbose=false
 mute_passes=false
 
+
 compare_with_executable() {
     command_argument="$1"
     expected_output="$2"
@@ -50,7 +51,7 @@ if [ $# -eq 2 ]; then
 else
     command_argument="$1"
     command_output=$(eval "$command_argument" 2>&1)
-    executable_output=$($executable_path "$command_argument" 2>&1)
+    executable_output=$(bash -c "$executable_path \"$command_argument\"" 2>&1)
 
     diff_output=$(diff <(echo "$command_output") <(echo "$executable_output"))
 

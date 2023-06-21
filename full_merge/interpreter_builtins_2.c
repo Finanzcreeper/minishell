@@ -7,7 +7,7 @@ int	builtin_pwd(void)
 	char	buf_cwd[PATH_MAX];
 
 	if (getcwd(buf_cwd, sizeof(buf_cwd)) != NULL)
-		printf("%s\n", buf_cwd);
+		ft_printf("%s\n", buf_cwd);
 	else
 	{
 		perror("getcwd() error");
@@ -38,7 +38,7 @@ void	builtin_export_no_args(char **env)
 		j = 0;
 		while (j < c - 1 - i)
 		{
-			printf("%s\n", env[j]);
+			ft_printf("%s\n", env[j]);
 			if (ft_strncmp(env[j], env[j + 1], 1) > 0) // which one to ft_strlen? the longest?
 			{				
 				temp = env[j];

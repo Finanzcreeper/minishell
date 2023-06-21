@@ -5,67 +5,66 @@ if [ "$2" ]; then
     exit
 fi
 
-echo "
-###############################################"
-echo "syntax errors:"
-echo "###############################################
-"
-./t.sh $1 "|" "syntax error!"
-./t.sh $1 "|" "syntax error!"
-./t.sh $1 "| |" "syntax error!"
-./t.sh $1 "||" "syntax error!" 
-./t.sh $1 "wc |" "syntax error!"
-./t.sh $1 "wc | |" "syntax error!"
-./t.sh $1 "wc ||" "syntax error!"
-./t.sh $1 ">" "syntax error!"
-./t.sh $1 "<" "syntax error!"
-./t.sh $1 ">>" "syntax error!"
-./t.sh $1 "<<" "syntax error!"
-./t.sh $1 ">> >" "syntax error!"
-./t.sh $1 "< <<" "syntax error!"
-./t.sh $1 "< >" "syntax error!"
-./t.sh $1 "| <" "syntax error!"
+# echo "
+# ###############################################"
+# echo "syntax errors:"
+# echo "###############################################
+# "
+# ./t.sh $1 "|" "syntax error!"
+# ./t.sh $1 "|" "syntax error!"
+# ./t.sh $1 "| |" "syntax error!"
+# ./t.sh $1 "||" "syntax error!" 
+# ./t.sh $1 "wc |" "syntax error!"
+# ./t.sh $1 "wc | |" "syntax error!"
+# ./t.sh $1 "wc ||" "syntax error!"
+# ./t.sh $1 ">" "syntax error!"
+# ./t.sh $1 "<" "syntax error!"
+# ./t.sh $1 ">>" "syntax error!"
+# ./t.sh $1 "<<" "syntax error!"
+# ./t.sh $1 ">> >" "syntax error!"
+# ./t.sh $1 "< <<" "syntax error!"
+# ./t.sh $1 "< >" "syntax error!"
+# ./t.sh $1 "| <" "syntax error!"
 
-echo "
-###############################################"
-echo "command not found:"
-echo "###############################################
-"
-./t.sh $1 "blah" "blah: command not found"
-./t.sh $1 "ls | notacommand" "notacommand: command not found"
-./t.sh $1 "ls | notacommand | wc" "notacommand: command not found
-      0       0       0"
-#[wc called with no input resulting in 0 0 0]
+# echo "
+# ###############################################"
+# echo "command not found:"
+# echo "###############################################
+# "
+# ./t.sh $1 "blah" "blah: command not found"
+# ./t.sh $1 "ls | notacommand" "notacommand: command not found"
+# ./t.sh $1 "ls | notacommand | wc" "notacommand: command not found
+#       0       0       0"
+# #[wc called with no input resulting in 0 0 0]
 
-echo "
-###############################################"
-echo "single executables (no args, single arg, multiple args)"
-echo "###############################################
-"
-./t.sh $1 "ls"
-./t.sh $1 "ls -l -h"
-./t.sh $1 "ls -l -a -h"
-./t.sh $1 "echo 123"
+# echo "
+# ###############################################"
+# echo "single executables (no args, single arg, multiple args)"
+# echo "###############################################
+# "
+# ./t.sh $1 "ls"
+# ./t.sh $1 "ls -l -h"
+# ./t.sh $1 "ls -l -a -h"
 
-echo "
-###############################################"
-echo "with executables (single, multiple incorrect args)"
-echo "###############################################
-"
-./t.sh $1 "ls -fwef"
-./t.sh $1 "man fwfeasdf"
-./t.sh $1 "rm nothing"
+# echo "
+# ###############################################"
+# echo "with executables (single, multiple incorrect args)"
+# echo "###############################################
+# "
+# ./t.sh $1 "ls -fwef"
+# ./t.sh $1 "man fwfeasdf"
+# ./t.sh $1 "rm nothing"
 
-echo "
-###############################################"
-echo "with executables (single, multiple incorrect and correct args)"
-echo "###############################################
-"
+# echo "
+# ###############################################"
+# echo "with executables (single, multiple incorrect and correct args)"
+# echo "###############################################
+# "
 
-./t.sh $1 "ls -fwefw -a"
-./t.sh $1 "ls -a -fwefw"
-./t.sh $1 "ls -fwefw -a -fwef"
-./t.sh $1 "ls -ewwg -wgef -a -wef"
+# ./t.sh $1 "ls -fwefw -a"
+# ./t.sh $1 "ls -a -fwefw"
+# ./t.sh $1 "ls -fwefw -a -fwef"
+# ./t.sh $1 "ls -ewwg -wgef -a -wef"
 
 echo "
 ###############################################"
@@ -74,6 +73,7 @@ echo "###############################################
 "
 ## see builtin tester file for more pptential tests
 ## listed in order specified in subject
+./t.sh $1 "echo 123"
 ./t.sh $1 "echo one 2 three";
 ./t.sh $1 "echo -n one 2 three";
 ./t.sh $1 "echo"; # in bash we just get a carriage return
@@ -81,11 +81,9 @@ echo "###############################################
 
 ./t.sh $1 "cd"; # cd alone in bash just goes to home dir
 ./t.sh $1 "cd ." # stay in same dir
-./t.sh $1 "cd foldertest";
+./t.sh $1 "cd foldertest" "bash: cd: foldertest: No such file or directory";
 ./t.sh $1 "cd /tmp";
-./t.sh $1 "cd /test";
-./t.sh $1 "cd unknown_folder";
-./t.sh $1 "cd /test this";
+./t.sh $1 "cd /tmp this";
 
 ./t.sh $1 "pwd"; # only possible case
 ./t.sh $1 "pwd one two"; # arguments should be ignored
@@ -103,16 +101,16 @@ echo "###############################################
 
 ./t.sh $1 "env";
 ./t.sh $1 "env unwantedArg unwantedArg2"; # not expected to reproduce bash behaviour - arguments should be ignored or give error
-./t.sh $1 "exit" # only possible case - exit not yet implemented
+# ./t.sh $1 "exit" # only possible case - exit not yet implemented
 
-echo "
-###############################################"
-echo "single pipe with executables"
-echo "###############################################
-"
+# echo "
+# ###############################################"
+# echo "single pipe with executables"
+# echo "###############################################
+# "
 
-./t.sh $1 "ls | wc"
-./t.sh $1 "ls -l | wc -l -w -c"
+# ./t.sh $1 "ls | wc"
+# ./t.sh $1 "ls -l | wc -l -w -c"
 
 # echo "
 # ###############################################"

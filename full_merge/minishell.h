@@ -72,6 +72,7 @@ typedef struct s_node
 	bool			read_from_heredoc;
 	char			*limiter;
 	bool			append_when_writing;
+	bool			top_node;
 }					t_node;
 
 typedef struct s_seperate_arguments_into_nodes
