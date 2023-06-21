@@ -43,22 +43,22 @@ t_node ***ast_head, t_list **command_elements)
 bool	parse__simple_command_tail(t_token **token,
 	t_node ***ast_head, t_list **command_elements)
 {
-	t_node	*node_to_link;
+	t_node	*cmd_node;
 
 	if (parse__simple_command_element(token, ast_head, command_elements))
 	{
 		return (parse__simple_command_tail(token, ast_head, command_elements));
 	}
-	node_to_link = ft_calloc(1, sizeof(t_node));
-	node_to_link->command_elements = *command_elements;
+	cmd_node = ft_calloc(1, sizeof(t_node));
+	cmd_node->command_elements = *command_elements;
 	*command_elements = NULL;
 	if ((*ast_head) == NULL)
 	{
-		(*ast_head) = &node_to_link;
+		(*ast_head) = &cmd_node;
 	}
 	else
 	{
-		(**ast_head)->right = node_to_link;
+		(**ast_head)->right = cmd_node;
 	}
 	return (true);
 }
