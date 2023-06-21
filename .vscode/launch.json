@@ -9,7 +9,7 @@
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/full_merge/minishell",
-			"args": [],
+			"args": ["ls | wc"],
 			"stopAtEntry": true,
 			"cwd": "${fileDirname}",
 			"environment": [],

@@ -14,10 +14,10 @@ compare_with_executable() {
 		if [ $mute_passes = false ]; then
         	echo -e "\e[32mPASS\e[0m "$1
 		    if [ "$verbose" = true ]; then
-    		    echo "Bash Command Output:"
-    		    echo "$command_output"
+    		    echo "Expected Output:"
+    			echo "$expected_output"
     		    echo "----------------------------------------------------------"
-    		    echo "Executable Output:"
+    		    echo "Minishell Output:"
     		    echo "$executable_output"
     		fi
 			echo "=========================================================="
@@ -27,7 +27,7 @@ compare_with_executable() {
 		echo "Expected Output:"
     	echo "$expected_output"
     	echo "----------------------------------------------------------"
-        echo "Executable Output:"
+        echo "Minishell Output:"
         echo "$executable_output"
 		echo "=========================================================="
     fi
@@ -50,7 +50,7 @@ if [ $# -eq 2 ]; then
 else
     command_argument="$1"
     command_output=$(eval "$command_argument" 2>&1)
-    executable_output=$(eval "$executable_path \"$command_argument\"" 2>&1)
+    executable_output=$($executable_path "$command_argument" 2>&1)
 
     diff_output=$(diff <(echo "$command_output") <(echo "$executable_output"))
 
@@ -58,10 +58,10 @@ else
 		if [ $mute_passes = false ]; then
         	echo -e "\e[32mPASS\e[0m "$1
     		if [ "$verbose" = true ]; then
-        		echo "Bash Command Output:"
+        		echo "Bash Output:"
         		echo "$command_output"
         		echo "----------------------------------------------------------"
-        		echo "Executable Output:"
+        		echo "Minishell Output:"
         		echo "$executable_output"
     		fi
 			echo "=========================================================="
@@ -69,10 +69,10 @@ else
 	else
         echo -e "\e[31mFAIL\e[0m "$1
         echo "----------------------------------------------------------"
-        echo "Bash Command Output:"
+        echo "Bash Output:"
         echo "$command_output"
         echo "----------------------------------------------------------"
-        echo "Executable Output:"
+        echo "Minishell Output:"
         echo "$executable_output"
 		echo "=========================================================="
     fi
