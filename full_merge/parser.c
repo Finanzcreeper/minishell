@@ -25,6 +25,30 @@ bool	parse__redirection(t_token **token, t_node *ast_head)
 		}
 		return (false);
 	}
+	else if ((*token) && (*token)->type == T_RETO_APPEND)
+	{
+		(*token) = (*token)->next;
+		if ((*token) && (*token)->type == T_WORD)
+		{
+			ast_head->append_when_writing = true;
+			ast_head->outfile = (*token)->content;
+			(*token) = (*token)->next;
+			return (true);
+		}
+		return (false);
+	}
+	else if ((*token) && (*token)->type == T_REFROM_HEREDOC)
+	{
+		ast_head->read_from_heredoc = true;
+		(*token) = (*token)->next;
+		if ((*token) && (*token)->type == T_WORD)
+		{
+			ast_head->limiter = (*token)->content;
+			(*token) = (*token)->next;
+			return (true);
+		}
+		return (false);
+	}	
 	return (false);
 }
 

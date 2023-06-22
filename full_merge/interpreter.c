@@ -119,7 +119,7 @@ int	open_and_redirect_to_outfile(t_node *cmd)
 {
 	int	out_fd;
 
-	if (!cmd->outfile)
+	if (cmd->outfile == NULL)
 		return (STDOUT_FD);
 	if (cmd->append_when_writing == true)
 		out_fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
@@ -139,13 +139,13 @@ void	execute_cmd(t_list *command_elements, char **env)
 	if (check_for_builtin(cmd_as_array[0]) == true)
 	{
 		run_builtin(cmd_as_array, env);
-		return ;
+		exit(0);
 	}
 	path = get_path(cmd_as_array, env);
 	if (path == NULL)
 	{
 		fprintf(stderr, "%s%s", cmd_as_array[0], ERR_CMD);
-		return ;
+		exit(1);
 	}
 	if (execve(path, cmd_as_array, env) == -1)
 	{
