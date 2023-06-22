@@ -9,7 +9,7 @@
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/full_merge/minishell",
-//			"program": "${workspaceFolder}/nicos_prototypes/a.out",
+			// "program": "${workspaceFolder}/nicos_prototypes/a.out",
 			"args": [],
 			"stopAtEntry": true,
 			"cwd": "${fileDirname}",

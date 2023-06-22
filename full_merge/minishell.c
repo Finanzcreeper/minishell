@@ -107,11 +107,13 @@ void	free_ast(t_node *ast)
 	return ;
 }
 
-void	lexparseinterpret_line(char *line, t_node	**ast_head, char **env)
+void	lexparseinterpret_line(char *line, char **env)
 {
 	t_token	*tokens;
 	t_token	*token_head;
+	t_node	*ast_head;
 
+	ast_head = ft_calloc(1, sizeof(t_node));
 	token_head = lexer(line, env);
 	tokens = token_head->next;
 	// print_tokens(tokens);
@@ -120,12 +122,12 @@ void	lexparseinterpret_line(char *line, t_node	**ast_head, char **env)
 		ft_printf("syntax error!\n");
 		return ;
 	}
-	(*ast_head)->top_node = true;
+	ast_head->top_node = true;
 	// ft_printf("\nPRINTING AST:\n");
 	// print_ast(ast_head);
 	// ft_printf("\n");
 	traverse_ast(ast_head, env);
-	free_ast(*ast_head); // issues here!
+	free_ast(ast_head); // issues here!
 	ast_head = NULL;
 	lex_freedman(token_head);
 	return ;
@@ -133,13 +135,11 @@ void	lexparseinterpret_line(char *line, t_node	**ast_head, char **env)
 
 int	main(int argc, char **argv, char **env)
 {
-	t_node	**ast_head;
 	char	*line;
 
-	ast_head = NULL;
 	if (argc == 2)
 	{
-		lexparseinterpret_line(argv[1], ast_head, env);
+		lexparseinterpret_line(argv[1], env);
 		return (0);
 	}
 	if (argc > 2)
@@ -161,7 +161,7 @@ int	main(int argc, char **argv, char **env)
 			if (line[0] != '\0')
 			{
 				add_history(line);
-				lexparseinterpret_line(line, ast_head, env);
+				lexparseinterpret_line(line, env);
 			}
 		}
 		free(line);

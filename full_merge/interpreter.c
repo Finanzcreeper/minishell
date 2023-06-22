@@ -234,7 +234,7 @@ void	traverse_ast2(t_node *ast, char **env)
 	}
 }
 
-void	traverse_ast(t_node **ast, char **env)
+void	traverse_ast(t_node *ast, char **env)
 {
-	traverse_ast2(*ast, env);
+	traverse_ast2(ast, env);
 }

@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -g3 -lreadline -O0
+CFLAGS = -g3 -lreadline
 CFULLFLAGS = -Wall -Werror -Wextra
 MAKEFLAGS = --no-print-directory
 SRC = $(wildcard *.c)

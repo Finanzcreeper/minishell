@@ -66,51 +66,51 @@ fi
 # ./t.sh $1 "ls -fwefw -a -fwef"
 # ./t.sh $1 "ls -ewwg -wgef -a -wef"
 
-echo "
-###############################################"
-echo "single builtins (no args, args)"
-echo "###############################################
-"
-## see builtin tester file for more pptential tests
-## listed in order specified in subject
-./t.sh $1 "echo 123"
-./t.sh $1 "echo one 2 three";
-./t.sh $1 "echo -n one 2 three";
-./t.sh $1 "echo"; # in bash we just get a carriage return
-./t.sh $1 "echo -n"; # control returns to prompt, no carriage return
-
-./t.sh $1 "cd"; # cd alone in bash just goes to home dir
-./t.sh $1 "cd ." # stay in same dir
-./t.sh $1 "cd foldertest" "bash: cd: foldertest: No such file or directory";
-./t.sh $1 "cd /tmp";
-./t.sh $1 "cd /tmp this" "cd: too many arguments";
-
-./t.sh $1 "pwd"; # only possible case
-./t.sh $1 "pwd one two"; # arguments should be ignored
-
-./t.sh $1 "export TEST=this";
-./t.sh $1 "echo $TEST"; # this check is needed to see if the export worked
-./t.sh $1 "export PWD";
-./t.sh $1 "echo $PWD"; # this check is needed to see if the export worked
-
-./t.sh $1 "unset PWD";
-./t.sh $1 "echo $PWD";
-./t.sh $1 "unset PWD HOME USER"; # unset with multiple args should be possible
-./t.sh $1 "echo $PWD $HOME $USER"; # this check is needed to see if the export worked
-./t.sh $1 "unset"; # does nothing control returns to prompt
-
-./t.sh $1 "env";
-./t.sh $1 "env unwantedArg unwantedArg2"; # not expected to reproduce bash behaviour - arguments should be ignored or give error
-# ./t.sh $1 "exit" # only possible case - exit not yet implemented
-
 # echo "
 # ###############################################"
-# echo "single pipe with executables"
+# echo "single builtins (no args, args)"
 # echo "###############################################
 # "
+# ## see builtin tester file for more pptential tests
+# ## listed in order specified in subject
+# ./t.sh $1 "echo 123"
+# ./t.sh $1 "echo one 2 three";
+# ./t.sh $1 "echo -n one 2 three";
+# ./t.sh $1 "echo"; # in bash we just get a carriage return
+# ./t.sh $1 "echo -n"; # control returns to prompt, no carriage return
 
-# ./t.sh $1 "ls | wc"
-# ./t.sh $1 "ls -l | wc -l -w -c"
+# ./t.sh $1 "cd"; # cd alone in bash just goes to home dir
+# ./t.sh $1 "cd ." # stay in same dir
+# ./t.sh $1 "cd foldertest" "bash: cd: foldertest: No such file or directory";
+# ./t.sh $1 "cd /tmp";
+# ./t.sh $1 "cd /tmp this" "cd: too many arguments";
+
+# ./t.sh $1 "pwd"; # only possible case
+# ./t.sh $1 "pwd one two"; # arguments should be ignored
+
+# ./t.sh $1 "export TEST=this";
+# ./t.sh $1 "echo $TEST"; # this check is needed to see if the export worked
+# ./t.sh $1 "export PWD";
+# ./t.sh $1 "echo $PWD"; # this check is needed to see if the export worked
+
+# ./t.sh $1 "unset PWD";
+# ./t.sh $1 "echo $PWD";
+# ./t.sh $1 "unset PWD HOME USER"; # unset with multiple args should be possible
+# ./t.sh $1 "echo $PWD $HOME $USER"; # this check is needed to see if the export worked
+# ./t.sh $1 "unset"; # does nothing control returns to prompt
+
+# ./t.sh $1 "env";
+# ./t.sh $1 "env unwantedArg unwantedArg2"; # not expected to reproduce bash behaviour - arguments should be ignored or give error
+# ./t.sh $1 "exit" # only possible case - exit not yet implemented
+
+echo "
+###############################################"
+echo "single pipe with executables"
+echo "###############################################
+"
+
+./t.sh $1 "ls | wc"
+./t.sh $1 "ls -l | wc -l -w -c"
 
 # echo "
 # ###############################################"
