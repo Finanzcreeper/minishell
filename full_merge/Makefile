@@ -21,7 +21,8 @@ testing :
 clean :
 	- rm minishell
 	- rm a.out
-
+	- rm infile
+	- rm outfile
 re : clean $(NAME)
 
 libft :

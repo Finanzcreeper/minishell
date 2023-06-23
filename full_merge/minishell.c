@@ -54,7 +54,8 @@ void	lex_freedman(t_token *tokens)
 	{
 		temp = tokens;
 		tokens = tokens->next;
-		free(temp->content);
+		if (temp->type != T_WORD)
+			free(temp->content);
 		free(temp);
 	}
 }
@@ -63,7 +64,7 @@ void	free_ast_node(t_node *temp)
 {
 	if (temp->command_elements != NULL)
 	{
-		free(temp->command_elements);
+		ft_lstclear(&temp->command_elements, free);
 		temp->command_elements = NULL;
 	}
 	if (temp->left != NULL)

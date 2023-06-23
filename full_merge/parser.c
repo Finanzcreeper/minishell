@@ -72,10 +72,8 @@ bool	parse__simple_command_tail(t_token **token,
 	t_node	*cmd_node;
 
 	if (parse__simple_command_element(token, command_elements, redirs))
-	{
 		return (parse__simple_command_tail(token, ast_head,
 				command_elements, redirs));
-	}
 	cmd_node = ft_calloc(1, sizeof(t_node));
 	cmd_node->command_elements = *command_elements;
 	cmd_node->infile = redirs->infile;
@@ -85,14 +83,14 @@ bool	parse__simple_command_tail(t_token **token,
 	cmd_node->limiter = redirs->limiter;
 	cmd_node->infile_takes_precedence = redirs->infile_takes_precedence;
 	*command_elements = NULL;
+	ft_bzero(redirs, sizeof(t_redirs));
 	if (ast_head->type != 1)
 	{
 		*ast_head = *cmd_node;
+		free(cmd_node);
 	}
 	else
-	{
 		ast_head->right = cmd_node;
-	}
 	return (true);
 }
 
@@ -113,8 +111,10 @@ bool	parse__pipeline(t_token **token, t_node **ast_head)
 		spcmd = false;
 	if (spcmd == true)
 	{
+		free(redirs);
 		return (parse__pipeline_tail(token, ast_head));
 	}
+	free(redirs);
 	return (false);
 }
 
