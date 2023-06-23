@@ -73,6 +73,7 @@ typedef struct s_node
 	char			*limiter;
 	bool			append_when_writing;
 	bool			top_node;
+	bool			infile_takes_precedence;
 }					t_node;
 
 typedef struct s_seperate_arguments_into_nodes
@@ -98,6 +99,7 @@ typedef struct s_redirs
 	bool	append_when_writing;
 	bool	read_from_heredoc;
 	char	*limiter;
+	bool	infile_takes_precedence;
 }t_redirs;
 
 

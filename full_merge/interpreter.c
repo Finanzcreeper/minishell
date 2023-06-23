@@ -145,10 +145,17 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 	int		out_fd;
 
 	in_fd = STDIN_FD;
-	if (cmd_node->read_from_heredoc == true)
-		make_heredoc(cmd_node, cmd_node->limiter);
-	if (cmd_node->infile != NULL)
-		in_fd = open(cmd_node->infile, O_RDONLY);
+
+	if (cmd_node->infile_takes_precedence == true)
+	{
+		if (cmd_node->infile != NULL)
+			in_fd = open(cmd_node->infile, O_RDONLY);
+	}
+	else
+	{
+		if (cmd_node->read_from_heredoc == true)
+			make_heredoc(cmd_node, cmd_node->limiter);
+	}
 	if (in_fd == -1)
 	{
 		fprintf(stderr, "bash: %s%s", cmd_node->infile, ERR_READ);
