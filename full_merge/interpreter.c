@@ -163,8 +163,6 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 		fprintf(stderr, "bash: %s%s", cmd_node->outfile, ERR_WRITE);
 		return ;
 	}
-	if (out_fd != STDOUT_FD)
-		dup2(out_fd, STDOUT_FD);
 	if (!is_last_command)
 		pipe(io_fd);
 	pid = fork();

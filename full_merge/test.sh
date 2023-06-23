@@ -136,6 +136,7 @@ echo "###############################################
 ./t.sh $1 "> outfile echo 1 2 3"
 ./t.sh $1 "echo 1 2 3 >> outfile" #[append]
 ./t.sh $1 ">> outfile echo 1 2 3" #[append]
+./t.sh $1 "< infile > outfile"
 # ./t.sh $1 "<< END cat >> outfile"
 # ./t.sh $1 "<< END > outfile"
 
