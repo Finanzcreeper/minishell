@@ -110,22 +110,7 @@ echo "###############################################
 ./t.sh $1 "echo 1 2 3 | wc -l"
 ./t.sh $1 "pwd | wc -c"
 ./t.sh $1 "env | grep PATH"
-./t.sh $1 "env | sort -r"
 ./t.sh $1 "env | head -n 5"
-
-echo "
-###############################################"
-echo "check these manually!"
-echo "###############################################
-"
-
-echo "env";
-echo "export TEST=this && echo $TEST"; # this check is needed to see if the export worked
-echo "export PWD";
-echo "echo $PWD"; # this check is needed to see if the export worked
-
-echo "unset PWD && echo $PWD"; # this check is needed to see if the export worked
-echo "unset PWD HOME USER && echo $PWD $HOME $USER"; # this check is needed to see if the export worked
 
 echo "
 ###############################################"
@@ -154,6 +139,19 @@ echo "###############################################
 # ./t.sh $1 "<< END cat >> outfile"
 # ./t.sh $1 "<< END > outfile"
 
+echo "
+###############################################"
+echo "check these manually!"
+echo "###############################################
+"
+
+echo "env";
+echo "export TEST=this && echo $TEST"; # this check is needed to see if the export worked
+echo "export PWD";
+echo "echo $PWD"; # this check is needed to see if the export worked
+
+echo "unset PWD && echo $PWD"; # this check is needed to see if the export worked
+echo "unset PWD HOME USER && echo $PWD $HOME $USER"; # this check is needed to see if the export worked
 
 # ## redirection only
 

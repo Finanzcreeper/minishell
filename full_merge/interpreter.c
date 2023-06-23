@@ -88,7 +88,7 @@ int	make_heredoc(char *limiter)
 		write(STDOUT_FD, "pipe heredoc> ", 14);
 		next_line = get_next_line(STDIN_FD);
 		next_line[ft_strlen(next_line) - 1] = '\0';
-		if (ft_strncmp(next_line, limiter, ft_strlen(limiter)) == 0)
+		if (ft_strncmp(next_line, limiter, ft_strlen(next_line)) == 0)
 			break ;
 		write(heredoc_fd, next_line, ft_strlen(next_line));
 		write(heredoc_fd, "\n", 1);
@@ -104,12 +104,15 @@ int	open_and_redirect_from_infile(t_node *cmd)
 {
 	int	in_fd;
 
-	if (!cmd->infile)
-		return (STDIN_FD);
-	if (cmd->read_from_heredoc)
+	in_fd = STDIN_FD;
+	if (cmd->read_from_heredoc == true)
+	{
 		in_fd = make_heredoc(cmd->limiter);
-	else
+	}
+	else if (cmd->infile != NULL)
+	{
 		in_fd = open(cmd->infile, O_RDONLY);
+	}
 	if (in_fd != -1)
 		dup2(in_fd, STDIN_FD);
 	return (in_fd);

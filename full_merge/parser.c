@@ -1,14 +1,14 @@
 
 #include "minishell.h"
 
-bool	parse__redirection(t_token **token, t_node *ast_head)
+bool	parse__redirection(t_token **token, t_redirs *redirs)
 {
 	if ((*token) && (*token)->type == T_RETO)
 	{
 		(*token) = (*token)->next;
 		if ((*token) && (*token)->type == T_WORD)
 		{
-			ast_head->outfile = (*token)->content;
+			redirs->outfile = (*token)->content;
 			(*token) = (*token)->next;
 			return (true);
 		}
@@ -19,7 +19,7 @@ bool	parse__redirection(t_token **token, t_node *ast_head)
 		(*token) = (*token)->next;
 		if ((*token) && (*token)->type == T_WORD)
 		{
-			ast_head->infile = (*token)->content;
+			redirs->infile = (*token)->content;
 			(*token) = (*token)->next;
 			return (true);
 		}
@@ -30,8 +30,8 @@ bool	parse__redirection(t_token **token, t_node *ast_head)
 		(*token) = (*token)->next;
 		if ((*token) && (*token)->type == T_WORD)
 		{
-			ast_head->append_when_writing = true;
-			ast_head->outfile = (*token)->content;
+			redirs->append_when_writing = true;
+			redirs->outfile = (*token)->content;
 			(*token) = (*token)->next;
 			return (true);
 		}
@@ -39,21 +39,21 @@ bool	parse__redirection(t_token **token, t_node *ast_head)
 	}
 	else if ((*token) && (*token)->type == T_REFROM_HEREDOC)
 	{
-		ast_head->read_from_heredoc = true;
+		redirs->read_from_heredoc = true;
 		(*token) = (*token)->next;
 		if ((*token) && (*token)->type == T_WORD)
 		{
-			ast_head->limiter = (*token)->content;
+			redirs->limiter = (*token)->content;
 			(*token) = (*token)->next;
 			return (true);
 		}
 		return (false);
-	}	
+	}
 	return (false);
 }
 
 bool	parse__simple_command_element(t_token **token,
-t_node *ast_head, t_list **command_elements)
+	t_list **command_elements, t_redirs *redirs)
 {
 	if ((*token) && (*token)->type == T_WORD)
 	{
@@ -61,20 +61,26 @@ t_node *ast_head, t_list **command_elements)
 		(*token) = (*token)->next;
 		return (true);
 	}
-	return (parse__redirection(token, ast_head));
+	return (parse__redirection(token, redirs));
 }
 
 bool	parse__simple_command_tail(t_token **token,
-	t_node *ast_head, t_list **command_elements)
+	t_node *ast_head, t_list **command_elements, t_redirs *redirs)
 {
 	t_node	*cmd_node;
 
-	if (parse__simple_command_element(token, ast_head, command_elements))
+	if (parse__simple_command_element(token, command_elements, redirs))
 	{
-		return (parse__simple_command_tail(token, ast_head, command_elements));
+		return (parse__simple_command_tail(token, ast_head,
+				command_elements, redirs));
 	}
 	cmd_node = ft_calloc(1, sizeof(t_node));
 	cmd_node->command_elements = *command_elements;
+	cmd_node->infile = redirs->infile;
+	cmd_node->outfile = redirs->outfile;
+	cmd_node->append_when_writing = redirs->append_when_writing;
+	cmd_node->read_from_heredoc = redirs->read_from_heredoc;
+	cmd_node->limiter = redirs->limiter;
 	*command_elements = NULL;
 	if (ast_head->type != 1)
 	{
@@ -89,17 +95,20 @@ bool	parse__simple_command_tail(t_token **token,
 
 bool	parse__pipeline(t_token **token, t_node **ast_head)
 {
-	bool	test;
-	t_list	*command_elements;
+	bool		spcmd;
+	t_list		*command_elements;
+	t_redirs	*redirs;
 
+	redirs = ft_calloc(1, sizeof(t_redirs));
 	command_elements = NULL;
-	if (parse__simple_command_element(token, *ast_head, &command_elements))
+	if (parse__simple_command_element(token, &command_elements, redirs))
 	{
-		test = parse__simple_command_tail(token, *ast_head, &command_elements);
+		spcmd = parse__simple_command_tail(token, *ast_head,
+				&command_elements, redirs);
 	}
 	else
-		test = false;
-	if (test == true)
+		spcmd = false;
+	if (spcmd == true)
 	{
 		return (parse__pipeline_tail(token, ast_head));
 	}

@@ -66,25 +66,15 @@ void	free_ast_node(t_node *temp)
 		free(temp->command_elements);
 		temp->command_elements = NULL;
 	}
-	if (temp->infile != NULL)
+	if (temp->left != NULL)
 	{
-		free(temp->infile);
-		temp->infile = NULL;
-	}
-	if (temp->outfile != NULL)
-	{
-		free(temp->outfile);
-		temp->outfile = NULL;
+		free(temp->left);
+		temp->left = NULL;
 	}
 	if (temp->right != NULL)
 	{
 		free(temp->right);
 		temp->right = NULL;
-	}
-	if (temp->left != NULL)
-	{
-		free(temp->left);
-		temp->left = NULL;
 	}
 	free(temp);
 }
