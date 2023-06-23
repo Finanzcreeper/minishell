@@ -1,4 +1,3 @@
-// DONE: add << >> support (infile, outfile) - test more fully
 // TODO: remove fprintf's (replace with writes?)
 // TODO: fix issue that minishell exits before allowing next line to be captured (it's fine with a single command)
 
@@ -74,7 +73,7 @@ char	*get_path(char **cmd_as_array, char **env)
 	return (NULL);
 }
 
-int	make_heredoc(char *limiter)
+void make_heredoc(t_node *cmd_node, char *limiter)
 {
 	int		heredoc_fd;
 	char	*next_line;
@@ -96,29 +95,10 @@ int	make_heredoc(char *limiter)
 	}
 	free(next_line);
 	close(heredoc_fd);
-	heredoc_fd = open(".heredoc_tmp", O_RDONLY);
-	return (heredoc_fd);
+	cmd_node->infile = ".heredoc_tmp";
 }
 
-int	open_and_redirect_from_infile(t_node *cmd)
-{
-	int	in_fd;
-
-	in_fd = STDIN_FD;
-	if (cmd->read_from_heredoc == true)
-	{
-		in_fd = make_heredoc(cmd->limiter);
-	}
-	else if (cmd->infile != NULL)
-	{
-		in_fd = open(cmd->infile, O_RDONLY);
-	}
-	if (in_fd != -1)
-		dup2(in_fd, STDIN_FD);
-	return (in_fd);
-}
-
-int	open_and_redirect_to_outfile(t_node *cmd)
+int	open_outfile(t_node *cmd)
 {
 	int	out_fd;
 
@@ -128,8 +108,6 @@ int	open_and_redirect_to_outfile(t_node *cmd)
 		out_fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
 	else
 		out_fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	if (out_fd != -1)
-		dup2(out_fd, STDOUT_FD);
 	return (out_fd);
 }
 
@@ -166,18 +144,27 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 	int		in_fd;
 	int		out_fd;
 
-	in_fd = open_and_redirect_from_infile(cmd_node);
+	in_fd = STDIN_FD;
+	if (cmd_node->read_from_heredoc == true)
+		make_heredoc(cmd_node, cmd_node->limiter);
+	if (cmd_node->infile != NULL)
+		in_fd = open(cmd_node->infile, O_RDONLY);
 	if (in_fd == -1)
 	{
 		fprintf(stderr, "bash: %s%s", cmd_node->infile, ERR_READ);
 		return ;
 	}
-	out_fd = open_and_redirect_to_outfile(cmd_node);
+	if (in_fd != STDIN_FD)
+		dup2(in_fd, STDIN_FD);
+
+	out_fd = open_outfile(cmd_node);
 	if (out_fd == -1)
 	{
 		fprintf(stderr, "bash: %s%s", cmd_node->outfile, ERR_WRITE);
 		return ;
-	}			
+	}
+	if (out_fd != STDOUT_FD)
+		dup2(out_fd, STDOUT_FD);
 	if (!is_last_command)
 		pipe(io_fd);
 	pid = fork();
