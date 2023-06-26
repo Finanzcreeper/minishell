@@ -21,48 +21,33 @@ int	builtin_env(int num_args, char **args, char **env)
 }
 
 // exit (with no options)
-// exit the shell where it is currently running
+// causes shell to exit
 // NOTE: exit can have one argument, an exit status code
 // (if not given it is that of the last executed command)
 int	builtin_exit(int num_args, char arg[])
 {
-	int	i;
-	int	exit_status;
-
 	if (num_args > 1)
 	{
-		ft_printf("exit: too many arguments\n");
-		return (1);
+		ft_printf("bash: exit: too many arguments\n");
+		return (-1);
 	}
-	else if (num_args == 1)
-	// check if arg is an integer, if so and it's under 127 use it as exit status
+	if (num_args == 0)
 	{
-		i = 0;
-		while (arg[i])
-		{
-			if (!isdigit(arg[i]))
-			{
-				ft_printf("ERROR: argument is not a valid integer\n");
-				return (1);
-			}
-			i++;
-		}
-		exit_status = atoi(&arg[0]);
-		if (exit_status <= 127)
-		{
-			exit(exit_status);
-			return (0);
-		}
-		else
-		{
-			ft_printf("ERROR: exit status is not in range (0 - 127)\n");
-		}
+		ft_printf("exit\n");
+		// free?
+		exit(exitstatus);
 	}
-	else
+	if (isdigit(arg[0]) == false)
 	{
-		// TODO: get exit status of last executed command (doesn't make sense in this context)
-		exit(1);
+		ft_printf("bash: exit: %s: numeric argument required\n", arg[0]);
+		return (-1);
 	}
+	return (0);
+}
+
+int	builtin_dollar_question()
+{
+	ft_printf("%i\n", exitstatus);
 	return (0);
 }
 
@@ -74,7 +59,8 @@ bool	check_for_builtin(char *command)
 		(ft_strncmp(command, "export", ft_strlen(command)) == 0) ||
 		(ft_strncmp(command, "unset", ft_strlen(command)) == 0) ||
 		(ft_strncmp(command, "env", ft_strlen(command)) == 0) ||
-		(ft_strncmp(command, "exit", ft_strlen(command)) == 0))
+		(ft_strncmp(command, "exit", ft_strlen(command)) == 0) ||
+		(ft_strncmp(command, "$?", ft_strlen(command)) == 0))
 		return true;
 	return false;
 }
@@ -104,4 +90,6 @@ void	run_builtin(char **cmd_as_array, char **env)
 		builtin_env(argc, args, env);
 	else if (ft_strncmp(cmd, "exit", ft_strlen(cmd)) == 0)
 		builtin_exit(argc, args[0]);
+	else if (ft_strncmp(cmd, "$?", ft_strlen(cmd)) == 0)
+		builtin_dollar_question();		
 }

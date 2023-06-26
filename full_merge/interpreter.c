@@ -11,6 +11,8 @@
 
 #include "minishell.h"
 
+int exitstatus;
+
 void	print_array(char **array)
 {
 	int	i;
@@ -120,19 +122,22 @@ void	execute_cmd(t_list *command_elements, char **env)
 	if (check_for_builtin(cmd_as_array[0]) == true)
 	{
 		run_builtin(cmd_as_array, env);
-		exit(0);
+		exitstatus = 0;
+		exit(exitstatus);
 	}
 	path = get_path(cmd_as_array, env);
 	if (path == NULL)
 	{
 		fprintf(stderr, "%s%s", cmd_as_array[0], ERR_CMD);
-		exit(1);
+		exitstatus = 1;
+		exit(exitstatus);
 	}
 	if (execve(path, cmd_as_array, env) == -1)
 	{
 		fprintf(stderr, "%s", ERR_EXEC);
 		free(cmd_as_array);
-		exit(1);
+		exitstatus = 1;
+		exit(exitstatus);
 	}
 }
 
@@ -140,7 +145,6 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 {
 	pid_t	pid;
 	int		io_fd[2];
-	int		exit_status;
 	int		in_fd;
 	int		out_fd;
 
@@ -197,14 +201,14 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 	}
 	else
 	{
-		wait(&exit_status);
+		wait(&exitstatus);
 		if (!is_last_command)
 		{
 			close(io_fd[1]);
 			dup2(io_fd[0], STDIN_FD);
 			close(io_fd[0]);
 		}
-		if (exit_status != 0)
+		if (exitstatus != 0)
 		{
 			if (in_fd != STDIN_FD)
 				close(in_fd);

@@ -31,6 +31,8 @@
 
 # define ROOT -2
 
+extern int exitstatus;
+
 typedef enum e_token_type
 {
 	T_WORD = 0,
@@ -170,6 +172,5 @@ bool	parse__simple_command_tail(t_token **token, t_node *ast_head, t_list **comm
 bool	parse__simple_command(t_token **token, t_node *ast_head);
 bool	parse__pipeline(t_token **token, t_node **ast_head);
 bool	parse__pipeline_tail(t_token **token, t_node **ast_head);
-
 
 #endif
