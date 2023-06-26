@@ -163,8 +163,8 @@ void	found(t_token *t, char *before, char *after, char *searched);
 // bool	parse__pipeline(t_token **token, t_node ***ast_head);
 // bool	parse__pipeline_tail(t_token **token, t_node ***ast_head);
 
-bool	parse__redirection(t_token **token, t_redirs *redirs);
-bool	parse__simple_command_element(t_token **token, t_list **command_elements, t_redirs *redirs);
+int		parse__redirection(t_token **token, t_redirs *redirs);
+int		parse__simple_command_element(t_token **token, t_list **command_elements, t_redirs *redirs);
 void	link_next_command_node_into_tree(t_node *ast_head, t_node *node_to_link);
 bool	parse__simple_command_tail(t_token **token, t_node *ast_head, t_list **command_elements, t_redirs *redirs);
 bool	parse__simple_command(t_token **token, t_node *ast_head);

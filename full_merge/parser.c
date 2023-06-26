@@ -1,7 +1,7 @@
 
 #include "minishell.h"
 
-bool	parse__redirection(t_token **token, t_redirs *redirs)
+int	parse__redirection(t_token **token, t_redirs *redirs)
 {
 	if ((*token) && (*token)->type == T_RETO)
 	{
@@ -10,9 +10,9 @@ bool	parse__redirection(t_token **token, t_redirs *redirs)
 		{
 			redirs->outfile = (*token)->content;
 			(*token) = (*token)->next;
-			return (true);
+			return (0);
 		}
-		return (false);
+		return (2);
 	}
 	else if ((*token) && (*token)->type == T_REFROM)
 	{
@@ -22,9 +22,9 @@ bool	parse__redirection(t_token **token, t_redirs *redirs)
 			redirs->infile = (*token)->content;
 			redirs->infile_takes_precedence = true;
 			(*token) = (*token)->next;
-			return (true);
+			return (0);
 		}
-		return (false);
+		return (2);
 	}
 	else if ((*token) && (*token)->type == T_RETO_APPEND)
 	{
@@ -34,9 +34,9 @@ bool	parse__redirection(t_token **token, t_redirs *redirs)
 			redirs->append_when_writing = true;
 			redirs->outfile = (*token)->content;
 			(*token) = (*token)->next;
-			return (true);
+			return (0);
 		}
-		return (false);
+		return (2);
 	}
 	else if ((*token) && (*token)->type == T_REFROM_HEREDOC)
 	{
@@ -47,21 +47,21 @@ bool	parse__redirection(t_token **token, t_redirs *redirs)
 		{
 			redirs->limiter = (*token)->content;
 			(*token) = (*token)->next;
-			return (true);
+			return (0);
 		}
-		return (false);
+		return (2);
 	}
-	return (false);
+	return (1);
 }
 
-bool	parse__simple_command_element(t_token **token,
+int	parse__simple_command_element(t_token **token,
 	t_list **command_elements, t_redirs *redirs)
 {
 	if ((*token) && (*token)->type == T_WORD)
 	{
 		ft_lstadd_back(command_elements, ft_lstnew((*token)->content));
 		(*token) = (*token)->next;
-		return (true);
+		return (0);
 	}
 	return (parse__redirection(token, redirs));
 }
@@ -70,10 +70,18 @@ bool	parse__simple_command_tail(t_token **token,
 	t_node *ast_head, t_list **command_elements, t_redirs *redirs)
 {
 	t_node	*cmd_node;
+	int		err;
 
-	if (parse__simple_command_element(token, command_elements, redirs))
+	err = parse__simple_command_element(token, command_elements, redirs);
+	if (err == 0)
+	{
 		return (parse__simple_command_tail(token, ast_head,
 				command_elements, redirs));
+	}
+	if (err == 2)
+	{
+		return (false);
+	}
 	cmd_node = ft_calloc(1, sizeof(t_node));
 	cmd_node->command_elements = *command_elements;
 	cmd_node->infile = redirs->infile;
@@ -102,7 +110,7 @@ bool	parse__pipeline(t_token **token, t_node **ast_head)
 
 	redirs = ft_calloc(1, sizeof(t_redirs));
 	command_elements = NULL;
-	if (parse__simple_command_element(token, &command_elements, redirs))
+	if (parse__simple_command_element(token, &command_elements, redirs) == 0)
 	{
 		spcmd = parse__simple_command_tail(token, *ast_head,
 				&command_elements, redirs);
