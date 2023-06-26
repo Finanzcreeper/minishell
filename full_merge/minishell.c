@@ -121,6 +121,8 @@ void	lexparseinterpret_line(char *line, char **env)
 	if (parse__pipeline(&tokens, &ast_head) == false)
 	{
 		ft_printf("syntax error!\n");
+		free_ast(ast_head); // issues here!
+		lex_freedman(token_head);
 		return ;
 	}
 	ast_head->top_node = true;

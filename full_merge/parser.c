@@ -80,6 +80,8 @@ bool	parse__simple_command_tail(t_token **token,
 	}
 	if (err == 2)
 	{
+		ft_lstclear(command_elements, free);
+		command_elements = NULL;
 		return (false);
 	}
 	cmd_node = ft_calloc(1, sizeof(t_node));
