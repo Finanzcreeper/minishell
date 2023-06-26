@@ -67,6 +67,16 @@ void	free_ast_node(t_node *temp)
 		ft_lstclear(&temp->command_elements, free);
 		temp->command_elements = NULL;
 	}
+	if (temp->infile != NULL)
+	{
+		free(temp->infile);
+		temp->infile = NULL;
+	}
+	if (temp->outfile != NULL)
+	{
+		free(temp->outfile);
+		temp->outfile = NULL;
+	}
 	if (temp->left != NULL)
 	{
 		free(temp->left);
