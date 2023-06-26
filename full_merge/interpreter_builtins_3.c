@@ -86,7 +86,7 @@ void	run_builtin(char **cmd_as_array, char **env)
 	unsigned int	argc;
 
 	cmd = cmd_as_array[0];
-	args = cmd_as_array++;
+	args = ++cmd_as_array;
 	argc = 0;
 	while (args[argc])
 		argc++;

@@ -38,7 +38,7 @@ char	**list_to_array(t_list *list_head)
 		list_head = list_head->next;
 		l++;
 	}
-	array = malloc(sizeof(char *) * (l + 1));
+	array = ft_calloc(l + 1, sizeof(char *));
 	i = 0;
 	while (i < l)
 	{

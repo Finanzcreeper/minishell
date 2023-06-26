@@ -51,10 +51,10 @@ void	builtin_echo(int num_elements, char **elements)
 		print_newline = false;
 		elements++;
 	}
-	i = 1;
+	i = 0;
 	while (elements[i])
 	{
-		if (i != 1)
+		if (i != 0)
 			ft_printf(" ");
 		ft_printf("%s", elements[i]);
 		i++;
