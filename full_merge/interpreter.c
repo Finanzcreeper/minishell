@@ -163,7 +163,6 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 	}
 	if (in_fd != STDIN_FD)
 		dup2(in_fd, STDIN_FD);
-
 	out_fd = open_outfile(cmd_node);
 	if (out_fd == -1)
 	{
@@ -180,6 +179,8 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 	}
 	if (pid == 0)
 	{
+		if (out_fd != STDOUT_FD)
+			dup2(out_fd, STDOUT_FD);
 		if (!is_last_command)
 		{
 			close(io_fd[0]);
