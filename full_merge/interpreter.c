@@ -162,7 +162,10 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 		return ;
 	}
 	if (in_fd != STDIN_FD)
+	{
 		dup2(in_fd, STDIN_FD);
+		close(in_fd);
+	}
 	out_fd = open_outfile(cmd_node);
 	if (out_fd == -1)
 	{
@@ -180,22 +183,27 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 	if (pid == 0)
 	{
 		if (out_fd != STDOUT_FD)
+		{
 			dup2(out_fd, STDOUT_FD);
+			close(out_fd);
+		}
 		if (!is_last_command)
 		{
 			close(io_fd[0]);
 			dup2(io_fd[1], STDOUT_FD);
+			close(io_fd[1]);
 		}
 		execute_cmd(cmd_node->command_elements, env);
 	}
 	else
 	{
+		wait(&exit_status);
 		if (!is_last_command)
 		{
 			close(io_fd[1]);
 			dup2(io_fd[0], STDIN_FD);
+			close(io_fd[0]);
 		}
-		wait(&exit_status);
 		if (exit_status != 0)
 		{
 			if (in_fd != STDIN_FD)
