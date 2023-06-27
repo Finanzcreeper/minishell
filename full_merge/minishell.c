@@ -154,8 +154,6 @@ int	main(int argc, char **argv, char **env)
 	signal(SIGQUIT, SIG_IGN); // override/ignore default behaviour of CTRL + '\'
 	while (1)
 	{
-		fflush(stdout);
-		fflush(stdin);
 		line = readline("minishell% ");
 		if (!line) // using this to detect CTRL D, which sends EOF (what if line is actually NULL?)
 			break ;

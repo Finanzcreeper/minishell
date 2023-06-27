@@ -119,12 +119,6 @@ void	execute_cmd(t_list *command_elements, char **env)
 	char	*path;
 
 	cmd_as_array = list_to_array(command_elements);
-	if (check_for_builtin(cmd_as_array[0]) == true)
-	{
-		run_builtin(cmd_as_array, env);
-		exitstatus = 0;
-		exit(exitstatus);
-	}
 	path = get_path(cmd_as_array, env);
 	if (path == NULL)
 	{
@@ -147,6 +141,7 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 	int		io_fd[2];
 	int		in_fd;
 	int		out_fd;
+	char	**cmd_as_array;
 
 	in_fd = STDIN_FD;
 
@@ -176,6 +171,14 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 		fprintf(stderr, "bash: %s%s", cmd_node->outfile, ERR_WRITE);
 		return ;
 	}
+	// builtins are now here and are not run in a separate subprocess anymore
+	cmd_as_array = list_to_array(cmd_node->command_elements);
+	if (check_for_builtin(cmd_as_array[0]) == true)
+	{
+		run_builtin(cmd_as_array, env);
+		return ;
+	}
+
 	if (!is_last_command)
 		pipe(io_fd);
 	pid = fork();

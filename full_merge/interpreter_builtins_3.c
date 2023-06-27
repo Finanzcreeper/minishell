@@ -22,32 +22,28 @@ int	builtin_env(int num_args, char **args, char **env)
 
 // exit (with no options)
 // causes shell to exit
-// NOTE: exit can have one argument, an exit status code
+// can have one argument, an exit status code
 // (if not given it is that of the last executed command)
-int	builtin_exit(int num_args, char arg[])
+int	builtin_exit(int num_args, char **args)
 {
 	if (num_args > 1)
 	{
 		ft_printf("bash: exit: too many arguments\n");
 		return (-1);
 	}
-	if (num_args == 0)
+	if (num_args == 1)
 	{
-		ft_printf("exit\n");
-		// free?
-		exit(exitstatus);
+		if (ft_atoi(args[0]) == 0)
+		{
+			ft_printf("bash: exit: %s: numeric argument required\n", args[0]);
+			return (-1);
+		}
+		else
+			exitstatus = ft_atoi(args[0]);
 	}
-	if (isdigit(arg[0]) == false)
-	{
-		ft_printf("bash: exit: %s: numeric argument required\n", arg[0]);
-		return (-1);
-	}
-	return (0);
-}
-
-int	builtin_dollar_question()
-{
-	ft_printf("%i\n", exitstatus);
+	ft_printf("exit\n");
+	// TODO: what to free here?
+	exit(exitstatus);
 	return (0);
 }
 
@@ -59,8 +55,7 @@ bool	check_for_builtin(char *command)
 		(ft_strncmp(command, "export", ft_strlen(command)) == 0) ||
 		(ft_strncmp(command, "unset", ft_strlen(command)) == 0) ||
 		(ft_strncmp(command, "env", ft_strlen(command)) == 0) ||
-		(ft_strncmp(command, "exit", ft_strlen(command)) == 0) ||
-		(ft_strncmp(command, "$?", ft_strlen(command)) == 0))
+		(ft_strncmp(command, "exit", ft_strlen(command)) == 0))
 		return true;
 	return false;
 }
@@ -89,7 +84,5 @@ void	run_builtin(char **cmd_as_array, char **env)
 	else if (ft_strncmp(cmd, "env", ft_strlen(cmd)) == 0)
 		builtin_env(argc, args, env);
 	else if (ft_strncmp(cmd, "exit", ft_strlen(cmd)) == 0)
-		builtin_exit(argc, args[0]);
-	else if (ft_strncmp(cmd, "$?", ft_strlen(cmd)) == 0)
-		builtin_dollar_question();		
+		builtin_exit(argc, args);
 }
