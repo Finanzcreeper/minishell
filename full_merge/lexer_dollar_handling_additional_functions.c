@@ -19,12 +19,12 @@ int	dollar_spotted(t_token *t, char **env, int c)
 	}
 	else
 	{
+		ft_printf("exitstatus is: %d\n", exitstatus);
 		free(t->content);
 		t->content = searched;
 		searched = env[c] + ft_strlen(searched);
 		if (c == -2)
-			ft_printf("$? found, It isnt fully implemented yet, look into lexer_dollar_handling_additional_functions at line 26 and finish int_to_string to implement it.\n");
-			// searched = int_to_string(exitstatus);
+			searched = int_to_string(exitstatus);
 		found(t, before, after, searched);
 		return (0);
 	}

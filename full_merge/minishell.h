@@ -155,6 +155,7 @@ char	*make_after(t_token *t, int c);
 int		match_searched(char **env, char *searched);
 void	not_found(t_token *t, char *before, char *after, char *searched);
 void	found(t_token *t, char *before, char *after, char *searched);
+char	*int_to_string(int in);
 
 // Parser
 // bool	parse__redirection(t_token **token, t_node ***ast_head);

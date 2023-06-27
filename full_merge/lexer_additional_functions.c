@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:38:35 by nreher            #+#    #+#             */
-/*   Updated: 2023/06/26 16:13:19 by nreher           ###   ########.fr       */
+/*   Updated: 2023/06/27 15:27:54 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,16 +74,28 @@ void	fuck_norminete(t_sain *sain, t_defs defs, t_token **list, char *string)
 		sain->substring[sain->k++] = string[sain->c++];
 }
 
-// char	*int_to_string(int in)
-// {
-// 	int		c;
-// 	char	*out;
+char	*int_to_string(int in)
+{
+	int		c;
+	int		len;
+	char	*out;
 
-// 	c = 0;
-
-// 	while (in > 0)
-// 	{
-// 		c = in % 10;
-		
-// 	}
-// }
+	c = 0;
+	c = in;
+	len = 0;
+	while (c > 0)
+	{
+		c = c / 10;
+		len++;
+	}
+	if (in == 0)
+		return ("0");
+	out = ft_calloc(len + 1, sizeof(char));
+	while (in > 0)
+	{
+		c = in % 10;
+		out[--len] = c + 48;
+		in = in / 10;
+	}
+	return (out);
+}
