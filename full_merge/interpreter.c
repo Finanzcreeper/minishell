@@ -223,7 +223,7 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 	}
 }
 
-void	traverse_ast2(t_node *ast, char **env)
+void	traverse_ast(t_node *ast, char **env)
 {
 	if (ast->type == N_CMD)
 	{
@@ -234,7 +234,7 @@ void	traverse_ast2(t_node *ast, char **env)
 	}
 	else
 	{
-		traverse_ast2(ast->left, env);
+		traverse_ast(ast->left, env);
 		if (ast->type == N_PIPE)
 		{
 			if (ast->top_node == true)
@@ -243,9 +243,4 @@ void	traverse_ast2(t_node *ast, char **env)
 				pipe_to_parent(ast->right, env, false);
 		}
 	}
-}
-
-void	traverse_ast(t_node *ast, char **env)
-{
-	traverse_ast2(ast, env);
 }
