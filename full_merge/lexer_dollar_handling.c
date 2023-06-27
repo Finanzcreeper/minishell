@@ -22,10 +22,10 @@ char	*make_searched(t_token *t, int *c)
 	int		j;
 
 	i = *c + 1;
-	while ((t->content[i] >= '0' && t->content[i] <= '9') || (t->content[i]
-			>= 'a' && t->content[i] <= 'z' ) || (t->content[i] >= 'A'
-			&& t->content[i] <= 'Z'))
+	while (ft_isalnum(t->content[i]) == 1)
 		i++;
+	if (t->content[*c + 1] == '?')
+		i = *c + 2;
 	searched = ft_calloc(i - *c + 1, sizeof(char));
 	(*c)++;
 	j = 0;

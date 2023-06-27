@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   proto_lexer_additional_functions.c                 :+:      :+:    :+:   */
+/*   lexer_additional_functions.c                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:38:35 by nreher            #+#    #+#             */
-/*   Updated: 2023/05/25 12:49:18 by nreher           ###   ########.fr       */
+/*   Updated: 2023/06/26 16:13:19 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,3 +74,16 @@ void	fuck_norminete(t_sain *sain, t_defs defs, t_token **list, char *string)
 		sain->substring[sain->k++] = string[sain->c++];
 }
 
+// char	*int_to_string(int in)
+// {
+// 	int		c;
+// 	char	*out;
+
+// 	c = 0;
+
+// 	while (in > 0)
+// 	{
+// 		c = in % 10;
+		
+// 	}
+// }

@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int		dollar_spotted(t_token *t, char **env, int c)
+int	dollar_spotted(t_token *t, char **env, int c)
 {
 	char	*before;
 	char	*searched;
@@ -22,6 +22,9 @@ int		dollar_spotted(t_token *t, char **env, int c)
 		free(t->content);
 		t->content = searched;
 		searched = env[c] + ft_strlen(searched);
+		if (c == -2)
+			ft_printf("$? found, It isnt fully implemented yet, look into lexer_dollar_handling_additional_functions and finish int_to_string to implement it.\n");
+			// searched = int_to_string(exitstatus);
 		found(t, before, after, searched);
 		return (0);
 	}
@@ -53,6 +56,8 @@ int	match_searched(char **env, char *searched)
 	int	c;
 
 	c = 0;
+	if (ft_strncmp(searched, "?=", 3) == 0)
+		return (-2);
 	while (env[c] != NULL)
 	{
 		if (ft_strncmp(env[c], searched, ft_strlen(searched)) == 0)
