@@ -123,6 +123,7 @@ void	execute_cmd(t_list *command_elements, char **env)
 	if (path == NULL)
 	{
 		fprintf(stderr, "%s%s", cmd_as_array[0], ERR_CMD);
+		free(cmd_as_array);
 		exitstatus = 1;
 		exit(exitstatus);
 	}
@@ -176,9 +177,10 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 	if (check_for_builtin(cmd_as_array[0]) == true)
 	{
 		run_builtin(cmd_as_array, env);
+		free(cmd_as_array);
 		return ;
 	}
-
+	free(cmd_as_array);
 	if (!is_last_command)
 		pipe(io_fd);
 	pid = fork();

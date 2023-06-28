@@ -3,6 +3,7 @@
 		"libft.h": "c",
 		"*.bak": "c",
 		"new": "c",
-		"typeinfo": "c"
+		"typeinfo": "c",
+		"*.cdd": "c"
 	}
 }

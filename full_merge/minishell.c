@@ -139,7 +139,9 @@ void	lexparseinterpret_line(char *line, char **env)
 int	main(int argc, char **argv, char **env)
 {
 	char	*line;
+	int		infds;
 
+	infds = dup(STDIN_FD);
 	if (argc == 2)
 	{
 		lexparseinterpret_line(argv[1], env);
@@ -154,8 +156,9 @@ int	main(int argc, char **argv, char **env)
 	signal(SIGQUIT, SIG_IGN); // override/ignore default behaviour of CTRL + '\'
 	while (1)
 	{
+		dup2(infds, STDIN_FD);
 		line = readline("minishell% ");
-		if (!line) // using this to detect CTRL D, which sends EOF (what if line is actually NULL?)
+		if (line == NULL) // using this to detect CTRL D, which sends EOF (what if line is actually NULL?)
 			break ;
 		if (ft_strncmp(line, "clear", 5) == 0)
 			rl_clear_history();
