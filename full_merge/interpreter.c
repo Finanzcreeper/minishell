@@ -57,6 +57,8 @@ char	*get_path(char **cmd_as_array, char **env)
 	int		i;
 	char	*path_cmd;
 
+	if (access(cmd_as_array[0], F_OK | X_OK) == 0)
+		return (cmd_as_array[0]);
 	while (ft_strncmp("PATH=", *env, 5))
 		env++;
 	paths = ft_split(*env + 5, ':');
@@ -122,6 +124,7 @@ void	execute_cmd(t_list *command_elements, char **env)
 	path = get_path(cmd_as_array, env);
 	if (path == NULL)
 	{
+		printf("here\n");
 		fprintf(stderr, "%s%s", cmd_as_array[0], ERR_CMD);
 		free(cmd_as_array);
 		exitstatus = 1;
