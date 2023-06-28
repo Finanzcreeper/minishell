@@ -19,7 +19,7 @@ int	dollar_spotted(t_token *t, char **env, int c)
 	}
 	else
 	{
-		ft_printf("exitstatus is: %d\n", exitstatus);
+		// ft_printf("exitstatus is: %d\n", exitstatus);
 		free(t->content);
 		t->content = searched;
 		searched = env[c] + ft_strlen(searched);
