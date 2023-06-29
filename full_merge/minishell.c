@@ -117,7 +117,7 @@ void	lexparseinterpret_line(char *line, char **env)
 	ast_head = ft_calloc(1, sizeof(t_node));
 	token_head = lexer(line, env);
 	tokens = token_head->next;
-	if (token_head->content == NULL)
+	if (tokens->content == NULL)
 	{
 		free_ast(ast_head);
 		lex_freedman(token_head);
