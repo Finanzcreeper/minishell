@@ -56,6 +56,7 @@ char	*get_path(char **cmd_as_array, char **env)
 	char	**paths;
 	int		i;
 	char	*path_cmd;
+	char	*pre;
 
 	if (access(cmd_as_array[0], F_OK | X_OK) == 0)
 		return (cmd_as_array[0]);
@@ -65,15 +66,24 @@ char	*get_path(char **cmd_as_array, char **env)
 	i = 0;
 	while (paths[i])
 	{
-		path_cmd = ft_strjoin(ft_strjoin(paths[i], "/"), cmd_as_array[0]);
+		pre = ft_strjoin(paths[i], "/");
+		path_cmd = ft_strjoin(pre, cmd_as_array[0]);
+		free(pre);
 		if (access(path_cmd, F_OK | X_OK) == 0)
 		{
+			i = 0;
+			while (paths[i] != NULL)
+				free(paths[i++]);
 			free(paths);
 			return (path_cmd);
 		}
 		free(path_cmd);
 		i++;
 	}
+	i = 0;
+	while (paths[i] != NULL)
+		free(paths[i++]);
+	free(paths);
 	return (NULL);
 }
 
@@ -171,9 +181,10 @@ void	execute_cmd(t_list *command_elements, char **env)
 	path = get_path(cmd_as_array, env);
 	if (path == NULL)
 	{
-		// printf("here\n");
 		fprintf(stderr, "%s%s", cmd_as_array[0], ERR_CMD);
 		free(cmd_as_array);
+		free(path);
+		// ft_lstclear(&command_elements, free);
 		exitstatus = 1;
 		exit(exitstatus);
 	}
@@ -198,6 +209,7 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 	if (ft_strncmp(cmd_as_array[0], "exit", ft_strlen(cmd_as_array[0])) == 0)
 	{
 		builtin_exit(cmd_as_array);
+		free(cmd_as_array);
 		return ;
 	}
 	in_fd = open_infile(cmd_node);
@@ -238,6 +250,7 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 	else
 	{
 		wait(&exitstatus);
+		free(cmd_as_array);
 		if (!is_last_command)
 		{
 			close(io_fd[1]);
