@@ -15,7 +15,7 @@ char	**remove_key_from_env(char **env, char *key_to_remove)
 	j = 0;
 	bunch_up = false;
 	while (env[j])
-	{	
+	{
 		from_equals = ft_strchr(env[j], '=');
 		line_key_len = ft_strlen(env[j]) - ft_strlen(from_equals);
 		line_key = ft_substr(env[j], 0, line_key_len);
@@ -43,6 +43,7 @@ void	builtin_echo(int num_elements, char **elements)
 	if (num_elements == 0)
 	{
 		ft_printf("\n");
+		exitstatus = 127;
 		return ;
 	}
 	print_newline = true;
@@ -61,11 +62,12 @@ void	builtin_echo(int num_elements, char **elements)
 	}
 	if (print_newline)
 		ft_printf("\n");
+	exitstatus = 0;
 }
 
 // cd (with only a relative or absolute path)
 // change current working directory
-int	builtin_cd_absolute(char *path)
+void	builtin_cd_absolute(char *path)
 {
 	int	status;
 
@@ -73,13 +75,15 @@ int	builtin_cd_absolute(char *path)
 	if (status != 0)
 	{
 		ft_printf("bash: cd: %s: No such file or directory\n", path);
-		return (1);
+		exitstatus = 127;
+		return ;
 	}
-	return (0);
+	exitstatus = 0;
+	return ;
 }
 
 // concats buf_cwd, slash and path
-int	builtin_cd_relative(char *path)
+void	builtin_cd_relative(char *path)
 {
 	char	buf_cwd[PATH_MAX];
 	int		status;
@@ -94,30 +98,36 @@ int	builtin_cd_relative(char *path)
 		if (status != 0)
 		{
 			ft_printf("bash: cd: %s: No such file or directory\n", path);
-			return (1);
+			exitstatus = 127;
+			return ;
 		}
-		return (0);
+		exitstatus = 0;
+		return ;
 	}
 	perror("getcwd() error");
-	return (1);
+	exitstatus = 127;
+	return ;
 }
 
-int	builtin_cd(int num_elements, char **elements)
+void	builtin_cd(int num_elements, char **elements)
 {
 	char	*path;
 
 	if (num_elements > 1)
 	{
 		ft_printf("cd: too many arguments\n");
-		return (1);
+		exitstatus = 127;
+		return ;
 	}
 	if (num_elements == 0)
 	{
 		chdir("~");
-		return (0);
+		exitstatus = 0;
+		return ;
 	}
 	path = elements[0];
 	if (path[0] == '/')
-		return (builtin_cd_absolute(path));
-	return (builtin_cd_relative(path));
+		builtin_cd_absolute(path);
+	else
+		builtin_cd_relative(path);
 }

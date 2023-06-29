@@ -2,7 +2,7 @@
 
 // pwd (with no options)
 // print the path of the working directory, starting from the root
-int	builtin_pwd(void)
+void	builtin_pwd(void)
 {
 	char	buf_cwd[PATH_MAX];
 
@@ -11,9 +11,10 @@ int	builtin_pwd(void)
 	else
 	{
 		perror("getcwd() error");
-		return (1);
+		exitstatus = 127;
+		return ;
 	}
-	return (0);
+	exitstatus = 0;
 }
 
 // export (with no options)
@@ -21,11 +22,13 @@ int	builtin_pwd(void)
 // NOTE: performs bubble sort 
 // NOTE: arguments are variable names without $
 // NOTE: no error message even if unsuccessful
+// TODO: tidy and break into functions
 void	builtin_export_no_args(char **env)
 {
 	int		c;
 	int		i;
 	int		j;
+	int		l;
 	char	*temp;
 
 	env = remove_key_from_env(env, "_");
@@ -38,9 +41,12 @@ void	builtin_export_no_args(char **env)
 		j = 0;
 		while (j < c - 1 - i)
 		{
-			ft_printf("%s\n", env[j]);
-			if (ft_strncmp(env[j], env[j + 1], 1) > 0) // which one to ft_strlen? the longest?
-			{				
+			if (ft_strlen(env[j]) > ft_strlen(env[j + 1]))
+				l = ft_strlen(env[j]);
+			else
+				l = ft_strlen(env[j + 1]);
+			if (ft_strncmp(env[j], env[j + 1], l) > 0)
+			{
 				temp = env[j];
 				env[j] = env[j + 1];
 				env[j + 1] = temp;
@@ -48,6 +54,31 @@ void	builtin_export_no_args(char **env)
 			j++;
 		}
 		i++;
+	}
+	
+	i = 0;
+	while (i < c)
+	{
+		bool posteq = false;
+		ft_printf("declare -x ");
+		j = 0;
+		while (env[i][j])
+		{
+			char	qu;
+			char	ch;
+
+			qu = '\"';
+			ch = env[i][j];
+			write(STDOUT_FD, &ch, 1);
+			if (posteq == false && env[i][j] == '=')
+			{
+				posteq = true;
+				write(STDOUT_FD, &qu, 1);
+			}			
+			j++;
+		}
+		i++;
+		ft_printf("\"\n");
 	}
 }
 
@@ -79,21 +110,23 @@ void builtin_export_args(char **args, char **env)
 	}
 }
 
-int	builtin_export(int num_args, char **args, char **env)
+void	builtin_export(int num_args, char **args, char **env)
 {
 	if (num_args == 0)
 	{
 		builtin_export_no_args(env);
-		return (0);
+		exitstatus = 0;
+		return ;
 	}
 	builtin_export_args(args, env);
-	return (0);
+	exitstatus = 0;
+	return ;
 }
 
 // unset (with no options)
 // remove item from env by name
 // NOTE: unsetting a not-previously-set variable does not abort or give an error
-int	builtin_unset(char **args, char **env)
+void	builtin_unset(char **args, char **env)
 {
 	int	i;
 
@@ -103,5 +136,6 @@ int	builtin_unset(char **args, char **env)
 		env = remove_key_from_env(env, args[i]);
 		i++;
 	}
-	return (0);
+	exitstatus = 0;
+	return ;
 }

@@ -75,7 +75,6 @@ typedef struct s_node
 	char			*limiter;
 	bool			append_when_writing;
 	bool			top_node;
-	bool			infile_takes_precedence;
 }					t_node;
 
 typedef struct s_seperate_arguments_into_nodes
@@ -101,7 +100,6 @@ typedef struct s_redirs
 	bool	append_when_writing;
 	bool	read_from_heredoc;
 	char	*limiter;
-	bool	infile_takes_precedence;
 }t_redirs;
 
 
@@ -114,14 +112,14 @@ void	print_tokens(t_token *token);
 char	*tokentype_lookup(int type_num);
 void	traverse_ast(t_node *ast, char **env);
 
-
 // interpreter builtins
-int		builtin_cd(int num_args, char **args);
+void	builtin_exit(char **cmd_as_array);
+void	builtin_cd(int num_args, char **args);
 void	builtin_echo(int num_args, char **args);
-int		builtin_export(int num_args, char **args, char **env);
-int		builtin_unset(char **args, char **env);
+void	builtin_export(int num_args, char **args, char **env);
+void	builtin_unset(char **args, char **env);
 char	**remove_key_from_env(char **env, char *key_to_remove);
-int		builtin_pwd(void);
+void	builtin_pwd(void);
 void	run_builtin(char **cmd_as_array, char **env);
 bool	check_for_builtin(char *command);
 

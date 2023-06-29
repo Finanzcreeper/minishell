@@ -2,14 +2,15 @@
 
 // env (with no options or arguments)
 // print a list of environment variables (in order of creation?)
-int	builtin_env(int num_args, char **args, char **env)
+void	builtin_env(int num_args, char **args, char **env)
 {
 	int	i;
 
 	if (num_args != 0)
 	{
 		ft_printf("env: ‘%s’: No such file or directory\n", args[0]);
-		return (1);
+		exitstatus = 127;
+		return ;
 	}
 	i = 0;
 	while (env[i])
@@ -17,34 +18,52 @@ int	builtin_env(int num_args, char **args, char **env)
 		ft_printf("%s\n", env[i]);
 		i++;
 	}
-	return (0);
+	exitstatus = 0;
 }
 
 // exit (with no options)
 // causes shell to exit
 // can have one argument, an exit status code
 // (if not given it is that of the last executed command)
-int	builtin_exit(int num_args, char **args)
+void	builtin_exit(char **cmd_as_array)
 {
-	if (num_args > 1)
+	char			*cmd;
+	char			**args;
+	unsigned int	argc;
+	int 			i;
+
+	cmd = cmd_as_array[0];
+	args = ++cmd_as_array;
+	argc = 0;
+	while (args[argc])
+		argc++;
+
+	if (argc > 1)
 	{
 		ft_printf("bash: exit: too many arguments\n");
-		return (-1);
+		exitstatus = 127;
+		return ;
 	}
-	if (num_args == 1)
+	if (argc == 1)
 	{
-		if (ft_atoi(args[0]) == 0)
+		i = 0;
+		while (args[0][i])
 		{
-			ft_printf("bash: exit: %s: numeric argument required\n", args[0]);
-			return (-1);
+			if (args[0][i] < '0' || args[0][i] > '9')
+			{
+				ft_printf("bash: exit: %s: numeric argument required\n", args[0]);
+				exitstatus = 127;
+				return ;
+			}
+			i++;
 		}
-		else
-			exitstatus = ft_atoi(args[0]);
+		exitstatus = ft_atoi(args[0]);
 	}
+	if (argc == 0)
+		exitstatus = 0;
 	ft_printf("exit\n");
 	// TODO: what to free here?
 	exit(exitstatus);
-	return (0);
 }
 
 bool	check_for_builtin(char *command)
@@ -54,8 +73,7 @@ bool	check_for_builtin(char *command)
 		(ft_strncmp(command, "pwd", ft_strlen(command)) == 0) ||
 		(ft_strncmp(command, "export", ft_strlen(command)) == 0) ||
 		(ft_strncmp(command, "unset", ft_strlen(command)) == 0) ||
-		(ft_strncmp(command, "env", ft_strlen(command)) == 0) ||
-		(ft_strncmp(command, "exit", ft_strlen(command)) == 0))
+		(ft_strncmp(command, "env", ft_strlen(command)) == 0))
 		return true;
 	return false;
 }
@@ -83,6 +101,4 @@ void	run_builtin(char **cmd_as_array, char **env)
 		builtin_unset(args, env);
 	else if (ft_strncmp(cmd, "env", ft_strlen(cmd)) == 0)
 		builtin_env(argc, args, env);
-	else if (ft_strncmp(cmd, "exit", ft_strlen(cmd)) == 0)
-		builtin_exit(argc, args);
 }

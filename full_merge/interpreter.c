@@ -102,17 +102,64 @@ void make_heredoc(t_node *cmd_node, char *limiter)
 	cmd_node->infile = ".heredoc_tmp";
 }
 
-int	open_outfile(t_node *cmd)
+int	open_infile(t_node *cmd_node)
+{
+	int		in_fd;
+
+	in_fd = STDIN_FD;
+	if (cmd_node->read_from_heredoc == false)
+	{
+		if (cmd_node->infile != NULL)
+			in_fd = open(cmd_node->infile, O_RDONLY);
+	}
+	else
+	{
+		if (cmd_node->read_from_heredoc == true)
+			make_heredoc(cmd_node, cmd_node->limiter);
+	}
+	if (in_fd == -1)
+	{
+		fprintf(stderr, "bash: %s%s", cmd_node->infile, ERR_READ);
+		return (-1);
+	}
+	if (in_fd != STDIN_FD)
+	{
+		dup2(in_fd, STDIN_FD);
+		close(in_fd);
+	}
+	return (in_fd);
+}
+
+int	open_outfile(t_node *cmd_node)
 {
 	int	out_fd;
 
-	if (cmd->outfile == NULL)
-		return (STDOUT_FD);
-	if (cmd->append_when_writing == true)
-		out_fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
+	out_fd = STDOUT_FD;
+	if (cmd_node->outfile == NULL)
+		return (out_fd);
+	if (cmd_node->append_when_writing == true)
+		out_fd = open(cmd_node->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
 	else
-		out_fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+		out_fd = open(cmd_node->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (out_fd == -1)
+	{
+		fprintf(stderr, "bash: %s%s", cmd_node->outfile, ERR_WRITE);
+		return (-1);
+	}
+	if (out_fd != STDOUT_FD)
+	{
+		dup2(out_fd, STDOUT_FD);
+		close(out_fd);
+	}
 	return (out_fd);
+}
+
+void	close_inout_fds(int in_fd, int out_fd)
+{
+	if (exitstatus != 0 && in_fd != STDIN_FD)
+		close(in_fd);
+	if (out_fd != STDOUT_FD)
+		close(out_fd);
 }
 
 void	execute_cmd(t_list *command_elements, char **env)
@@ -124,7 +171,6 @@ void	execute_cmd(t_list *command_elements, char **env)
 	path = get_path(cmd_as_array, env);
 	if (path == NULL)
 	{
-		printf("here\n");
 		fprintf(stderr, "%s%s", cmd_as_array[0], ERR_CMD);
 		free(cmd_as_array);
 		exitstatus = 1;
@@ -147,43 +193,18 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 	int		out_fd;
 	char	**cmd_as_array;
 
-	in_fd = STDIN_FD;
-
-	if (cmd_node->infile_takes_precedence == true)
+	cmd_as_array = list_to_array(cmd_node->command_elements);
+	if (ft_strncmp(cmd_as_array[0], "exit", ft_strlen(cmd_as_array[0])) == 0)
 	{
-		if (cmd_node->infile != NULL)
-			in_fd = open(cmd_node->infile, O_RDONLY);
-	}
-	else
-	{
-		if (cmd_node->read_from_heredoc == true)
-			make_heredoc(cmd_node, cmd_node->limiter);
-	}
-	if (in_fd == -1)
-	{
-		fprintf(stderr, "bash: %s%s", cmd_node->infile, ERR_READ);
+		builtin_exit(cmd_as_array);
 		return ;
 	}
-	if (in_fd != STDIN_FD)
-	{
-		dup2(in_fd, STDIN_FD);
-		close(in_fd);
-	}
+	in_fd = open_infile(cmd_node);
+	if (in_fd == -1)
+		return ;
 	out_fd = open_outfile(cmd_node);
 	if (out_fd == -1)
-	{
-		fprintf(stderr, "bash: %s%s", cmd_node->outfile, ERR_WRITE);
 		return ;
-	}
-	// builtins are now here and are not run in a separate subprocess anymore
-	cmd_as_array = list_to_array(cmd_node->command_elements);
-	if (check_for_builtin(cmd_as_array[0]) == true)
-	{
-		run_builtin(cmd_as_array, env);
-		free(cmd_as_array);
-		return ;
-	}
-	free(cmd_as_array);
 	if (!is_last_command)
 		pipe(io_fd);
 	pid = fork();
@@ -194,18 +215,24 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 	}
 	if (pid == 0)
 	{
-		if (out_fd != STDOUT_FD)
-		{
-			dup2(out_fd, STDOUT_FD);
-			close(out_fd);
-		}
 		if (!is_last_command)
 		{
 			close(io_fd[0]);
 			dup2(io_fd[1], STDOUT_FD);
 			close(io_fd[1]);
 		}
-		execute_cmd(cmd_node->command_elements, env);
+		// cmd_as_array = list_to_array(cmd_node->command_elements);
+		if (check_for_builtin(cmd_as_array[0]) == true)
+		{
+			run_builtin(cmd_as_array, env);
+			free(cmd_as_array);
+			exit(exitstatus);
+		}
+		else
+		{
+			free(cmd_as_array);
+			execute_cmd(cmd_node->command_elements, env);
+		}
 	}
 	else
 	{
@@ -216,13 +243,7 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 			dup2(io_fd[0], STDIN_FD);
 			close(io_fd[0]);
 		}
-		if (exitstatus != 0)
-		{
-			if (in_fd != STDIN_FD)
-				close(in_fd);
-		}
-		if (out_fd != STDOUT_FD)
-			close(out_fd);
+		close_inout_fds(in_fd, out_fd);
 		if (cmd_node->read_from_heredoc == true)
 			unlink(".heredoc_tmp");
 	}

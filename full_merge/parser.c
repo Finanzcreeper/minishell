@@ -20,7 +20,7 @@ int	parse__redirection(t_token **token, t_redirs *redirs)
 		if ((*token) && (*token)->type == T_WORD)
 		{
 			redirs->infile = (*token)->content;
-			redirs->infile_takes_precedence = true;
+			redirs->read_from_heredoc = false;
 			(*token) = (*token)->next;
 			return (0);
 		}
@@ -41,7 +41,6 @@ int	parse__redirection(t_token **token, t_redirs *redirs)
 	else if ((*token) && (*token)->type == T_REFROM_HEREDOC)
 	{
 		redirs->read_from_heredoc = true;
-		redirs->infile_takes_precedence = false;
 		(*token) = (*token)->next;
 		if ((*token) && (*token)->type == T_WORD)
 		{
@@ -91,7 +90,6 @@ bool	parse__simple_command_tail(t_token **token,
 	cmd_node->append_when_writing = redirs->append_when_writing;
 	cmd_node->read_from_heredoc = redirs->read_from_heredoc;
 	cmd_node->limiter = redirs->limiter;
-	cmd_node->infile_takes_precedence = redirs->infile_takes_precedence;
 	*command_elements = NULL;
 	ft_bzero(redirs, sizeof(t_redirs));
 	if (ast_head->type != 1)
