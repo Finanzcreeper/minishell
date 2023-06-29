@@ -171,6 +171,7 @@ void	execute_cmd(t_list *command_elements, char **env)
 	path = get_path(cmd_as_array, env);
 	if (path == NULL)
 	{
+		// printf("here\n");
 		fprintf(stderr, "%s%s", cmd_as_array[0], ERR_CMD);
 		free(cmd_as_array);
 		exitstatus = 1;

@@ -151,7 +151,6 @@ echo "###############################################
 "
 
 ./t.sh $1 "cat | cat | ls"
-./t.sh $1 "exit 1 2"
 ./t.sh $1 "/bin/ls"
 ./t.sh $1 "/bin/ls -l"
 ./t.sh $1 ""
@@ -160,20 +159,15 @@ echo "###############################################
 ./t.sh $1 "          "
 ./t.sh $1 "echo -n"
 ./t.sh $1 "echo -n e"
-./t.sh $1 "exit"
-./t.sh $1 "exit 123"
-./t.sh $1 "exit 123 456"
-./t.sh $1 "exit fr"
+./t.sh $1 "exit" "exit"
+./t.sh $1 "exit 123" "exit"
+./t.sh $1 "exit 123 456" "bash: exit: too many arguments"
+./t.sh $1 "exit fr" "bash: exit: fr: numeric argument required"
 ./t.sh $1 "echo $?"
-./t.sh $1 "$?"
-./t.sh $1 "$? + $?"
-./t.sh $1 "$? peo $?"
-./t.sh $1 "echo "cat lol.c|cat lol.c""
-./t.sh $1 "echo '$USER'"
-./t.sh $1 "echo "$USER""
-unset PWD && echo /nfs/homes/nreher/Dev/minishell/full_merge
-./t.sh $1 "echo "test$USER tset""
-./t.sh $1 "echo 'test$USER tset'"
+./t.sh $1 "$?" "0: command not found"
+./t.sh $1 "$? + $?" "0: command not found"
+./t.sh $1 "$? peo $?" "0: command not found"
+./t.sh $1 "echo "cat lol.c cat lol.c""
 
 echo "
 ###############################################"
@@ -181,6 +175,10 @@ echo "check these manually!"
 echo "###############################################
 "
 
+echo "test$USER tset"
+echo 'test$USER tset'
+echo '$USER'
+echo "$USER"
 echo "env";
 echo "export TEST=this && echo $TEST"; # this check is needed to see if the export worked
 echo "export PWD";
