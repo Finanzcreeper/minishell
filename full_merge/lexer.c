@@ -9,7 +9,6 @@
 /*   Updated: 2023/05/26 12:15:00 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include "minishell.h"
 
 void	set_type(t_token	*token, char **metachars, t_token **token_list)

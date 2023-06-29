@@ -1,17 +1,17 @@
-// TODO: remove fprintf's (replace with writes?)
-// TODO: fix issue that minishell exits before allowing next line to be captured (it's fine with a single command)
-
-// - when we do ls | ls, output of ls is treated as input to minishell because it goes to std_out
-// Q: if a command is not found, do we stop there or do we continue piping? A: we continue piping but next command receives no input
-
-// approach: check a valid path for the command is found in env, and ONLY THEN create the pipe and execute the command in the child process
-// special case for the last command or single command, which will be executed without piping (as there is no interprocess communication in this case)
-// when running as minishell, the LAST COMMAND should be run as a subprocess so as not to take over the main minishell process, but we do not need its piped output(so no pipe)
-// whereas on the tester we just return to the command line
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer_additional_functions.c                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/03 10:38:35 by nreher            #+#    #+#             */
+/*   Updated: 2023/06/27 15:27:54 by nreher           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "minishell.h"
 
-int exitstatus;
+int	g_exitstatus;
 
 void	print_array(char **array)
 {
@@ -77,7 +77,7 @@ char	*get_path(char **cmd_as_array, char **env)
 	return (NULL);
 }
 
-void make_heredoc(t_node *cmd_node, char *limiter)
+void	make_heredoc(t_node *cmd_node, char *limiter)
 {
 	int		heredoc_fd;
 	char	*next_line;
@@ -156,7 +156,7 @@ int	open_outfile(t_node *cmd_node)
 
 void	close_inout_fds(int in_fd, int out_fd)
 {
-	if (exitstatus != 0 && in_fd != STDIN_FD)
+	if (g_exitstatus != 0 && in_fd != STDIN_FD)
 		close(in_fd);
 	if (out_fd != STDOUT_FD)
 		close(out_fd);
@@ -171,25 +171,77 @@ void	execute_cmd(t_list *command_elements, char **env)
 	path = get_path(cmd_as_array, env);
 	if (path == NULL)
 	{
-		// printf("here\n");
 		fprintf(stderr, "%s%s", cmd_as_array[0], ERR_CMD);
 		free(cmd_as_array);
-		exitstatus = 1;
-		exit(exitstatus);
+		g_exitstatus = 1;
+		exit(g_exitstatus);
 	}
 	if (execve(path, cmd_as_array, env) == -1)
 	{
 		fprintf(stderr, "%s", ERR_EXEC);
 		free(cmd_as_array);
-		exitstatus = 1;
-		exit(exitstatus);
+		g_exitstatus = 1;
+		exit(g_exitstatus);
 	}
 }
 
-void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
+void	child(t_node *cmd_node, char **env, bool lstcmd, int io_fd[2])
 {
-	pid_t	pid;
+	char	**cmd_as_array;
+
+	if (!lstcmd)
+	{
+		close(io_fd[0]);
+		dup2(io_fd[1], STDOUT_FD);
+		close(io_fd[1]);
+	}
+	cmd_as_array = list_to_array(cmd_node->command_elements);
+	if (check_for_builtin(cmd_as_array[0]) == true)
+	{
+		run_builtin(cmd_as_array, env);
+		free(cmd_as_array);
+		exit(g_exitstatus);
+	}
+	else
+	{
+		free(cmd_as_array);
+		execute_cmd(cmd_node->command_elements, env);
+	}
+}
+
+// too many args: keep in_fd and out_fd in cmd struct?!
+void	forker(t_node *cmd_node, char **env, bool lstcmd, int in_fd, int out_fd)
+{
 	int		io_fd[2];
+	pid_t	pid;
+
+	if (!lstcmd)
+		pipe(io_fd);
+	pid = fork();
+	if (pid == -1)
+	{
+		fprintf(stderr, "%s", ERR_FORK);
+		exit(127);
+	}
+	if (pid == 0)
+		child(cmd_node, env, lstcmd, io_fd);
+	else
+	{
+		wait(&g_exitstatus);
+		if (!lstcmd)
+		{
+			close(io_fd[1]);
+			dup2(io_fd[0], STDIN_FD);
+			close(io_fd[0]);
+		}
+		close_inout_fds(in_fd, out_fd);
+		if (cmd_node->read_from_heredoc == true)
+			unlink(".heredoc_tmp");
+	}
+}
+
+void	pipe_to_parent(t_node *cmd_node, char **env, bool lstcmd)
+{
 	int		in_fd;
 	int		out_fd;
 	char	**cmd_as_array;
@@ -206,48 +258,7 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool is_last_command)
 	out_fd = open_outfile(cmd_node);
 	if (out_fd == -1)
 		return ;
-	if (!is_last_command)
-		pipe(io_fd);
-	pid = fork();
-	if (pid == -1)
-	{
-		fprintf(stderr, "%s", ERR_FORK);
-		exit(1);
-	}
-	if (pid == 0)
-	{
-		if (!is_last_command)
-		{
-			close(io_fd[0]);
-			dup2(io_fd[1], STDOUT_FD);
-			close(io_fd[1]);
-		}
-		// cmd_as_array = list_to_array(cmd_node->command_elements);
-		if (check_for_builtin(cmd_as_array[0]) == true)
-		{
-			run_builtin(cmd_as_array, env);
-			free(cmd_as_array);
-			exit(exitstatus);
-		}
-		else
-		{
-			free(cmd_as_array);
-			execute_cmd(cmd_node->command_elements, env);
-		}
-	}
-	else
-	{
-		wait(&exitstatus);
-		if (!is_last_command)
-		{
-			close(io_fd[1]);
-			dup2(io_fd[0], STDIN_FD);
-			close(io_fd[0]);
-		}
-		close_inout_fds(in_fd, out_fd);
-		if (cmd_node->read_from_heredoc == true)
-			unlink(".heredoc_tmp");
-	}
+	forker(cmd_node, env, lstcmd, in_fd, out_fd);
 }
 
 void	traverse_ast(t_node *ast, char **env)

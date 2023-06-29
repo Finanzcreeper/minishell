@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer_additional_functions.c                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/03 10:38:35 by nreher            #+#    #+#             */
+/*   Updated: 2023/06/27 15:27:54 by nreher           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "minishell.h"
 
 // pwd (with no options)
@@ -11,10 +22,39 @@ void	builtin_pwd(void)
 	else
 	{
 		perror("getcwd() error");
-		exitstatus = 127;
+		g_exitstatus = 127;
 		return ;
 	}
-	exitstatus = 0;
+	g_exitstatus = 0;
+}
+
+void	format_export_for_display(char **env, int c)
+{
+	int		i;
+	int		j;
+	char	qu;
+	bool	posteq;
+
+	qu = '\"';
+	i = 0;
+	while (i < c)
+	{
+		posteq = false;
+		ft_printf("declare -x ");
+		j = 0;
+		while (env[i][j])
+		{
+			write(STDOUT_FD, &(env[i][j]), 1);
+			if (posteq == false && env[i][j++] == '=')
+			{
+				write(STDOUT_FD, &qu, 1);
+				posteq = true;
+			}
+			j++;
+		}
+		ft_printf("\"\n");
+		i++;
+	}
 }
 
 // export (with no options)
@@ -22,7 +62,6 @@ void	builtin_pwd(void)
 // NOTE: performs bubble sort 
 // NOTE: arguments are variable names without $
 // NOTE: no error message even if unsuccessful
-// TODO: tidy and break into functions
 void	builtin_export_no_args(char **env)
 {
 	int		c;
@@ -41,45 +80,21 @@ void	builtin_export_no_args(char **env)
 		j = 0;
 		while (j < c - 1 - i)
 		{
-			if (ft_strlen(env[j]) > ft_strlen(env[j + 1]))
-				l = ft_strlen(env[j]);
-			else
-				l = ft_strlen(env[j + 1]);
-			if (ft_strncmp(env[j], env[j + 1], l) > 0)
-			{
-				temp = env[j];
-				env[j] = env[j + 1];
-				env[j + 1] = temp;
-			}
+				if (ft_strlen(env[j]) > ft_strlen(env[j + 1]))
+					l = ft_strlen(env[j]);
+				else
+					l = ft_strlen(env[j + 1]);
+				if (ft_strncmp(env[j], env[j + 1], l) > 0)
+				{
+					temp = env[j];
+					env[j] = env[j + 1];
+					env[j + 1] = temp;
+				}
 			j++;
 		}
 		i++;
 	}
-	
-	i = 0;
-	while (i < c)
-	{
-		bool posteq = false;
-		ft_printf("declare -x ");
-		j = 0;
-		while (env[i][j])
-		{
-			char	qu;
-			char	ch;
-
-			qu = '\"';
-			ch = env[i][j];
-			write(STDOUT_FD, &ch, 1);
-			if (posteq == false && env[i][j] == '=')
-			{
-				posteq = true;
-				write(STDOUT_FD, &qu, 1);
-			}			
-			j++;
-		}
-		i++;
-		ft_printf("\"\n");
-	}
+	format_export_for_display(env, c);
 }
 
 void builtin_export_args(char **args, char **env)
@@ -115,11 +130,11 @@ void	builtin_export(int num_args, char **args, char **env)
 	if (num_args == 0)
 	{
 		builtin_export_no_args(env);
-		exitstatus = 0;
+		g_exitstatus = 0;
 		return ;
 	}
 	builtin_export_args(args, env);
-	exitstatus = 0;
+	g_exitstatus = 0;
 	return ;
 }
 
@@ -136,6 +151,6 @@ void	builtin_unset(char **args, char **env)
 		env = remove_key_from_env(env, args[i]);
 		i++;
 	}
-	exitstatus = 0;
+	g_exitstatus = 0;
 	return ;
 }

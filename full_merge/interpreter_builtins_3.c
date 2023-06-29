@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer_additional_functions.c                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/03 10:38:35 by nreher            #+#    #+#             */
+/*   Updated: 2023/06/27 15:27:54 by nreher           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "minishell.h"
 
 // env (with no options or arguments)
@@ -9,7 +20,7 @@ void	builtin_env(int num_args, char **args, char **env)
 	if (num_args != 0)
 	{
 		ft_printf("env: ‘%s’: No such file or directory\n", args[0]);
-		exitstatus = 127;
+		g_exitstatus = 127;
 		return ;
 	}
 	i = 0;
@@ -18,7 +29,7 @@ void	builtin_env(int num_args, char **args, char **env)
 		ft_printf("%s\n", env[i]);
 		i++;
 	}
-	exitstatus = 0;
+	g_exitstatus = 0;
 }
 
 // exit (with no options)
@@ -41,7 +52,7 @@ void	builtin_exit(char **cmd_as_array)
 	if (argc > 1)
 	{
 		ft_printf("bash: exit: too many arguments\n");
-		exitstatus = 127;
+		g_exitstatus = 127;
 		return ;
 	}
 	if (argc == 1)
@@ -52,18 +63,17 @@ void	builtin_exit(char **cmd_as_array)
 			if (args[0][i] < '0' || args[0][i] > '9')
 			{
 				ft_printf("bash: exit: %s: numeric argument required\n", args[0]);
-				exitstatus = 127;
+				g_exitstatus = 127;
 				return ;
 			}
 			i++;
 		}
-		exitstatus = ft_atoi(args[0]);
+		g_exitstatus = ft_atoi(args[0]);
 	}
 	if (argc == 0)
-		exitstatus = 0;
+		g_exitstatus = 0;
 	ft_printf("exit\n");
-	// TODO: what to free here?
-	exit(exitstatus);
+	exit(g_exitstatus);
 }
 
 bool	check_for_builtin(char *command)

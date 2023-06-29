@@ -2,12 +2,11 @@ builtins:
 - DONE: export with no args (tidy function)
 - ability to unset and export multiple commands
 - FIX: char	relative_path[ft_strlen(buf_cwd) + ft_strlen(path) + 2];
-multiple pipes that give problems
-one space issue
-all redirections broken
+- move cd outside child process
+
+check cd .. and cd .
 "echo 1 2 3 > outfile" shouldn't print 1 2 3
 implement clear
-what should we free within exit builtin?
 
 cleanups:
 - check for forbidden functions i.e. fprintf

@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer_additional_functions.c                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/03 10:38:35 by nreher            #+#    #+#             */
+/*   Updated: 2023/06/27 15:27:54 by nreher           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "minishell.h"
 
 int	dollar_spotted(t_token *t, char **env, int c)
@@ -19,12 +30,12 @@ int	dollar_spotted(t_token *t, char **env, int c)
 	}
 	else
 	{
-		// ft_printf("exitstatus is: %d\n", exitstatus);
+		// ft_printf("g_exitstatus is: %d\n", g_exitstatus);
 		free(t->content);
 		t->content = searched;
 		searched = env[c] + ft_strlen(searched);
 		if (c == -2)
-			searched = int_to_string(exitstatus);
+			searched = int_to_string(g_exitstatus);
 		found(t, before, after, searched);
 		return (0);
 	}

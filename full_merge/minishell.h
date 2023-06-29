@@ -31,7 +31,7 @@
 
 # define ROOT -2
 
-extern int exitstatus;
+extern int g_exitstatus;
 
 typedef enum e_token_type
 {
