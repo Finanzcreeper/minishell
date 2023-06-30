@@ -141,9 +141,11 @@ void	lexparseinterpret_line(char *line, char **env)
 int	main(int argc, char **argv, char **env)
 {
 	char	*line;
-	int		infds;
+	int		infd;
+	int		outfd;
 
-	infds = dup(STDIN_FD);
+	infd = dup(STDIN_FD);
+	outfd = dup(STDOUT_FD);
 	if (argc == 2)
 	{
 		lexparseinterpret_line(argv[1], env);
@@ -158,7 +160,8 @@ int	main(int argc, char **argv, char **env)
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
-		dup2(infds, STDIN_FD);
+		dup2(infd, STDIN_FD);
+		dup2(outfd, STDOUT_FD);
 		line = readline("minishell% ");
 		if (line == NULL)
 			break ;
