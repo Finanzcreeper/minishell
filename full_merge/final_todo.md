@@ -1,14 +1,8 @@
-builtins:
-- DONE: export with no args (tidy function)
-export
-
 "echo 1 2 3 > outfile" hangs
 implement clear
 
 cleanups:
 - check for forbidden functions i.e. fprintf
-- break out pipe_to_parent into smaller functions
-- norminette
 
 manual:
 echo "env";

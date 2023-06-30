@@ -1,4 +1,3 @@
-
 #include "minishell.h"
 
 // pwd (with no options)
@@ -18,35 +17,6 @@ void	builtin_pwd(void)
 	g_exitstatus = 0;
 }
 
-void	format_export_for_display(char **env, int c)
-{
-	int		i;
-	int		j;
-	char	qu;
-	bool	posteq;
-
-	qu = '\"';
-	i = 0;
-	while (i < c)
-	{
-		posteq = false;
-		ft_printf("declare -x ");
-		j = 0;
-		while (env[i][j])
-		{
-			write(STDOUT_FD, &(env[i][j]), 1);
-			if (posteq == false && env[i][j++] == '=')
-			{
-				write(STDOUT_FD, &qu, 1);
-				posteq = true;
-			}
-			j++;
-		}
-		ft_printf("\"\n");
-		i++;
-	}
-}
-
 // export (with no options)
 // set environment variables for passing to child processes
 // NOTE: performs bubble sort 
@@ -55,39 +25,16 @@ void	format_export_for_display(char **env, int c)
 void	builtin_export_no_args(char **env)
 {
 	int		c;
-	int		i;
-	int		j;
-	int		l;
-	char	*temp;
 
 	env = remove_key_from_env(env, "_");
 	c = 0;
 	while (env[c])
 		c++;
-	i = 0;
-	while (i < c)
-	{
-		j = 0;
-		while (j < c - 1 - i)
-		{
-			if (ft_strlen(env[j]) > ft_strlen(env[j + 1]))
-				l = ft_strlen(env[j]);
-			else
-				l = ft_strlen(env[j + 1]);
-			if (ft_strncmp(env[j], env[j + 1], l) > 0)
-			{
-				temp = env[j];
-				env[j] = env[j + 1];
-				env[j + 1] = temp;
-			}
-			j++;
-		}
-		i++;
-	}
+	bubble_sort_env(env, c);
 	format_export_for_display(env, c);
 }
 
-void builtin_export_args(char **args, char **env)
+void	builtin_export_args(char **args, char **env)
 {
 	int		c;
 	int		i;

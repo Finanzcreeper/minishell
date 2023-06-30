@@ -1,4 +1,3 @@
-
 #include "minishell.h"
 
 // env (with no options or arguments)

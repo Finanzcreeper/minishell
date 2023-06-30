@@ -124,6 +124,8 @@ char	**remove_key_from_env(char **env, char *key_to_remove);
 void	builtin_pwd(void);
 void	run_builtin(char **cmd_as_array, char **env);
 bool	check_for_builtin(char *command);
+void	bubble_sort_env(char **env, int c);
+void	format_export_for_display(char **env, int c);
 
 // nicos stuff
 t_defs	make_defs(void);
