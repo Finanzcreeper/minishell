@@ -126,16 +126,13 @@ void	lexparseinterpret_line(char *line, char **env)
 	if (parse__pipeline(&tokens, &ast_head) == false)
 	{
 		ft_printf("syntax error!\n");
-		free_ast(ast_head); // issues here!
+		free_ast(ast_head);
 		lex_freedman(token_head);
 		return ;
 	}
 	ast_head->top_node = true;
-	// ft_printf("\nPRINTING AST:\n");
-	// print_ast(ast_head);
-	// ft_printf("\n");
 	traverse_ast(ast_head, env);
-	free_ast(ast_head); // issues here!
+	free_ast(ast_head);
 	ast_head = NULL;
 	lex_freedman(token_head);
 	return ;
@@ -157,13 +154,13 @@ int	main(int argc, char **argv, char **env)
 		printf(ERR_PRG_ARGS);
 		return (0);
 	}
-	signal(SIGINT, sigint_handler); // display new prompt on new line when CTRL + C pressed
-	signal(SIGQUIT, SIG_IGN); // override/ignore default behaviour of CTRL + '\'
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		dup2(infds, STDIN_FD);
 		line = readline("minishell% ");
-		if (line == NULL) // using this to detect CTRL D, which sends EOF (what if line is actually NULL?)
+		if (line == NULL)
 			break ;
 		if (ft_strncmp(line, "clear", 5) == 0)
 			rl_clear_history();
@@ -177,8 +174,6 @@ int	main(int argc, char **argv, char **env)
 		}
 		free(line);
 	}
-	// free_ast(ast_root);
-	// free_tokens(tokens_head);
 	return (0);
 }
 
