@@ -1,8 +1,8 @@
 "echo 1 2 3 > outfile" hangs
-implement clear
-
-cleanups:
-- check for forbidden functions i.e. fprintf
+fix broken heredoc
+make interpreter norm compliant
+check for forbidden functions i.e. fprintf
+cat | cat | ls
 
 manual:
 echo "env";
