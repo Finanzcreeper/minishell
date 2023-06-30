@@ -1,14 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   lexer_additional_functions.c                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/03 10:38:35 by nreher            #+#    #+#             */
-/*   Updated: 2023/06/27 15:27:54 by nreher           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	g_exitstatus;
@@ -258,6 +248,7 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool lstcmd)
 		free(cmd_as_array);
 		return ;
 	}
+	free(cmd_as_array);
 	open_infile(cmd_node);
 	if (cmd_node->in_fd == -1)
 		return ;
