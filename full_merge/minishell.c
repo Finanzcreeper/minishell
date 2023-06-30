@@ -167,13 +167,10 @@ int	main(int argc, char **argv, char **env)
 			break ;
 		if (ft_strncmp(line, "clear", 5) == 0)
 			rl_clear_history();
-		else
+		if (line[0] != '\0')
 		{
-			if (line[0] != '\0')
-			{
-				add_history(line);
-				lexparseinterpret_line(line, env);
-			}
+			add_history(line);
+			lexparseinterpret_line(line, env);
 		}
 		free(line);
 	}
