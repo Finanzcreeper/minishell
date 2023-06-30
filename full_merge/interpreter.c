@@ -3,19 +3,6 @@
 
 int	g_exitstatus;
 
-void	print_array(char **array)
-{
-	int	i;
-
-	i = 0;
-	while (array[i])
-	{
-		fprintf(stderr, "%s ", array[i]);
-		i++;
-	}
-	fprintf(stderr, "\n");
-}
-
 char	**list_to_array(t_list *list_head)
 {
 	int		l;
@@ -82,7 +69,6 @@ void	make_heredoc(t_node *cmd_node, char *limiter)
 	int		heredoc_fd;
 	char	*next_line;
 
-	fprintf(stderr, "lmt:%s\n", limiter);
 	heredoc_fd = open(".heredoc_tmp", O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (heredoc_fd < 0)
 		fprintf(stderr, "%s", ERR_HEREDOC);
@@ -105,20 +91,10 @@ void	make_heredoc(t_node *cmd_node, char *limiter)
 void	open_infile(t_node *cmd_node)
 {
 	cmd_node->in_fd = STDIN_FD;
-	if (cmd_node->read_from_heredoc == false)
-	{
-		if (cmd_node->infile != NULL)
-			cmd_node->in_fd = open(cmd_node->infile, O_RDONLY);
-	}
-	else
-	{
-		if (cmd_node->read_from_heredoc == true)
-			make_heredoc(cmd_node, cmd_node->limiter);
-	}
+	if (cmd_node->infile != NULL)
+		cmd_node->in_fd = open(cmd_node->infile, O_RDONLY);
 	if (cmd_node->in_fd == -1)
-	{
 		fprintf(stderr, "bash: %s%s", cmd_node->infile, ERR_READ);
-	}
 	if (cmd_node->in_fd != STDIN_FD)
 	{
 		dup2(cmd_node->in_fd, STDIN_FD);
@@ -132,9 +108,9 @@ void	open_outfile(t_node *cmd_node)
 	if (cmd_node->outfile == NULL)
 		return ;
 	if (cmd_node->append_when_writing == true)
-		open(cmd_node->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
+		cmd_node->out_fd = open(cmd_node->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
 	else
-		open(cmd_node->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+		cmd_node->out_fd = open(cmd_node->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (cmd_node->out_fd == -1)
 	{
 		fprintf(stderr, "bash: %s%s", cmd_node->outfile, ERR_WRITE);
@@ -235,20 +211,25 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool lstcmd)
 {
 	char	**cmd_as_array;
 
-	cmd_as_array = list_to_array(cmd_node->command_elements);
-	if (ft_strncmp(cmd_as_array[0], "exit", ft_strlen(cmd_as_array[0])) == 0)
+	if (cmd_node->read_from_heredoc == true)
+		make_heredoc(cmd_node, cmd_node->limiter);
+	else
 	{
-		builtin_exit(cmd_as_array);
+		cmd_as_array = list_to_array(cmd_node->command_elements);
+		if (ft_strncmp(cmd_as_array[0], "exit", ft_strlen(cmd_as_array[0])) == 0)
+		{
+			builtin_exit(cmd_as_array);
+			free(cmd_as_array);
+			return ;
+		}
+		if (ft_strncmp(cmd_as_array[0], "cd", ft_strlen(cmd_as_array[0])) == 0)
+		{
+			builtin_cd(cmd_as_array, env);
+			free(cmd_as_array);
+			return ;
+		}
 		free(cmd_as_array);
-		return ;
 	}
-	if (ft_strncmp(cmd_as_array[0], "cd", ft_strlen(cmd_as_array[0])) == 0)
-	{
-		builtin_cd(cmd_as_array, env);
-		free(cmd_as_array);
-		return ;
-	}
-	free(cmd_as_array);
 	open_infile(cmd_node);
 	if (cmd_node->in_fd == -1)
 		return ;

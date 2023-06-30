@@ -1,9 +1,7 @@
 builtins:
 - DONE: export with no args (tidy function)
-- move cd outside child process
 export
 
-check cd .. and cd .
 "echo 1 2 3 > outfile" hangs
 implement clear
 
