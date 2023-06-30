@@ -112,64 +112,56 @@ void	make_heredoc(t_node *cmd_node, char *limiter)
 	cmd_node->infile = ".heredoc_tmp";
 }
 
-int	open_infile(t_node *cmd_node)
+void	open_infile(t_node *cmd_node)
 {
-	int		in_fd;
-
-	in_fd = STDIN_FD;
+	cmd_node->in_fd = STDIN_FD;
 	if (cmd_node->read_from_heredoc == false)
 	{
 		if (cmd_node->infile != NULL)
-			in_fd = open(cmd_node->infile, O_RDONLY);
+			cmd_node->in_fd = open(cmd_node->infile, O_RDONLY);
 	}
 	else
 	{
 		if (cmd_node->read_from_heredoc == true)
 			make_heredoc(cmd_node, cmd_node->limiter);
 	}
-	if (in_fd == -1)
+	if (cmd_node->in_fd == -1)
 	{
 		fprintf(stderr, "bash: %s%s", cmd_node->infile, ERR_READ);
-		return (-1);
 	}
-	if (in_fd != STDIN_FD)
+	if (cmd_node->in_fd != STDIN_FD)
 	{
-		dup2(in_fd, STDIN_FD);
-		close(in_fd);
+		dup2(cmd_node->in_fd, STDIN_FD);
+		close(cmd_node->in_fd);
 	}
-	return (in_fd);
 }
 
-int	open_outfile(t_node *cmd_node)
+void	open_outfile(t_node *cmd_node)
 {
-	int	out_fd;
-
-	out_fd = STDOUT_FD;
+	cmd_node->out_fd = STDOUT_FD;
 	if (cmd_node->outfile == NULL)
-		return (out_fd);
+		return ;
 	if (cmd_node->append_when_writing == true)
-		out_fd = open(cmd_node->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
+		open(cmd_node->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
 	else
-		out_fd = open(cmd_node->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	if (out_fd == -1)
+		open(cmd_node->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (cmd_node->out_fd == -1)
 	{
 		fprintf(stderr, "bash: %s%s", cmd_node->outfile, ERR_WRITE);
-		return (-1);
 	}
-	if (out_fd != STDOUT_FD)
+	if (cmd_node->out_fd != STDOUT_FD)
 	{
-		dup2(out_fd, STDOUT_FD);
-		close(out_fd);
+		dup2(cmd_node->out_fd, STDOUT_FD);
+		close(cmd_node->out_fd);
 	}
-	return (out_fd);
 }
 
-void	close_inout_fds(int in_fd, int out_fd)
+void	close_inout_fds(t_node *cmd_node)
 {
-	if (g_exitstatus != 0 && in_fd != STDIN_FD)
-		close(in_fd);
-	if (out_fd != STDOUT_FD)
-		close(out_fd);
+	if (g_exitstatus != 0 && cmd_node->in_fd != STDIN_FD)
+		close(cmd_node->in_fd);
+	if (cmd_node->out_fd != STDOUT_FD)
+		close(cmd_node->out_fd);
 }
 
 void	execute_cmd(t_list *command_elements, char **env)
@@ -219,8 +211,7 @@ void	child(t_node *cmd_node, char **env, bool lstcmd, int io_fd[2])
 	}
 }
 
-// too many args: keep in_fd and out_fd in cmd struct?!
-void	forker(t_node *cmd_node, char **env, bool lstcmd, int in_fd, int out_fd)
+void	forker(t_node *cmd_node, char **env, bool lstcmd)
 {
 	int		io_fd[2];
 	pid_t	pid;
@@ -244,7 +235,7 @@ void	forker(t_node *cmd_node, char **env, bool lstcmd, int in_fd, int out_fd)
 			dup2(io_fd[0], STDIN_FD);
 			close(io_fd[0]);
 		}
-		close_inout_fds(in_fd, out_fd);
+		close_inout_fds(cmd_node);
 		if (cmd_node->read_from_heredoc == true)
 			unlink(".heredoc_tmp");
 	}
@@ -252,8 +243,6 @@ void	forker(t_node *cmd_node, char **env, bool lstcmd, int in_fd, int out_fd)
 
 void	pipe_to_parent(t_node *cmd_node, char **env, bool lstcmd)
 {
-	int		in_fd;
-	int		out_fd;
 	char	**cmd_as_array;
 
 	cmd_as_array = list_to_array(cmd_node->command_elements);
@@ -263,13 +252,19 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool lstcmd)
 		free(cmd_as_array);
 		return ;
 	}
-	in_fd = open_infile(cmd_node);
-	if (in_fd == -1)
+	if (ft_strncmp(cmd_as_array[0], "cd", ft_strlen(cmd_as_array[0])) == 0)
+	{
+		builtin_cd(cmd_as_array, env);
+		free(cmd_as_array);
 		return ;
-	out_fd = open_outfile(cmd_node);
-	if (out_fd == -1)
+	}
+	open_infile(cmd_node);
+	if (cmd_node->in_fd == -1)
 		return ;
-	forker(cmd_node, env, lstcmd, in_fd, out_fd);
+	open_outfile(cmd_node);
+	if (cmd_node->out_fd == -1)
+		return ;
+	forker(cmd_node, env, lstcmd);
 }
 
 void	traverse_ast(t_node *ast, char **env)

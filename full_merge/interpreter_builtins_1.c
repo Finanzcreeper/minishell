@@ -106,7 +106,6 @@ void	builtin_cd_relative(char *path)
 		ft_strlcpy(relative_path, buf_cwd, ft_strlen(buf_cwd) + 1);
 		ft_strlcat(relative_path, "/", ft_strlen(relative_path) + 2);
 		ft_strlcat(relative_path, path, ft_strlen(relative_path) + ft_strlen(path) + 1);
-		printf("%s\n", relative_path);
 		status = chdir(relative_path);
 		free(relative_path);
 		if (status != 0)
@@ -123,25 +122,61 @@ void	builtin_cd_relative(char *path)
 	return ;
 }
 
-void	builtin_cd(int num_elements, char **elements)
+void	builtin_cd(char **cmd_as_array, char **env)
 {
-	char	*path;
+	char			*path;
+	char			*cmd;
+	char			**args;
+	unsigned int	argc;
+	char			buf_cwd[PATH_MAX];
+	char			*path_without_last_slash;
+	int				c;
+	char			*home_path;
 
-	if (num_elements > 1)
+	cmd = cmd_as_array[0];
+	args = ++cmd_as_array;
+	argc = 0;
+	while (args[argc])
+		argc++;
+	if (argc > 1)
 	{
 		ft_printf("cd: too many arguments\n");
 		g_exitstatus = 127;
 		return ;
 	}
-	if (num_elements == 0)
+	if (argc == 0)
 	{
-		chdir("~");
+		c = 0;
+		while (env[c] != NULL)
+		{
+			if (ft_strncmp(env[c], "HOME", ft_strlen("HOME")) == 0)
+				break ;
+			c++;
+		}
+		home_path = ft_strchr(env[c], '=');
+		chdir(++home_path);
 		g_exitstatus = 0;
 		return ;
 	}
-	if (num_elements == 1)
+	if (argc == 1)
 	{
-		path = elements[0];
+		path = args[0];
+		if (ft_strncmp(path, ".", ft_strlen(path)) == 0)
+		{
+			g_exitstatus = 0;
+			return ;
+		}
+		if (ft_strncmp(path, "..", ft_strlen(path)) == 0)
+		{			
+			if (getcwd(buf_cwd, sizeof(buf_cwd)) != NULL)
+			{ 
+				path_without_last_slash = ft_strrchr(buf_cwd, '/');
+				*path_without_last_slash = '\0';
+			}
+			chdir(buf_cwd);
+			g_exitstatus = 0;
+			return ;
+		}
 		if (path[0] == '/')
 			builtin_cd_absolute(path);
 		else

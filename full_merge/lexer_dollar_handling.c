@@ -26,7 +26,6 @@ char	*make_before(t_token *t, int c)
 	return (before);
 }
 
-
 char	*make_searched(t_token *t, int *c)
 {
 	char	*searched;

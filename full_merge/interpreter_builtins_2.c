@@ -80,16 +80,16 @@ void	builtin_export_no_args(char **env)
 		j = 0;
 		while (j < c - 1 - i)
 		{
-				if (ft_strlen(env[j]) > ft_strlen(env[j + 1]))
-					l = ft_strlen(env[j]);
-				else
-					l = ft_strlen(env[j + 1]);
-				if (ft_strncmp(env[j], env[j + 1], l) > 0)
-				{
-					temp = env[j];
-					env[j] = env[j + 1];
-					env[j + 1] = temp;
-				}
+			if (ft_strlen(env[j]) > ft_strlen(env[j + 1]))
+				l = ft_strlen(env[j]);
+			else
+				l = ft_strlen(env[j + 1]);
+			if (ft_strncmp(env[j], env[j + 1], l) > 0)
+			{
+				temp = env[j];
+				env[j] = env[j + 1];
+				env[j + 1] = temp;
+			}
 			j++;
 		}
 		i++;

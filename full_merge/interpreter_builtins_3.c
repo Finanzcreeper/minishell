@@ -79,7 +79,6 @@ void	builtin_exit(char **cmd_as_array)
 bool	check_for_builtin(char *command)
 {
 	if ((ft_strncmp(command, "echo", ft_strlen(command)) == 0) ||
-		(ft_strncmp(command, "cd", ft_strlen(command)) == 0) ||
 		(ft_strncmp(command, "pwd", ft_strlen(command)) == 0) ||
 		(ft_strncmp(command, "export", ft_strlen(command)) == 0) ||
 		(ft_strncmp(command, "unset", ft_strlen(command)) == 0) ||
@@ -101,8 +100,6 @@ void	run_builtin(char **cmd_as_array, char **env)
 		argc++;
 	if (ft_strncmp(cmd, "echo", ft_strlen(cmd)) == 0)
 		builtin_echo(argc, args);
-	else if (ft_strncmp(cmd, "cd", ft_strlen(cmd)) == 0)
-		builtin_cd(argc, args);
 	else if (ft_strncmp(cmd, "pwd", ft_strlen(cmd)) == 0)
 		builtin_pwd();
 	else if (ft_strncmp(cmd, "export", ft_strlen(cmd)) == 0)

@@ -71,6 +71,8 @@ typedef struct s_node
 	t_list			*command_elements;
 	char			*infile;
 	char			*outfile;
+	int				in_fd;
+	int				out_fd;
 	bool			read_from_heredoc;
 	char			*limiter;
 	bool			append_when_writing;
@@ -114,7 +116,7 @@ void	traverse_ast(t_node *ast, char **env);
 
 // interpreter builtins
 void	builtin_exit(char **cmd_as_array);
-void	builtin_cd(int num_args, char **args);
+void	builtin_cd(char **cmd_as_array, char **env);
 void	builtin_echo(int num_args, char **args);
 void	builtin_export(int num_args, char **args, char **env);
 void	builtin_unset(char **args, char **env);

@@ -1,11 +1,10 @@
 builtins:
 - DONE: export with no args (tidy function)
-- ability to unset and export multiple commands
-- FIX: char	relative_path[ft_strlen(buf_cwd) + ft_strlen(path) + 2];
 - move cd outside child process
+export
 
 check cd .. and cd .
-"echo 1 2 3 > outfile" shouldn't print 1 2 3
+"echo 1 2 3 > outfile" hangs
 implement clear
 
 cleanups:
@@ -15,12 +14,11 @@ cleanups:
 
 manual:
 echo "env";
-echo "export TEST=this && echo $TEST"
 echo "export PWD";
 echo "echo $PWD"
-echo "unset PWD && echo $PWD"
-echo "unset PWD HOME USER && echo $PWD $HOME $USER"
 heredoc functionality
-various cd shit - does it go where it should?
+cd with relative and abs paths
 cd with minus (up a dir?)
 cd with nothing (home dir)
+unset COLORTERM USER PWD (doesn't work at all even for one)
+export COLORTERM USER PWD (does work)
