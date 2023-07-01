@@ -1,4 +1,3 @@
-
 #include "minishell.h"
 
 int	dollar_spotted(t_token *t, char **env, int c)
@@ -20,7 +19,6 @@ int	dollar_spotted(t_token *t, char **env, int c)
 	}
 	else
 	{
-		// ft_printf("g_exitstatus is: %d\n", g_exitstatus);
 		free(t->content);
 		t->content = searched;
 		searched = env[c] + ft_strlen(searched);

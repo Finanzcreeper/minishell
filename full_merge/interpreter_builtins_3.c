@@ -52,6 +52,7 @@ void	builtin_exit(char **args)
 	if (argc > 1)
 	{
 		ft_printf("bash: exit: too many arguments\n");
+		free(--args);
 		exit(127);
 		return ;
 	}
@@ -63,9 +64,11 @@ void	builtin_exit(char **args)
 	ft_printf("exit\n");
 	if (argc == 0)
 		g_exitstatus = 0;
+	free(--args);
 	exit(g_exitstatus);
 }
 
+// TODO: choose whichever is longer!
 bool	check_for_builtin(char *command)
 {
 	if ((ft_strncmp(command, "echo", ft_strlen(command)) == 0)

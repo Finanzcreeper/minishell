@@ -1,4 +1,3 @@
-
 #include "minishell.h"
 
 char	*make_before(t_token *t, int c)
@@ -97,42 +96,3 @@ void	expand_dollars(t_token **list, char **env)
 	}
 	return ;
 }
-
-
-/*int	main(int arc, char *argv[], char *env[])
-{
-	t_token	*token;
-
-	token = ft_calloc(1, sizeof(t_token));
-
-	token->content = ft_calloc(22, sizeof(char));
-	token->content[0] = 't';
-	token->content[1] = 'h';
-	token->content[2] = 'i';
-	token->content[3] = 's';
-	token->content[4] = 'i';
-	token->content[5] = 's';
-	token->content[6] = '$';
-	token->content[7] = 'U';
-	token->content[8] = 'S';
-	token->content[9] = 'E';
-	token->content[10] = 'R';
-	token->content[11] = '$';
-	token->content[12] = 'U';
-	token->content[13] = 'S';
-	token->content[14] = 'E';
-	token->content[15] = 'R';
-	token->content[16] = ' ';
-	token->content[17] = 't';
-	token->content[18] = 'e';
-	token->content[19] = 's';
-	token->content[20] = 't';
-	token->content[21] = '\0';
-
-	token->next = NULL;
-	expand_dollars(&token, env);
-	ft_printf("%s\n", token->content);
-	free(token->content);
-	free(token);
-	return (0);
-} */

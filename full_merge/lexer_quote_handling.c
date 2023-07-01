@@ -1,5 +1,3 @@
-
-
 #include "minishell.h"
 
 void	double_quoter(t_sain *sain, char *string, t_token **list, t_defs defs)

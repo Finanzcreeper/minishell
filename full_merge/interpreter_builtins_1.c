@@ -122,13 +122,13 @@ void	builtin_cd(char **cmd_as_array, char **env)
 	}
 	if (argc == 0)
 	{
-		c = 0;
-		while (env[c] != NULL && ft_strncmp(env[c], "HOME", 
-				ft_strlen("HOME")) != 0)
-			c++;
+		c = -1;
+		while (env[++c] != NULL && ft_strncmp(env[c], "HOME", 
+				ft_strlen("HOME")) != 0);
 		chdir(ft_strchr(env[c], '=') + 1);
 		g_exitstatus = 0;
 		return ;
 	}
 	builtin_single_arg(argc, cmd_as_array);
+	free(--cmd_as_array);
 }

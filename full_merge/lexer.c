@@ -1,4 +1,3 @@
-
 #include "minishell.h"
 
 void	set_type(t_token	*token, char **metachars, t_token **token_list)
@@ -93,25 +92,3 @@ t_token	*lexer(char *in, char **env)
 	expand_dollars(&token_list, env);
 	return (token_list);
 }
-
-// int	main(int argc, char *argv[])
-// {
-// 	static t_token	*token_list;
-// 	t_token			*temp;
-
-// 	if (argc != 2)
-// 	{
-// 		write(2, "wrong input\n", 12);
-// 		return (1);
-// 	}
-// 	token_list = lexer(argv[1]);
-// 	argc += 1;
-// 	while (token_list != NULL)
-// 	{
-// 		ft_printf("content: {%s}	type: {%d}\n", token_list->content, token_list->type);
-// 		free(token_list->content);
-// 		temp = token_list;
-// 		token_list = token_list->next;
-// 		free(temp);
-// 	}
-// }

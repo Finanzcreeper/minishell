@@ -1,4 +1,3 @@
-
 #include "minishell.h"
 
 t_defs	make_defs(void)
