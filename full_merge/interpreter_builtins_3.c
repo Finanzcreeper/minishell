@@ -21,59 +21,60 @@ void	builtin_env(int num_args, char **args, char **env)
 	g_exitstatus = 0;
 }
 
+void	detect_non_numeric_arg(char **args)
+{
+	int	i;
+
+	i = 0;
+	while (args[0][i])
+	{
+		if (args[0][i] < '0' || args[0][i] > '9')
+		{
+			ft_printf("bash: exit: %s: number required\n", args[0]);
+			exit(127);
+		}
+		i++;
+	}
+}
+
 // exit (with no options)
 // causes shell to exit
 // can have one argument, an exit status code
 // (if not given it is that of the last executed command)
-void	builtin_exit(char **cmd_as_array)
+void	builtin_exit(char **args)
 {
-	char			*cmd;
-	char			**args;
 	unsigned int	argc;
-	int 			i;
 
-	cmd = cmd_as_array[0];
-	args = ++cmd_as_array;
+	args++;
 	argc = 0;
 	while (args[argc])
 		argc++;
-
 	if (argc > 1)
 	{
 		ft_printf("bash: exit: too many arguments\n");
-		g_exitstatus = 127;
+		exit(127);
 		return ;
 	}
 	if (argc == 1)
 	{
-		i = 0;
-		while (args[0][i])
-		{
-			if (args[0][i] < '0' || args[0][i] > '9')
-			{
-				ft_printf("bash: exit: %s: numeric argument required\n", args[0]);
-				g_exitstatus = 127;
-				return ;
-			}
-			i++;
-		}
+		detect_non_numeric_arg(args);
 		g_exitstatus = ft_atoi(args[0]);
 	}
+	ft_printf("exit\n");
 	if (argc == 0)
 		g_exitstatus = 0;
-	ft_printf("exit\n");
 	exit(g_exitstatus);
 }
 
 bool	check_for_builtin(char *command)
 {
-	if ((ft_strncmp(command, "echo", ft_strlen(command)) == 0) ||
-		(ft_strncmp(command, "pwd", ft_strlen(command)) == 0) ||
-		(ft_strncmp(command, "export", ft_strlen(command)) == 0) ||
-		(ft_strncmp(command, "unset", ft_strlen(command)) == 0) ||
-		(ft_strncmp(command, "env", ft_strlen(command)) == 0))
-		return true;
-	return false;
+	if ((ft_strncmp(command, "echo", ft_strlen(command)) == 0)
+		|| (ft_strncmp(command, "pwd", ft_strlen(command)) == 0)
+		|| (ft_strncmp(command, "export", ft_strlen(command)) == 0)
+		|| (ft_strncmp(command, "unset", ft_strlen(command)) == 0)
+		|| (ft_strncmp(command, "env", ft_strlen(command)) == 0))
+		return (true);
+	return (false);
 }
 
 void	run_builtin(char **cmd_as_array, char **env)

@@ -35,7 +35,7 @@ void	bubble_sort_env(char **env, int c)
 	int		j;
 	int		l;
 	char	*temp;
-	
+
 	i = 0;
 	while (i < c)
 	{
@@ -55,7 +55,7 @@ void	bubble_sort_env(char **env, int c)
 			j++;
 		}
 		i++;
-	}	
+	}
 }
 
 // extract key from env line (all chars before first equals sign)

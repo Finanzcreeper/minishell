@@ -28,15 +28,15 @@ char	**list_to_array(t_list *list_head)
 	return (array);
 }
 
-char	*get_path(char **cmd_as_array, char **env)
+char	*get_path(char **cmd_as_arr, char **env)
 {
 	char	**paths;
 	int		i;
 	char	*path_cmd;
 	char	*pre;
 
-	if (access(cmd_as_array[0], F_OK | X_OK) == 0)
-		return (cmd_as_array[0]);
+	if (access(cmd_as_arr[0], F_OK | X_OK) == 0)
+		return (cmd_as_arr[0]);
 	while (ft_strncmp("PATH=", *env, 5))
 		env++;
 	paths = ft_split(*env + 5, ':');
@@ -44,7 +44,7 @@ char	*get_path(char **cmd_as_array, char **env)
 	while (paths[i])
 	{
 		pre = ft_strjoin(paths[i], "/");
-		path_cmd = ft_strjoin(pre, cmd_as_array[0]);
+		path_cmd = ft_strjoin(pre, cmd_as_arr[0]);
 		free(pre);
 		if (access(path_cmd, F_OK | X_OK) == 0)
 		{
@@ -71,7 +71,7 @@ void	make_heredoc(t_node *cmd_node, char *limiter)
 
 	heredoc_fd = open(".heredoc_tmp", O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (heredoc_fd < 0)
-		fprintf(stderr, "%s", ERR_HEREDOC);
+		write(STDERR_FD, ERR_HEREDOC, ft_strlen(ERR_HEREDOC));
 	while (1)
 	{
 		write(STDOUT_FD, "pipe heredoc> ", 14);
@@ -94,7 +94,11 @@ void	open_infile(t_node *cmd_node)
 	if (cmd_node->infile != NULL)
 		cmd_node->in_fd = open(cmd_node->infile, O_RDONLY);
 	if (cmd_node->in_fd == -1)
-		fprintf(stderr, "bash: %s%s", cmd_node->infile, ERR_READ);
+	{
+		write(STDERR_FD, "bash: ", 6);
+		write(STDERR_FD, cmd_node->infile, ft_strlen(cmd_node->infile));
+		write(STDERR_FD, ERR_READ, ft_strlen(ERR_READ));
+	}
 	if (cmd_node->in_fd != STDIN_FD)
 	{
 		dup2(cmd_node->in_fd, STDIN_FD);
@@ -108,12 +112,16 @@ void	open_outfile(t_node *cmd_node)
 	if (cmd_node->outfile == NULL)
 		return ;
 	if (cmd_node->append_when_writing == true)
-		cmd_node->out_fd = open(cmd_node->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
+		cmd_node->out_fd = open(cmd_node->outfile,
+				O_CREAT | O_WRONLY | O_APPEND, 0644);
 	else
-		cmd_node->out_fd = open(cmd_node->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+		cmd_node->out_fd = open(cmd_node->outfile,
+				O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (cmd_node->out_fd == -1)
 	{
-		fprintf(stderr, "bash: %s%s", cmd_node->outfile, ERR_WRITE);
+		write(STDERR_FD, "bash: ", 6);
+		write(STDERR_FD, cmd_node->outfile, ft_strlen(cmd_node->outfile));
+		write(STDERR_FD, ERR_WRITE, ft_strlen(ERR_WRITE));
 	}
 	if (cmd_node->out_fd != STDOUT_FD)
 	{
@@ -128,26 +136,29 @@ void	close_inout_fds(t_node *cmd_node)
 		close(cmd_node->in_fd);
 	if (cmd_node->out_fd != STDOUT_FD)
 		close(cmd_node->out_fd);
+	if (cmd_node->read_from_heredoc == true)
+		unlink(".heredoc_tmp");
 }
 
 void	execute_cmd(t_list *command_elements, char **env)
 {
-	char	**cmd_as_array;
+	char	**cmd_as_arr;
 	char	*path;
 
-	cmd_as_array = list_to_array(command_elements);
-	path = get_path(cmd_as_array, env);
+	cmd_as_arr = list_to_array(command_elements);
+	path = get_path(cmd_as_arr, env);
 	if (path == NULL)
 	{
-		fprintf(stderr, "%s%s", cmd_as_array[0], ERR_CMD);
-		free(cmd_as_array);
+		write(STDERR_FD, cmd_as_arr[0], ft_strlen(cmd_as_arr[0]));
+		write(STDERR_FD, ERR_CMD, ft_strlen(ERR_CMD));
+		free(cmd_as_arr);
 		g_exitstatus = 1;
 		exit(g_exitstatus);
 	}
-	if (execve(path, cmd_as_array, env) == -1)
+	if (execve(path, cmd_as_arr, env) == -1)
 	{
-		fprintf(stderr, "%s", ERR_EXEC);
-		free(cmd_as_array);
+		write(STDERR_FD, ERR_EXEC, ft_strlen(ERR_EXEC));
+		free(cmd_as_arr);
 		g_exitstatus = 1;
 		exit(g_exitstatus);
 	}
@@ -155,7 +166,7 @@ void	execute_cmd(t_list *command_elements, char **env)
 
 void	child(t_node *cmd_node, char **env, bool lstcmd, int io_fd[2])
 {
-	char	**cmd_as_array;
+	char	**cmd_as_arr;
 
 	if (!lstcmd)
 	{
@@ -163,16 +174,16 @@ void	child(t_node *cmd_node, char **env, bool lstcmd, int io_fd[2])
 		dup2(io_fd[1], STDOUT_FD);
 		close(io_fd[1]);
 	}
-	cmd_as_array = list_to_array(cmd_node->command_elements);
-	if (check_for_builtin(cmd_as_array[0]) == true)
+	cmd_as_arr = list_to_array(cmd_node->command_elements);
+	if (check_for_builtin(cmd_as_arr[0]) == true)
 	{
-		run_builtin(cmd_as_array, env);
-		free(cmd_as_array);
+		run_builtin(cmd_as_arr, env);
+		free(cmd_as_arr);
 		exit(g_exitstatus);
 	}
 	else
 	{
-		free(cmd_as_array);
+		free(cmd_as_arr);
 		execute_cmd(cmd_node->command_elements, env);
 	}
 }
@@ -187,7 +198,7 @@ void	forker(t_node *cmd_node, char **env, bool lstcmd)
 	pid = fork();
 	if (pid == -1)
 	{
-		fprintf(stderr, "%s", ERR_FORK);
+		write(STDERR_FD, ERR_FORK, ft_strlen(ERR_FORK));
 		exit(127);
 	}
 	if (pid == 0)
@@ -202,39 +213,35 @@ void	forker(t_node *cmd_node, char **env, bool lstcmd)
 			close(io_fd[0]);
 		}
 		close_inout_fds(cmd_node);
-		if (cmd_node->read_from_heredoc == true)
-			unlink(".heredoc_tmp");
 	}
 }
 
 void	pipe_to_parent(t_node *cmd_node, char **env, bool lstcmd)
 {
-	char	**cmd_as_array;
+	char	**cmd_as_arr;
 
 	if (cmd_node->read_from_heredoc == true)
 		make_heredoc(cmd_node, cmd_node->limiter);
 	else
 	{
-		cmd_as_array = list_to_array(cmd_node->command_elements);
-		if (ft_strncmp(cmd_as_array[0], "exit", ft_strlen(cmd_as_array[0])) == 0)
+		cmd_as_arr = list_to_array(cmd_node->command_elements);
+		if (ft_strncmp(cmd_as_arr[0], "exit", ft_strlen(cmd_as_arr[0])) == 0)
 		{
-			builtin_exit(cmd_as_array);
-			free(cmd_as_array);
+			builtin_exit(cmd_as_arr);
+			free(cmd_as_arr);
 			return ;
 		}
-		if (ft_strncmp(cmd_as_array[0], "cd", ft_strlen(cmd_as_array[0])) == 0)
+		if (ft_strncmp(cmd_as_arr[0], "cd", ft_strlen(cmd_as_arr[0])) == 0)
 		{
-			builtin_cd(cmd_as_array, env);
-			free(cmd_as_array);
+			builtin_cd(cmd_as_arr, env);
+			free(cmd_as_arr);
 			return ;
 		}
-		free(cmd_as_array);
+		free(cmd_as_arr);
 	}
 	open_infile(cmd_node);
-	if (cmd_node->in_fd == -1)
-		return ;
 	open_outfile(cmd_node);
-	if (cmd_node->out_fd == -1)
+	if (cmd_node->in_fd == -1 || cmd_node->out_fd == -1)
 		return ;
 	forker(cmd_node, env, lstcmd);
 }
