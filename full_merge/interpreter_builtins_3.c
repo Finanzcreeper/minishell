@@ -8,7 +8,7 @@ void	builtin_env(int num_args, char **args, char **env)
 
 	if (num_args != 0)
 	{
-		ft_printf("env: ‘%s’: No such file or directory\n", args[0]);
+		ft_printf("%s‘%s’%s", ERR_ENV, args[0], ERR_FILE);
 		g_exitstatus = 127;
 		return ;
 	}
@@ -30,7 +30,7 @@ void	detect_non_numeric_arg(char **args)
 	{
 		if (args[0][i] < '0' || args[0][i] > '9')
 		{
-			ft_printf("bash: exit: %s: number required\n", args[0]);
+			ft_printf("%s%s%s%s", PRG_NAME, ERR_EXIT, args[0], ERR_NONNUM);
 			exit(127);
 		}
 		i++;
@@ -49,9 +49,10 @@ void	builtin_exit(char **args)
 	argc = 0;
 	while (args[argc])
 		argc++;
+	ft_printf("exit\n");
 	if (argc > 1)
 	{
-		ft_printf("bash: exit: too many arguments\n");
+		ft_printf("%s%s%s", PRG_NAME, ERR_EXIT, ERR_TM_ARGS);
 		free(--args);
 		exit(127);
 		return ;
@@ -61,7 +62,6 @@ void	builtin_exit(char **args)
 		detect_non_numeric_arg(args);
 		g_exitstatus = ft_atoi(args[0]);
 	}
-	ft_printf("exit\n");
 	if (argc == 0)
 		g_exitstatus = 0;
 	free(--args);

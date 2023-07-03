@@ -10,7 +10,7 @@ void	builtin_pwd(void)
 		ft_printf("%s\n", buf_cwd);
 	else
 	{
-		perror("getcwd() error");
+		perror(ERR_CWD);
 		g_exitstatus = 127;
 		return ;
 	}

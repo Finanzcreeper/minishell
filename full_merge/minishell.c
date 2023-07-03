@@ -30,7 +30,7 @@ void	lexparseinterpret_line(char *line, char **env)
 	}
 	if (parse__pipeline(&tokens, &ast_head) == false)
 	{
-		ft_printf("syntax error!\n");
+		ft_printf("%s%s", PRG_NAME, ERR_SYNTAX);
 		free_ast(ast_head);
 		lex_freedman(token_head);
 		return ;
@@ -50,7 +50,7 @@ void	readlines(int infd, int outfd, char **env)
 	{
 		dup2(infd, STDIN_FD);
 		dup2(outfd, STDOUT_FD);
-		line = readline("minishell% ");
+		line = readline(MSG_PROMPT);
 		if (line == NULL)
 			return ;
 		if (ft_strncmp(line, "clear", 5) == 0)
@@ -78,7 +78,7 @@ int	main(int argc, char **argv, char **env)
 	}
 	if (argc > 2)
 	{
-		ft_printf(ERR_PRG_ARGS);
+		ft_printf("%s%s", PRG_NAME, ERR_PRG_ARGS);
 		return (0);
 	}
 	signal(SIGINT, sigint_handler);

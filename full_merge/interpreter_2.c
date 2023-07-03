@@ -46,9 +46,9 @@ void	open_infile(t_node *cmd_node)
 		cmd_node->in_fd = open(cmd_node->infile, O_RDONLY);
 	if (cmd_node->in_fd == -1)
 	{
-		write(STDERR_FD, "bash: ", 6);
+		write(STDERR_FD, PRG_NAME, ft_strlen(PRG_NAME));
 		write(STDERR_FD, cmd_node->infile, ft_strlen(cmd_node->infile));
-		write(STDERR_FD, ERR_READ, ft_strlen(ERR_READ));
+		write(STDERR_FD, ERR_FILE, ft_strlen(ERR_FILE));
 	}
 	if (cmd_node->in_fd != STDIN_FD)
 	{
@@ -70,7 +70,7 @@ void	open_outfile(t_node *cmd_node)
 				O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (cmd_node->out_fd == -1)
 	{
-		write(STDERR_FD, "bash: ", 6);
+		write(STDERR_FD, PRG_NAME, ft_strlen(PRG_NAME));
 		write(STDERR_FD, cmd_node->outfile, ft_strlen(cmd_node->outfile));
 		write(STDERR_FD, ERR_WRITE, ft_strlen(ERR_WRITE));
 	}

@@ -20,18 +20,27 @@
 # define STDOUT_FD 1
 # define STDERR_FD 2
 
-# define ERR_ARGS "Too many arguments - provide full line in double quotes\n"
+# define PRG_NAME "minishell: "
+# define MSG_PROMPT "minishell% "
+# define ERR_SYNTAX "syntax error\n"
+# define ERR_PRG_ARGS "single argument in quotes required e.g \"ls -l | wc -c\"\n"
 # define ERR_CMD ": command not found\n"
-# define ERR_FORK "Fork error!\n"
-# define ERR_EXEC "Execution error!\n"
-# define ERR_READ ": No such file or directory\n"
-# define ERR_WRITE "Error writing to file\n"
-# define ERR_HEREDOC "Error reading from heredoc file\n"
-# define ERR_PRG_ARGS "Single argument in quotes required e.g \"ls -l | wc -c\"\n"
+# define ERR_FORK "fork error\n"
+# define ERR_EXEC "execution error\n"
+# define ERR_WRITE "error writing to file\n"
+# define ERR_HEREDOC "error reading from heredoc file\n"
+# define ERR_CD "cd: "
+# define ERR_EXIT "exit: "
+# define ERR_ENV "env: "
+# define ERR_CWD "getcwd() error"
+# define ERR_TM_ARGS "too many arguments\n"
+# define ERR_FILE ": no such file or directory\n"
+# define ERR_TM_ARGS "too many arguments\n"
+# define ERR_NONNUM ": number required\n"
 
 # define ROOT -2
 
-extern int	g_exitstatus;
+extern int g_exitstatus;
 
 typedef enum e_token_type
 {
@@ -41,27 +50,27 @@ typedef enum e_token_type
 	T_RETO = 3,
 	T_REFROM_HEREDOC = 4,
 	T_RETO_APPEND = 5
-}t_token_type;
+}	t_token_type;
 
 typedef enum e_node_types
 {
 	N_CMD,
 	N_PIPE,
-}					t_node_types;
+}	t_node_types;
 
 typedef struct s_defs
 {
 	char	blanks[3];
 	char	*metachars[6];
 	char	*seperators[8];
-}t_defs;
+}	t_defs;
 
 typedef struct s_token
 {
 	char			*content;
 	t_token_type	type;
 	struct s_token	*next;
-}					t_token;
+}	t_token;
 
 typedef struct s_node
 {
@@ -77,23 +86,23 @@ typedef struct s_node
 	char			*limiter;
 	bool			append_when_writing;
 	bool			top_node;
-}					t_node;
+}	t_node;
 
 typedef struct s_seperate_arguments_into_nodes
 {
-	char	*substring;
-	int		c;
-	int		i;
-	int		j;
-	int		k;
-}t_sain;
+	char			*substring;
+	int				c;
+	int				i;
+	int				j;
+	int				k;
+}	t_sain;
 
 typedef struct s_rule
 {
 	char			*lhs;
 	char			**rhs;
 	struct s_rule	*next_rule;
-}t_rule;
+}	t_rule;
 
 typedef struct s_redirs
 {
@@ -102,7 +111,7 @@ typedef struct s_redirs
 	bool	append_when_writing;
 	bool	read_from_heredoc;
 	char	*limiter;
-}t_redirs;
+}	t_redirs;
 
 void	lex_freedman(t_token *tokens);
 void	free_ast(t_node *ast);
@@ -122,7 +131,7 @@ void	double_quoter(t_sain *sain, char *string, t_token **list, t_defs defs);
 
 void	expand_dollars(t_token **list, char **env);
 int		is_surrounded_by(t_token *t, char a);
-void	strip_quotes(t_token *t, char a); //quote handling exeption
+void	strip_quotes(t_token *t, char a); // quote handling exeption
 int		dollar_spotted(t_token *t, char **env, int c);
 char	*make_before(t_token *t, int c);
 char	*make_searched(t_token *t, int *c);
@@ -141,7 +150,7 @@ char	*tokentype_lookup(int type_num);
 void	traverse_ast(t_node *ast, char **env);
 
 int		parse__redirection(t_token **token, t_redirs *redirs);
-int		parse__simple_command_element(t_token **token, 
+int		parse__simple_command_element(t_token **token,
 			t_list **command_elements, t_redirs *redirs);
 void	link_next_command_node_into_tree(t_node *ast_head,
 			t_node *node_to_link);

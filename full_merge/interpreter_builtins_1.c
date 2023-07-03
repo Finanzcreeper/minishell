@@ -40,7 +40,7 @@ void	builtin_cd_absolute(char *path)
 	status = chdir(path);
 	if (status != 0)
 	{
-		ft_printf("bash: cd: %s: No such file or directory\n", path);
+		ft_printf("%s%s%s%s", PRG_NAME, ERR_CD, path, ERR_FILE);
 		g_exitstatus = 127;
 		return ;
 	}
@@ -65,14 +65,14 @@ void	builtin_cd_relative(char *path)
 		free(rel_pth);
 		if (status != 0)
 		{
-			ft_printf("bash: cd: %s: No such file or directory\n", path);
+			ft_printf("%s%s%s%s", PRG_NAME, ERR_CD, path, ERR_FILE);
 			g_exitstatus = 127;
 			return ;
 		}
 		g_exitstatus = 0;
 		return ;
 	}
-	perror("getcwd() error");
+	perror(ERR_CWD);
 	g_exitstatus = 127;
 	return ;
 }
@@ -116,7 +116,7 @@ void	builtin_cd(char **cmd_as_array, char **env)
 		argc++;
 	if (argc > 1)
 	{
-		ft_printf("cd: too many arguments\n");
+		ft_printf("%s%s%s", PRG_NAME, ERR_CD, ERR_TM_ARGS);
 		g_exitstatus = 127;
 		return ;
 	}
