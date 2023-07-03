@@ -1,6 +1,6 @@
 #!/bin/bash
 
-executable_path="./minishell"
+executable_path="../full_merge/minishell"
 verbose=false
 mute_passes=false
 

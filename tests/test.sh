@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd ../tests
+
 if [ "$2" ]; then
     echo "too many args"
     exit

@@ -78,7 +78,7 @@ int	main(int argc, char **argv, char **env)
 	}
 	if (argc > 2)
 	{
-		printf(ERR_PRG_ARGS);
+		ft_printf(ERR_PRG_ARGS);
 		return (0);
 	}
 	signal(SIGINT, sigint_handler);

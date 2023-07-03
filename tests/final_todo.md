@@ -1,13 +1,12 @@
 fix broken heredoc
 fix broken append
-make interpreter norm compliant
 check for forbidden functions i.e. fprintf
 cat | cat | ls
 redirections of nothing should just create files - but instead segfile
 better error messages
 cd .. to root doesn't work
 running "test" as command gives execution error
-ech 123 executes echo!! problem with strcmp
+echo 123 executes echo!! problem with strcmp
 some errors should be prefixed with bash
 
 manual:
