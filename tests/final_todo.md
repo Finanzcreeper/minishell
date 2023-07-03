@@ -1,6 +1,6 @@
 fix broken heredoc
 ✅fix broken append
-cat | cat | ls
+✅cat | cat | ls
 redirections of nothing should just create files - but instead segfault
 better error messages
 ✅running "test" as command gives execution error
