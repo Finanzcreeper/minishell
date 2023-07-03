@@ -1,15 +1,14 @@
 fix broken heredoc
 fix broken append
-check for forbidden functions i.e. fprintf
 cat | cat | ls
-redirections of nothing should just create files - but instead segfile
+redirections of nothing should just create files - but instead segfault
 better error messages
 cd .. to root doesn't work
 running "test" as command gives execution error
 echo 123 executes echo!! problem with strcmp
 some errors should be prefixed with bash
 
-manual:
+manual tests to double check:
 echo "env";
 echo "export PWD";
 echo "echo $PWD"
