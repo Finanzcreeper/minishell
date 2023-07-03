@@ -168,6 +168,6 @@ char	*get_path(char **cmd_as_arr, char **env);
 void	open_infile(t_node *cmd_node);
 void	open_outfile(t_node *cmd_node);
 void	close_inout_fds(t_node *cmd_node);
-void	make_heredoc(t_node *cmd_node, char *limiter);
+void	make_heredoc(char *limiter);
 
 #endif

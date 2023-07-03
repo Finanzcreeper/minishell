@@ -25,7 +25,7 @@ char	**list_to_array(t_list *list_head)
 	return (array);
 }
 
-void	make_heredoc(t_node *cmd_node, char *limiter)
+void	make_heredoc(char *limiter)
 {
 	int		heredoc_fd;
 	char	*next_line;
@@ -46,5 +46,4 @@ void	make_heredoc(t_node *cmd_node, char *limiter)
 	}
 	free(next_line);
 	close(heredoc_fd);
-	cmd_node->infile = ".heredoc_tmp";
 }

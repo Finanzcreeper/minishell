@@ -83,7 +83,7 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool lstcmd)
 	char	**cmd_as_arr;
 
 	if (cmd_node->read_from_heredoc == true)
-		make_heredoc(cmd_node, cmd_node->limiter);
+		make_heredoc(cmd_node->limiter);
 	else
 	{
 		cmd_as_arr = list_to_array(cmd_node->command_elements);
