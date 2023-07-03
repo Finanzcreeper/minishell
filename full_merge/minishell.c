@@ -15,20 +15,22 @@ void	sigint_handler(int sig)
 
 void	lexparseinterpret_line(char *line, char **env)
 {
+	t_token	*tokens;
 	t_token	*token_head;
 	t_node	*ast_head;
 
 	ast_head = ft_calloc(1, sizeof(t_node));
 	token_head = lexer(line, env);
-	if (token_head->next->content == NULL)
+	tokens = token_head->next;
+	if (tokens->content == NULL)
 	{
 		free_ast(ast_head);
 		lex_freedman(token_head);
 		return ;
 	}
-	if (parse__pipeline(&token_head->next, &ast_head) == false)
+	if (parse__pipeline(&tokens, &ast_head) == false)
 	{
-		ft_printf("bash: syntax error\n");
+		ft_printf("syntax error!\n");
 		free_ast(ast_head);
 		lex_freedman(token_head);
 		return ;
@@ -36,7 +38,6 @@ void	lexparseinterpret_line(char *line, char **env)
 	ast_head->top_node = true;
 	traverse_ast(ast_head, env);
 	free_ast(ast_head);
-	ast_head = NULL;
 	lex_freedman(token_head);
 	return ;
 }
