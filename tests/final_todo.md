@@ -1,21 +1,22 @@
 fix broken heredoc
-fix broken append
+✅fix broken append
 cat | cat | ls
 redirections of nothing should just create files - but instead segfault
 better error messages
-cd .. to root doesn't work
-running "test" as command gives execution error
-echo 123 executes echo!! problem with strcmp
+✅running "test" as command gives execution error
+builtin checker needs to only find full strings (ech 123 executes echo!! problem with strcmp)
 some errors should be prefixed with bash
 
+these command have to work : 
+{export feer
+env | grep feer
+echo $feer}
+
 manual tests to double check:
-echo "env";
-echo "export PWD";
-echo "echo $PWD"
+✅env
 heredoc functionality
-cd with relative and abs paths
-cd with minus (up a dir?)
-cd with nothing (home dir)
+✅cd with relative and abs paths
+✅cd with nothing (home dir)
 unset COLORTERM USER PWD (doesn't work at all even for one)
 export COLORTERM USER PWD (does work)
 
