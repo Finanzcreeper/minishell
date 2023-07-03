@@ -71,6 +71,8 @@ void	builtin_exit(char **args)
 // TODO: choose whichever is longer!
 bool	check_for_builtin(char *command)
 {
+	if (command == NULL)
+		return (false);
 	if ((ft_strncmp(command, "echo", ft_strlen(command)) == 0)
 		|| (ft_strncmp(command, "pwd", ft_strlen(command)) == 0)
 		|| (ft_strncmp(command, "export", ft_strlen(command)) == 0)
