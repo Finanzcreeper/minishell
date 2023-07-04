@@ -64,11 +64,32 @@ void	readlines(int infd, int outfd, char **env)
 	}
 }
 
-int	main(int argc, char **argv, char **env)
+char **dup_env(char **env)
+{
+	int		c;
+	int		j;
+	char	**new_env;
+
+	c = 0;
+	while (env[c] != NULL)
+		c++;
+	new_env = ft_calloc(c + 2, sizeof(char *));
+	j = 0;
+	while (j < c)
+	{
+		new_env[j] = env[j];
+		j++;
+	}
+	return (new_env);
+}
+
+int	main(int argc, char **argv, char **orig_env)
 {
 	int		infd;
 	int		outfd;
+	char	**env;
 
+	env = dup_env(orig_env);
 	infd = dup(STDIN_FD);
 	outfd = dup(STDOUT_FD);
 	if (argc == 2)
@@ -84,5 +105,6 @@ int	main(int argc, char **argv, char **env)
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	readlines(infd, outfd, env);
+	free(env);
 	return (0);
 }
