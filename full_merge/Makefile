@@ -19,10 +19,10 @@ testing :
 	$(CC) $(SRC) $(LIB) $(CFLAGS)
 
 clean :
-	- rm minishell
-	- rm a.out
-	- rm infile
-	- rm outfile
+	@rm minishell 2>/dev/null || true
+	@rm a.out 2>/dev/null || true
+	@rm infile 2>/dev/null || true
+	@rm outfile 2>/dev/null || true
 re : clean $(NAME)
 
 libft :
