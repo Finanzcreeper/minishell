@@ -8,6 +8,12 @@ void	execute_cmd(t_list *command_elements, char **env)
 	char	*path;
 
 	cmd_as_arr = list_to_array(command_elements);
+	if (*cmd_as_arr == NULL)
+	{
+		g_exitstatus = 12345;
+		exit(g_exitstatus);
+	}
+	
 	path = get_path(cmd_as_arr, env);
 	if (path == NULL)
 	{
@@ -87,12 +93,14 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool lstcmd)
 	else
 	{
 		cmd_as_arr = list_to_array(cmd_node->command_elements);
-		if (ft_strncmp(cmd_as_arr[0], "exit", ft_strlen(cmd_as_arr[0])) == 0)
+		if (*cmd_as_arr != NULL
+			&& ft_strncmp(cmd_as_arr[0], "exit", ft_strlen(cmd_as_arr[0])) == 0)
 		{
 			builtin_exit(cmd_as_arr);
 			return ;
 		}
-		if (ft_strncmp(cmd_as_arr[0], "cd", ft_strlen(cmd_as_arr[0])) == 0)
+		if (*cmd_as_arr != NULL
+			&& ft_strncmp(cmd_as_arr[0], "cd", ft_strlen(cmd_as_arr[0])) == 0)
 		{
 			builtin_cd(cmd_as_arr, env);
 			return ;
