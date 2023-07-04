@@ -88,7 +88,7 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool lstcmd)
 			}
 			if (is_builtin(cmd_node->cmdarr[0], "export"))
 			{
-				builtin_export(++(cmd_node->cmdarr), env);
+				env = builtin_export(++(cmd_node->cmdarr), env);
 				return ;
 			}			
 			

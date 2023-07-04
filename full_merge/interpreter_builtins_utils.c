@@ -79,6 +79,7 @@ char	**remove_key_from_env(char **env, char *key_to_remove)
 		line_key = ft_substr(env[j], 0, line_key_len);
 		if (ft_strncmp(key_to_remove, line_key, ft_strlen(key_to_remove)) == 0)
 			bunch_up = true;
+		free(line_key);
 		if (bunch_up == true)
 		{
 			if (env[j + 1])

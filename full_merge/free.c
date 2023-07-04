@@ -29,6 +29,13 @@ void	free_ast_node2(t_node *temp)
 		free(temp->right);
 		temp->right = NULL;
 	}
+	if (temp->cmdarr != NULL)
+	{
+		while (*(temp->cmdarr) != NULL)
+			free(*(temp->cmdarr)++);
+		free(temp->cmdarr);
+		temp->cmdarr = NULL;
+	}
 	free(temp);
 }
 
@@ -38,11 +45,6 @@ void	free_ast_node(t_node *temp)
 	{
 		ft_lstclear(&temp->command_elements, free);
 		temp->command_elements = NULL;
-	}
-	if (temp->cmdarr != NULL)
-	{
-		free(temp->cmdarr);
-		temp->cmdarr = NULL;
 	}
 	if (temp->infile != NULL)
 	{

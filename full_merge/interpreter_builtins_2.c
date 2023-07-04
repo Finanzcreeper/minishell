@@ -35,7 +35,7 @@ void	builtin_export_no_args(char **env)
 	format_export_for_display(env, c);
 }
 
-void	builtin_export_args(char **args, char **env)
+char	**builtin_export_args(char **args, char **env)
 {
 	int		c;
 	int		i;
@@ -43,12 +43,12 @@ void	builtin_export_args(char **args, char **env)
 	char	**new_env;
 
 	i = 0;
-	while (args[i])
+	while (args[i] != NULL)
 	{
 		c = 0;
 		if (ft_strchr(args[i], '='))
 		{
-			while (env[c])
+			while (env[c] != NULL)
 				c++;
 			new_env = ft_calloc(c + 2, sizeof(char *));
 			j = 0;
@@ -57,13 +57,15 @@ void	builtin_export_args(char **args, char **env)
 				new_env[j] = env[j];
 				j++;
 			}
+			ft_printf("%s\n", new_env[c]);
 			new_env[c] = args[i];
 		}
 		i++;
 	}
+	return (new_env);
 }
 
-void	builtin_export(char **args, char **env)
+char	**builtin_export(char **args, char **env)
 {
 	int	num_args;
 
@@ -74,11 +76,11 @@ void	builtin_export(char **args, char **env)
 	{
 		builtin_export_no_args(env);
 		g_exitstatus = 0;
-		return ;
+		return (env);
 	}
-	builtin_export_args(args, env);
+	env = builtin_export_args(args, env);
 	g_exitstatus = 0;
-	return ;
+	return (env);
 }
 
 // unset (with no options)
