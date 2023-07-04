@@ -11,7 +11,7 @@ void	builtin_echo(int num_elements, char **elements)
 	{
 		ft_printf("\n");
 		g_exitstatus = 127;
-		return ;
+		exit(g_exitstatus);
 	}
 	print_newline = true;
 	if (ft_strncmp(elements[0], "-n", ft_strlen(elements[0])) == 0)
@@ -29,6 +29,7 @@ void	builtin_echo(int num_elements, char **elements)
 	if (print_newline)
 		ft_printf("\n");
 	g_exitstatus = 0;
+	exit(g_exitstatus);
 }
 
 // cd (with only a relative or absolute path)
@@ -77,7 +78,7 @@ void	builtin_cd_relative(char *path)
 	return ;
 }
 
-void	builtin_single_arg(int argc, char **args)
+void	builtin_cd_single_arg(int argc, char **args)
 {
 	char			*path;
 	char			cwd[PATH_MAX];
@@ -129,5 +130,6 @@ void	builtin_cd(char **cmd_as_array, char **env)
 		g_exitstatus = 0;
 		return ;
 	}
-	builtin_single_arg(argc, cmd_as_array);
+	builtin_cd_single_arg(argc, cmd_as_array);
+	return ;
 }

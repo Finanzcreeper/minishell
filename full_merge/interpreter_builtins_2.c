@@ -12,9 +12,10 @@ void	builtin_pwd(void)
 	{
 		perror(ERR_CWD);
 		g_exitstatus = 127;
-		return ;
+		exit(g_exitstatus);
 	}
 	g_exitstatus = 0;
+	exit(g_exitstatus);
 }
 
 // export (with no options)
@@ -45,11 +46,11 @@ void	builtin_export_args(char **args, char **env)
 	while (args[i])
 	{
 		c = 0;
-		if (ft_memchr(args[i], '=', ft_strlen(args[i])) != NULL)
+		if (ft_strchr(args[i], '='))
 		{
 			while (env[c])
 				c++;
-			new_env = malloc((c + 1) * sizeof(char *));
+			new_env = ft_calloc(c + 2, sizeof(char *));
 			j = 0;
 			while (j < c)
 			{
@@ -62,8 +63,13 @@ void	builtin_export_args(char **args, char **env)
 	}
 }
 
-void	builtin_export(int num_args, char **args, char **env)
+void	builtin_export(char **args, char **env)
 {
+	int	num_args;
+
+	num_args = 0;
+	while (args[num_args])
+		num_args++;
 	if (num_args == 0)
 	{
 		builtin_export_no_args(env);
@@ -89,5 +95,5 @@ void	builtin_unset(char **args, char **env)
 		i++;
 	}
 	g_exitstatus = 0;
-	return ;
+	exit(g_exitstatus);
 }

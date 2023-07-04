@@ -161,10 +161,11 @@ bool	parse__simple_command(t_token **token, t_node *ast_head);
 bool	parse__pipeline(t_token **token, t_node **ast_head);
 bool	parse__pipeline_tail(t_token **token, t_node **ast_head);
 
+bool	is_builtin(char *command, char *builtin);
 void	builtin_exit(char **cmd_as_array);
 void	builtin_cd(char **cmd_as_array, char **env);
 void	builtin_echo(int num_args, char **args);
-void	builtin_export(int num_args, char **args, char **env);
+void	builtin_export(char **args, char **env);
 void	builtin_unset(char **args, char **env);
 char	**remove_key_from_env(char **env, char *key_to_remove);
 void	builtin_pwd(void);

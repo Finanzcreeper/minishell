@@ -35,13 +35,8 @@ void	child(t_node *cmd_node, char **env, bool lstcmd, int io_fd[2])
 		dup2(io_fd[1], STDOUT_FD);
 		close(io_fd[1]);
 	}
-	if (check_for_builtin(cmd_node->cmdarr[0]) == true)
-	{
-		run_builtin(cmd_node->cmdarr, env);
-		exit(g_exitstatus);
-	}
-	else
-		execute_cmd(cmd_node->cmdarr, env);
+	run_builtin(cmd_node->cmdarr, env);
+	execute_cmd(cmd_node->cmdarr, env);
 }
 
 void	forker(t_node *cmd_node, char **env, bool lstcmd)
@@ -81,16 +76,22 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool lstcmd)
 			make_heredoc(cmd_node->limiter);
 		else
 		{
-			if (ft_strncmp(cmd_node->cmdarr[0], "exit", ft_strlen(cmd_node->cmdarr[0])) == 0)
+			if (is_builtin(cmd_node->cmdarr[0], "exit"))
 			{
 				builtin_exit(cmd_node->cmdarr);
 				return ;
 			}
-			if (ft_strncmp(cmd_node->cmdarr[0], "cd", ft_strlen(cmd_node->cmdarr[0])) == 0)
+			if (is_builtin(cmd_node->cmdarr[0], "cd"))
 			{
 				builtin_cd(cmd_node->cmdarr, env);
 				return ;
 			}
+			if (is_builtin(cmd_node->cmdarr[0], "export"))
+			{
+				builtin_export(++(cmd_node->cmdarr), env);
+				return ;
+			}			
+			
 		}
 	}
 	open_infile(cmd_node);
