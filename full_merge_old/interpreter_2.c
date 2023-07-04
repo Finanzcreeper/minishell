@@ -10,15 +10,15 @@ void	free_paths(char	**paths)
 	free(paths);
 }
 
-char	*get_path(char **cmdarr, char **env)
+char	*get_path(char **cmd_as_arr, char **env)
 {
 	char	**paths;
 	int		i;
 	char	*path_cmd;
 	char	*pre;
 
-	if (access(cmdarr[0], F_OK | X_OK) == 0)
-		return (cmdarr[0]);
+	if (access(cmd_as_arr[0], F_OK | X_OK) == 0)
+		return (cmd_as_arr[0]);
 	while (ft_strncmp("PATH=", *env, 5))
 		env++;
 	paths = ft_split(*env + 5, ':');
@@ -26,7 +26,7 @@ char	*get_path(char **cmdarr, char **env)
 	while (paths[i])
 	{
 		pre = ft_strjoin(paths[i++], "/");
-		path_cmd = ft_strjoin(pre, cmdarr[0]);
+		path_cmd = ft_strjoin(pre, cmd_as_arr[0]);
 		free(pre);
 		if (access(path_cmd, F_OK | X_OK) == 0)
 		{
@@ -74,8 +74,6 @@ void	open_outfile(t_node *cmd_node)
 		write(STDERR_FD, cmd_node->outfile, ft_strlen(cmd_node->outfile));
 		write(STDERR_FD, ERR_WRITE, ft_strlen(ERR_WRITE));
 	}
-	if (*(cmd_node->cmdarr) == NULL)
-		return ;
 	if (cmd_node->out_fd != STDOUT_FD)
 	{
 		dup2(cmd_node->out_fd, STDOUT_FD);

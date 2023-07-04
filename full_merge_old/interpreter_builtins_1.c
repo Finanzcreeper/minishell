@@ -130,4 +130,5 @@ void	builtin_cd(char **cmd_as_array, char **env)
 		return ;
 	}
 	builtin_single_arg(argc, cmd_as_array);
+	free(--cmd_as_array);
 }

@@ -2,26 +2,30 @@
 
 int	g_exitstatus;
 
-void	execute_cmd(char **cmdarr, char **env)
+void	execute_cmd(t_list *command_elements, char **env)
 {
+	char	**cmd_as_arr;
 	char	*path;
 
-	if (*cmdarr == NULL)
+	cmd_as_arr = list_to_array(command_elements);
+	if (*cmd_as_arr == NULL)
 	{
 		g_exitstatus = 12345;
 		exit(g_exitstatus);
 	}
-	path = get_path(cmdarr, env);
+	path = get_path(cmd_as_arr, env);
 	if (path == NULL)
 	{
-		write(STDERR_FD, cmdarr[0], ft_strlen(cmdarr[0]));
+		write(STDERR_FD, cmd_as_arr[0], ft_strlen(cmd_as_arr[0]));
 		write(STDERR_FD, ERR_CMD, ft_strlen(ERR_CMD));
+		free(cmd_as_arr);
 		g_exitstatus = 1;
 		exit(g_exitstatus);
 	}
-	if (execve(path, cmdarr, env) == -1)
+	if (execve(path, cmd_as_arr, env) == -1)
 	{
 		write(STDERR_FD, ERR_EXEC, ft_strlen(ERR_EXEC));
+		free(cmd_as_arr);
 		g_exitstatus = 1;
 		exit(g_exitstatus);
 	}
@@ -29,19 +33,26 @@ void	execute_cmd(char **cmdarr, char **env)
 
 void	child(t_node *cmd_node, char **env, bool lstcmd, int io_fd[2])
 {
+	char	**cmd_as_arr;
+
 	if (!lstcmd)
 	{
 		close(io_fd[0]);
 		dup2(io_fd[1], STDOUT_FD);
 		close(io_fd[1]);
 	}
-	if (check_for_builtin(cmd_node->cmdarr[0]) == true)
+	cmd_as_arr = list_to_array(cmd_node->command_elements);
+	if (check_for_builtin(cmd_as_arr[0]) == true)
 	{
-		run_builtin(cmd_node->cmdarr, env);
+		run_builtin(cmd_as_arr, env);
+		free(cmd_as_arr);
 		exit(g_exitstatus);
 	}
 	else
-		execute_cmd(cmd_node->cmdarr, env);
+	{
+		free(cmd_as_arr);
+		execute_cmd(cmd_node->command_elements, env);
+	}
 }
 
 void	forker(t_node *cmd_node, char **env, bool lstcmd)
@@ -74,24 +85,24 @@ void	forker(t_node *cmd_node, char **env, bool lstcmd)
 
 void	pipe_to_parent(t_node *cmd_node, char **env, bool lstcmd)
 {
-	cmd_node->cmdarr = list_to_array(cmd_node->command_elements);
-	if (*(cmd_node->cmdarr) != NULL)
+	char	**cmd_as_arr;
+
+	if (cmd_node->read_from_heredoc == true)
+		make_heredoc(cmd_node->limiter);
+	else
 	{
-		if (cmd_node->read_from_heredoc == true)
-			make_heredoc(cmd_node->limiter);
-		else
+		cmd_as_arr = list_to_array(cmd_node->command_elements);
+		if (ft_strncmp(cmd_as_arr[0], "exit", ft_strlen(cmd_as_arr[0])) == 0)
 		{
-			if (ft_strncmp(cmd_node->cmdarr[0], "exit", ft_strlen(cmd_node->cmdarr[0])) == 0)
-			{
-				builtin_exit(cmd_node->cmdarr);
-				return ;
-			}
-			if (ft_strncmp(cmd_node->cmdarr[0], "cd", ft_strlen(cmd_node->cmdarr[0])) == 0)
-			{
-				builtin_cd(cmd_node->cmdarr, env);
-				return ;
-			}
+			builtin_exit(cmd_as_arr);
+			return ;
 		}
+		if (ft_strncmp(cmd_as_arr[0], "cd", ft_strlen(cmd_as_arr[0])) == 0)
+		{
+			builtin_cd(cmd_as_arr, env);
+			return ;
+		}
+		free(cmd_as_arr);
 	}
 	open_infile(cmd_node);
 	open_outfile(cmd_node);

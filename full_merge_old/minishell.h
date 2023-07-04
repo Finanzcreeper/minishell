@@ -78,7 +78,6 @@ typedef struct s_node
 	struct s_node	*left;
 	struct s_node	*right;
 	t_list			*command_elements;
-	char			**cmdarr;
 	char			*infile;
 	char			*outfile;
 	int				in_fd;
