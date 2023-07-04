@@ -1,0 +1,11 @@
+#ignore all files called minishell
+**/minishell
+
+#ignore all files calles a.out
+**/a.out
+
+#ignore all files called outfile
+**/outfile
+
+#ignore all files called infile
+**/infile
