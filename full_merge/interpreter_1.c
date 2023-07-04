@@ -67,7 +67,7 @@ void	forker(t_node *cmd_node, char **env, bool lstcmd)
 	}
 }
 
-void	pipe_to_parent(t_node *cmd_node, char **env, bool lstcmd)
+void	pipe_to_parent(t_node *cmd_node, char ***env, bool lstcmd)
 {
 	cmd_node->cmdarr = list_to_array(cmd_node->command_elements);
 	if (*(cmd_node->cmdarr) != NULL)
@@ -79,10 +79,10 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool lstcmd)
 			if (is_builtin(cmd_node->cmdarr[0], "exit"))
 				return (builtin_exit(cmd_node->cmdarr));
 			if (is_builtin(cmd_node->cmdarr[0], "cd"))
-				return (builtin_cd(cmd_node->cmdarr, env));
+				return (builtin_cd(cmd_node->cmdarr, *env));
 			if (is_builtin(cmd_node->cmdarr[0], "export"))
 			{
-				env = builtin_export(cmd_node->cmdarr, env);
+				*env = builtin_export(cmd_node->cmdarr, *env);
 				return ;
 			}
 		}
@@ -91,10 +91,10 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool lstcmd)
 	open_outfile(cmd_node);
 	if (cmd_node->in_fd == -1 || cmd_node->out_fd == -1)
 		return ;
-	forker(cmd_node, env, lstcmd);
+	forker(cmd_node, *env, lstcmd);
 }
 
-void	traverse_ast(t_node *ast, char **env)
+void	traverse_ast(t_node *ast, char ***env)
 {
 	if (ast->type == N_CMD)
 	{

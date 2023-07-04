@@ -148,7 +148,7 @@ void	ft_tokenadd_back(t_token **lst, t_token *new);
 void	visit_and_execute(t_node *node, char **env);
 void	print_tokens(t_token *token);
 char	*tokentype_lookup(int type_num);
-void	traverse_ast(t_node *ast, char **env);
+void	traverse_ast(t_node *ast, char ***env);
 
 int		parse__redirection(t_token **token, t_redirs *redirs);
 int		parse__simple_command_element(t_token **token,

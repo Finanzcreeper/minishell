@@ -13,14 +13,14 @@ void	sigint_handler(int sig)
 	}
 }
 
-void	lexparseinterpret_line(char *line, char **env)
+void	lexparseinterpret_line(char *line, char ***env)
 {
 	t_token	*tokens;
 	t_token	*token_head;
 	t_node	*ast_head;
 
 	ast_head = ft_calloc(1, sizeof(t_node));
-	token_head = lexer(line, env);
+	token_head = lexer(line, *env);
 	tokens = token_head->next;
 	if (tokens->content == NULL)
 	{
@@ -42,7 +42,7 @@ void	lexparseinterpret_line(char *line, char **env)
 	return ;
 }
 
-void	readlines(int infd, int outfd, char **env)
+void	readlines(int infd, int outfd, char ***env)
 {
 	char	*line;
 
@@ -77,7 +77,7 @@ char **dup_env(char **env)
 	j = 0;
 	while (j < c)
 	{
-		new_env[j] = env[j];
+		new_env[j] = ft_strdup(env[j]);
 		j++;
 	}
 	return (new_env);
@@ -95,7 +95,7 @@ int	main(int argc, char **argv, char **orig_env)
 	outfd = dup(STDOUT_FD);
 	if (argc == 2)
 	{
-		lexparseinterpret_line(argv[1], env);
+		lexparseinterpret_line(argv[1], &env);
 		return (0);
 	}
 	if (argc > 2)
@@ -105,12 +105,11 @@ int	main(int argc, char **argv, char **orig_env)
 	}
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
-	readlines(infd, outfd, env);
+	readlines(infd, outfd, &env);
 	i = 0;
-	while(env[i])
+	while (env[i] != NULL)
 	{
-		free(env[i]);
-		i++;
+		free(env[i++]);
 	}
 	free(env);
 	return (0);

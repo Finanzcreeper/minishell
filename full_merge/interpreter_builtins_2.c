@@ -57,7 +57,7 @@ char	**builtin_export_args(char **args, char **env)
 				new_env[j] = env[j];
 				j++;
 			}
-			new_env[c] = args[i];
+			new_env[c] = ft_strdup(args[i]);
 		}
 		i++;
 	}
@@ -66,7 +66,8 @@ char	**builtin_export_args(char **args, char **env)
 
 char	**builtin_export(char **args, char **env)
 {
-	int	num_args;
+	int		num_args;
+	char	**tempnv;
 
 	args++;
 	num_args = 0;
@@ -78,7 +79,9 @@ char	**builtin_export(char **args, char **env)
 		g_exitstatus = 0;
 		return (env);
 	}
+	tempnv = env;
 	env = builtin_export_args(args, env);
+	free(tempnv);
 	g_exitstatus = 0;
 	return (env);
 }

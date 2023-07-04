@@ -8,9 +8,11 @@ builtin checker needs to only find full strings (ech 123 executes echo!! problem
 some errors should be prefixed with bash
 
 these command have to work : 
-{export feer
+{export feer=f3fg
 env | grep feer
 echo $feer}
+fix that exports can be duplicated instead of being replaced.
+multiple false exports give invalid frees
 
 manual tests to double check:
 ✅env
