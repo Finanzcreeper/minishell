@@ -77,15 +77,9 @@ void	pipe_to_parent(t_node *cmd_node, char **env, bool lstcmd)
 		else
 		{
 			if (is_builtin(cmd_node->cmdarr[0], "exit"))
-			{
-				builtin_exit(cmd_node->cmdarr);
-				return ;
-			}
+				return (builtin_exit(cmd_node->cmdarr));
 			if (is_builtin(cmd_node->cmdarr[0], "cd"))
-			{
-				builtin_cd(cmd_node->cmdarr, env);
-				return ;
-			}
+				return (builtin_cd(cmd_node->cmdarr, env));
 			if (is_builtin(cmd_node->cmdarr[0], "export"))
 			{
 				env = builtin_export(cmd_node->cmdarr, env);
