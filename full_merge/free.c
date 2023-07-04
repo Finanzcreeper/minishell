@@ -31,8 +31,6 @@ void	free_ast_node2(t_node *temp)
 	}
 	if (temp->cmdarr != NULL)
 	{
-		while (*(temp->cmdarr) != NULL)
-			free(*(temp->cmdarr)++);
 		free(temp->cmdarr);
 		temp->cmdarr = NULL;
 	}
