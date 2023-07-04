@@ -69,6 +69,7 @@ char	**builtin_export(char **args, char **env)
 {
 	int	num_args;
 
+	args++;
 	num_args = 0;
 	while (args[num_args])
 		num_args++;
