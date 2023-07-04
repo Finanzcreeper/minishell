@@ -34,6 +34,11 @@ void	free_ast_node2(t_node *temp)
 		free(temp->cmdarr);
 		temp->cmdarr = NULL;
 	}
+	if (temp->limiter != NULL)
+	{
+		free(temp->limiter);
+		temp->limiter = NULL;
+	}
 	free(temp);
 }
 

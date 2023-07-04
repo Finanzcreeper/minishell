@@ -92,6 +92,8 @@ void	run_builtin(char **cmd_as_array, char **env)
 	char			**args;
 	unsigned int	argc;
 
+	if (*cmd_as_array == NULL)
+		return ;
 	cmd = cmd_as_array[0];
 	args = ++cmd_as_array;
 	argc = 0;
