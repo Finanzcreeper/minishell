@@ -57,7 +57,6 @@ char	**builtin_export_args(char **args, char **env)
 				new_env[j] = env[j];
 				j++;
 			}
-			ft_printf("%s\n", new_env[c]);
 			new_env[c] = args[i];
 		}
 		i++;

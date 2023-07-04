@@ -88,6 +88,7 @@ int	main(int argc, char **argv, char **orig_env)
 	int		infd;
 	int		outfd;
 	char	**env;
+	int		i;
 
 	env = dup_env(orig_env);
 	infd = dup(STDIN_FD);
@@ -105,6 +106,12 @@ int	main(int argc, char **argv, char **orig_env)
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	readlines(infd, outfd, env);
+	i = 0;
+	while(env[i])
+	{
+		free(env[i]);
+		i++;
+	}
 	free(env);
 	return (0);
 }
