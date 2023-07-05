@@ -62,6 +62,7 @@ char	**builtin_export_args(char **args, char **env)
 				j++;
 			}
 			new_env[c] = ft_strdup(args[i]);
+			env = new_env;
 		}
 		i++;
 	}
