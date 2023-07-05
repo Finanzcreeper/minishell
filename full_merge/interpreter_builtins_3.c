@@ -103,8 +103,6 @@ void	run_builtin(char **cmd_as_array, char **env)
 		builtin_echo(argc, args);
 	else if (is_builtin(cmd, "pwd"))
 		builtin_pwd();
-	else if (is_builtin(cmd, "unset"))
-		builtin_unset(args, env);
 	else if (is_builtin(cmd, "env"))
 		builtin_env(argc, args, env);
 }

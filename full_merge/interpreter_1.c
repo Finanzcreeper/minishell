@@ -83,6 +83,8 @@ void	pipe_to_parent(t_node *cmd_node, char ***env, bool lstcmd)
 			*env = builtin_export(cmd_node->cmdarr, *env);
 			return ;
 		}
+		if (is_builtin(cmd_node->cmdarr[0], "unset"))
+			return (builtin_unset(cmd_node->cmdarr, *env));		
 	}
 	open_infile(cmd_node);
 	open_outfile(cmd_node);

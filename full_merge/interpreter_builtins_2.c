@@ -41,13 +41,17 @@ char	**builtin_export_args(char **args, char **env)
 	int		i;
 	int		j;
 	char	**new_env;
+	char	*pre_eq;
 
 	i = 0;
 	while (args[i] != NULL)
 	{
-		c = 0;
 		if (ft_strchr(args[i], '='))
 		{
+			pre_eq = get_string_before_equals(args[i]);
+			env = remove_key_from_env(env, pre_eq);
+			free(pre_eq);
+			c = 0;
 			while (env[c] != NULL)
 				c++;
 			new_env = ft_calloc(c + 2, sizeof(char *));
@@ -100,5 +104,4 @@ void	builtin_unset(char **args, char **env)
 		i++;
 	}
 	g_exitstatus = 0;
-	exit(g_exitstatus);
 }

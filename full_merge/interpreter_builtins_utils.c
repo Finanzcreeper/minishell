@@ -91,3 +91,14 @@ char	**remove_key_from_env(char **env, char *key_to_remove)
 	}
 	return (env);
 }
+
+char *get_string_before_equals(char *str)
+{
+	char	*pre_eq;
+	char	*end;
+
+	pre_eq = ft_strdup(str);
+	end = ft_strchr(pre_eq, '=');
+	*end = '\0';
+	return (pre_eq);
+}
