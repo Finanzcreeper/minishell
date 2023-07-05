@@ -65,28 +65,31 @@ void	bubble_sort_env(char **env, int c)
 char	**remove_key_from_env(char **env, char *key_to_remove)
 {
 	int		j;
-	bool	bunch_up;
 	char	*from_equals;
 	int		line_key_len;
 	char	*line_key;
 
 	j = 0;
-	bunch_up = false;
 	while (env[j])
 	{
 		from_equals = ft_strchr(env[j], '=');
 		line_key_len = ft_strlen(env[j]) - ft_strlen(from_equals);
 		line_key = ft_substr(env[j], 0, line_key_len);
 		if (ft_strncmp(key_to_remove, line_key, ft_strlen(key_to_remove)) == 0)
-			bunch_up = true;
-		free(line_key);
-		if (bunch_up == true)
 		{
-			if (env[j + 1])
-				env[j] = env[j + 1];
-			else
-				env[j] = NULL;
+			free(env[j]);
+			free(line_key);
+			break ;
 		}
+		free(line_key);
+		j++;
+	}
+	while (env[j] != NULL)
+	{
+		if (env[j + 1] != NULL)
+			env[j] = env[j + 1];
+		else
+			env[j] = NULL;
 		j++;
 	}
 	return (env);
