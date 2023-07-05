@@ -74,8 +74,8 @@ void	open_outfile(t_node *cmd_node)
 		write(STDERR_FD, cmd_node->outfile, ft_strlen(cmd_node->outfile));
 		write(STDERR_FD, ERR_WRITE, ft_strlen(ERR_WRITE));
 	}
-	if (*(cmd_node->cmdarr) == NULL)
-		return ;
+	// if (*(cmd_node->cmdarr) == NULL && cmd_node->outfile == NULL)
+	// 	return ;
 	if (cmd_node->out_fd != STDOUT_FD)
 	{
 		dup2(cmd_node->out_fd, STDOUT_FD);

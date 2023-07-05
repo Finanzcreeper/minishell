@@ -34,9 +34,9 @@
 # define ERR_ENV "env: "
 # define ERR_CWD "getcwd() error"
 # define ERR_TM_ARGS "too many arguments\n"
-# define ERR_FILE ": no such file or directory\n"
+# define ERR_FILE ": No such file or directory\n"
 # define ERR_TM_ARGS "too many arguments\n"
-# define ERR_NONNUM ": number required\n"
+# define ERR_NONNUM ": numeric argument required\n"
 
 # define ROOT -2
 

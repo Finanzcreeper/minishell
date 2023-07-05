@@ -74,17 +74,14 @@ void	pipe_to_parent(t_node *cmd_node, char ***env, bool lstcmd)
 		make_heredoc(cmd_node->limiter);
 	if (*(cmd_node->cmdarr) != NULL)
 	{
-		if (cmd_node->read_from_heredoc == false)
+		if (is_builtin(cmd_node->cmdarr[0], "exit"))
+			return (builtin_exit(cmd_node->cmdarr));
+		if (is_builtin(cmd_node->cmdarr[0], "cd"))
+			return (builtin_cd(cmd_node->cmdarr, *env));
+		if (is_builtin(cmd_node->cmdarr[0], "export"))
 		{
-			if (is_builtin(cmd_node->cmdarr[0], "exit"))
-				return (builtin_exit(cmd_node->cmdarr));
-			if (is_builtin(cmd_node->cmdarr[0], "cd"))
-				return (builtin_cd(cmd_node->cmdarr, *env));
-			if (is_builtin(cmd_node->cmdarr[0], "export"))
-			{
-				*env = builtin_export(cmd_node->cmdarr, *env);
-				return ;
-			}
+			*env = builtin_export(cmd_node->cmdarr, *env);
+			return ;
 		}
 	}
 	open_infile(cmd_node);

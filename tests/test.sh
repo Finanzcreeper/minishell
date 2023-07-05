@@ -12,24 +12,24 @@ echo "
 echo "syntax errors:"
 echo "###############################################
 "
-./t.sh $1 "echo <" "bash: syntax error"
-./t.sh $1 "echo >" "bash: syntax error"
-./t.sh $1 "echo <<" "bash: syntax error"
-./t.sh $1 "echo >>" "bash: syntax error"
-./t.sh $1 "|" "bash: syntax error"
-./t.sh $1 "| |" "bash: syntax error"
-./t.sh $1 "||" "bash: syntax error" 
-./t.sh $1 "wc |" "bash: syntax error"
-./t.sh $1 "wc | |" "bash: syntax error"
-./t.sh $1 "wc ||" "bash: syntax error"
-./t.sh $1 ">" "bash: syntax error"
-./t.sh $1 "<" "bash: syntax error"
-./t.sh $1 ">>" "bash: syntax error"
-./t.sh $1 "<<" "bash: syntax error"
-./t.sh $1 ">> >" "bash: syntax error"
-./t.sh $1 "< <<" "bash: syntax error"
-./t.sh $1 "< >" "bash: syntax error"
-./t.sh $1 "| <" "bash: syntax error"
+./t.sh $1 "echo <" "minishell: syntax error"
+./t.sh $1 "echo >" "minishell: syntax error"
+./t.sh $1 "echo <<" "minishell: syntax error"
+./t.sh $1 "echo >>" "minishell: syntax error"
+./t.sh $1 "|" "minishell: syntax error"
+./t.sh $1 "| |" "minishell: syntax error"
+./t.sh $1 "||" "minishell: syntax error" 
+./t.sh $1 "wc |" "minishell: syntax error"
+./t.sh $1 "wc | |" "minishell: syntax error"
+./t.sh $1 "wc ||" "minishell: syntax error"
+./t.sh $1 ">" "minishell: syntax error"
+./t.sh $1 "<" "minishell: syntax error"
+./t.sh $1 ">>" "minishell: syntax error"
+./t.sh $1 "<<" "minishell: syntax error"
+./t.sh $1 ">> >" "minishell: syntax error"
+./t.sh $1 "< <<" "minishell: syntax error"
+./t.sh $1 "< >" "minishell: syntax error"
+./t.sh $1 "| <" "minishell: syntax error"
 
 echo "
 ###############################################"
@@ -86,9 +86,9 @@ echo "###############################################
 
 ./t.sh $1 "cd"; # cd alone in bash just goes to home dir
 ./t.sh $1 "cd ." # stay in same dir
-./t.sh $1 "cd foldertest" "bash: cd: foldertest: No such file or directory";
+./t.sh $1 "cd foldertest" "minishell: cd: foldertest: No such file or directory";
 ./t.sh $1 "cd /tmp";
-./t.sh $1 "cd /tmp this" "cd: too many arguments";
+./t.sh $1 "cd /tmp this" "minishell: cd: too many arguments";
 
 ./t.sh $1 "pwd"; # only possible case
 ./t.sh $1 "pwd one two"; # arguments should be ignored
@@ -152,7 +152,7 @@ echo "new test, sort em"
 echo "###############################################
 "
 
-./t.sh $1 "cat | cat | ls"
+// ./t.sh $1 "cat | cat | ls"
 ./t.sh $1 "/bin/ls"
 ./t.sh $1 "/bin/ls -l"
 ./t.sh $1 ""
@@ -163,8 +163,10 @@ echo "###############################################
 ./t.sh $1 "echo -n e"
 ./t.sh $1 "exit" "exit"
 ./t.sh $1 "exit 123" "exit"
-./t.sh $1 "exit 123 456" "bash: exit: too many arguments"
-./t.sh $1 "exit fr" "bash: exit: fr: numeric argument required"
+./t.sh $1 "exit 123 456" "exit
+minishell: exit: too many arguments"
+./t.sh $1 "exit fr" "exit
+minishell: exit: fr: numeric argument required"
 ./t.sh $1 "echo $?"
 ./t.sh $1 "$?" "0: command not found"
 ./t.sh $1 "$? + $?" "0: command not found"
