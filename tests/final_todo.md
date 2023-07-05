@@ -1,4 +1,4 @@
-single space or pasted tabs segfault
+✅ single space or pasted tabs segfault
 check exit status is same as bash for builtins especially
 echo $? leaks
 Try ctrl-C after running a blocking command like cat without arguments or grep “something“. - we get two minishell prompts
