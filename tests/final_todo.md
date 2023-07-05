@@ -1,25 +1,36 @@
-fix broken heredoc
-✅fix broken append
-✅cat | cat | ls
-redirections of nothing should just create files - but instead segfault
-better error messages
-✅running "test" as command gives execution error
-builtin checker needs to only find full strings (ech 123 executes echo!! problem with strcmp)
-some errors should be prefixed with bash
+single space or pasted tabs segfault
+check exit status is same as bash for builtins especially
+echo $? leaks
+Try ctrl-C after running a blocking command like cat without arguments or grep “something“. - we get two minishell prompts
 
-these command have to work : 
-{export feer=f3fg
-env | grep feer
-echo $feer}
-fix that exports can be duplicated instead of being replaced.
-multiple false exports give invalid frees
+heredoc CTRLC doesn't end
+heredoc CTRLD segfaults
+minishell% echo '' 123
+minishell% echo "" 123
+(first '' is seen as -n)
+nreher@c4b12c5:~$ unset PATH
+nreher@c4b12c5:~$ env | grep PATH
+bash: grep: No such file or directory
+bash: env: No such file or directory
+minishell% echo $DOCKER_HOST
 
-manual tests to double check:
-✅env
-heredoc functionality
-✅cd with relative and abs paths
-✅cd with nothing (home dir)
-unset COLORTERM USER PWD (doesn't work at all even for one)
-export COLORTERM USER PWD (does work)
+"
+minishell% 
+minishell% echo $LANG
+en_US.UTF-8
+minishell% echo $COLORTERM
 
-what would it take to do bonuses?
+minishell% unset TERM COLORTERM LANG
+minishell% echo $LANG
+en_US.UTF-8
+"
+
+but "unset USER COLORTERM SHLVL" works
+
+
+cd .. doesn't work when one level down from root
+
+unset PATH
+ls
+
+issues with: "<< END cat >outfile"
