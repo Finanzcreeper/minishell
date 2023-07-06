@@ -35,10 +35,9 @@ void	make_heredoc(char *limiter)
 		write(STDERR_FD, ERR_HEREDOC, ft_strlen(ERR_HEREDOC));
 	while (1)
 	{
-		write(STDOUT_FD, "pipe heredoc> ", 14);
-		next_line = get_next_line(STDIN_FD);
-		next_line[ft_strlen(next_line) - 1] = '\0';
-		if (ft_strncmp(next_line, limiter, ll(next_line, limiter)) == 0)
+		next_line = readline("pipe heredoc> ");
+		if (next_line == NULL || 
+			ft_strncmp(next_line, limiter, ll(next_line, limiter)) == 0)
 			break ;
 		write(heredoc_fd, next_line, ft_strlen(next_line));
 		write(heredoc_fd, "\n", 1);
