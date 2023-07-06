@@ -54,17 +54,16 @@ void	forker(t_node *cmd_node, char **env, bool lstcmd)
 	}
 	if (pid == 0)
 		child(cmd_node, env, lstcmd, io_fd);
-	else
+	signal(SIGINT, SIG_IGN);
+	wait(&g_exitstatus);
+	signal(SIGINT, sigint_handler);
+	if (!lstcmd)
 	{
-		wait(&g_exitstatus);
-		if (!lstcmd)
-		{
-			close(io_fd[1]);
-			dup2(io_fd[0], STDIN_FD);
-			close(io_fd[0]);
-		}
-		close_inout_fds(cmd_node);
+		close(io_fd[1]);
+		dup2(io_fd[0], STDIN_FD);
+		close(io_fd[0]);
 	}
+	close_inout_fds(cmd_node);
 }
 
 void	pipe_to_parent(t_node *cmd_node, char ***env, bool lstcmd)
