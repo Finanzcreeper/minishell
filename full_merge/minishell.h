@@ -183,4 +183,6 @@ void	open_outfile(t_node *cmd_node);
 void	close_inout_fds(t_node *cmd_node);
 void	make_heredoc(char *limiter);
 
+void	sigint_handler(int sig);
+
 #endif

@@ -86,12 +86,12 @@ void	builtin_cd_single_arg(int argc, char **args)
 	if (argc == 1)
 	{
 		path = args[0];
-		if (ft_strncmp(path, ".", ft_strlen(path)) == 0)
+		if (ft_strncmp(path, ".", ll(path, ".")) == 0)
 		{
 			g_exitstatus = 0;
 			return ;
 		}
-		if (ft_strncmp(path, "..", ft_strlen(path)) == 0)
+		if (ft_strncmp(path, "..", ll(path, "..")) == 0)
 		{
 			if (getcwd(cwd, sizeof(cwd)) != NULL)
 				*(ft_strrchr(cwd, '/')) = '\0';

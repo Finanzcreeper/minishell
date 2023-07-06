@@ -73,14 +73,7 @@ void	builtin_exit(char **args)
 // TODO: choose whichever is longer!
 bool	is_builtin(char *command, char *builtin)
 {
-	int l;
-
-	l = 0;
-	if (ft_strlen(command) > ft_strlen(builtin))
-		l = ft_strlen(command);
-	else
-		l = ft_strlen(builtin);
-	if ((ft_strncmp(command, builtin, l) == 0))
+	if ((ft_strncmp(command, builtin, ll(command, builtin)) == 0))
 		return (true);
 	else
 		return (false);

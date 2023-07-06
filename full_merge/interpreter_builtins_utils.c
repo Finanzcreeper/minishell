@@ -33,7 +33,6 @@ void	bubble_sort_env(char **env, int c)
 {
 	int		i;
 	int		j;
-	int		l;
 	char	*temp;
 
 	i = 0;
@@ -42,11 +41,7 @@ void	bubble_sort_env(char **env, int c)
 		j = 0;
 		while (j < c - i - 1)
 		{
-			if (ft_strlen(env[j]) > ft_strlen(env[j + 1]))
-				l = ft_strlen(env[j]);
-			else
-				l = ft_strlen(env[j + 1]);
-			if (ft_strncmp(env[j], env[j + 1], l) > 0)
+			if (ft_strncmp(env[j], env[j + 1], ll(env[j], env[j + 1])) > 0)
 			{
 				temp = env[j];
 				env[j] = env[j + 1];
