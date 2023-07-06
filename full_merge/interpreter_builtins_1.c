@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   interpreter_builtins_1.c                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/06 14:43:47 by gbooth            #+#    #+#             */
+/*   Updated: 2023/07/06 14:43:48 by gbooth           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 // echo (with option -n)
@@ -28,8 +40,7 @@ void	builtin_echo(int num_elements, char **elements)
 	}
 	if (print_newline)
 		ft_printf("\n");
-	g_exitstatus = 0;
-	exit(g_exitstatus);
+	exit(g_exitstatus = 0);
 }
 
 // cd (with only a relative or absolute path)

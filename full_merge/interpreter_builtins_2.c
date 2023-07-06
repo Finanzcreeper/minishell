@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   interpreter_builtins_2.c                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/06 14:43:54 by gbooth            #+#    #+#             */
+/*   Updated: 2023/07/06 14:43:55 by gbooth           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 // pwd (with no options)
@@ -37,12 +49,10 @@ void	builtin_export_no_args(char **env)
 
 char	**builtin_export_args(char **args, char **env)
 {
-	int		c;
 	int		i;
-	int		j;
-	char	**new_env;
 	char	**temp;
 	char	*pre_eq;
+	char	**new_env;
 
 	i = 0;
 	while (args[i] != NULL)
@@ -52,17 +62,7 @@ char	**builtin_export_args(char **args, char **env)
 			pre_eq = get_string_before_equals(args[i]);
 			env = remove_key_from_env(env, pre_eq);
 			free(pre_eq);
-			c = 0;
-			while (env[c] != NULL)
-				c++;
-			new_env = ft_calloc(c + 2, sizeof(char *));
-			j = 0;
-			while (j < c)
-			{
-				new_env[j] = env[j];
-				j++;
-			}
-			new_env[c] = ft_strdup(args[i]);
+			new_env = count_and_copy_over(env, args, i);
 			temp = env;
 			env = new_env;
 			free(temp);
@@ -94,7 +94,7 @@ char	**builtin_export(char **args, char **env)
 // unset (with no options)
 // remove item from env by name
 // NOTE: unsetting a not-previously-set variable does not abort or give an error
-char **builtin_unset(char **args, char **env)
+char	**builtin_unset(char **args, char **env)
 {
 	int	i;
 

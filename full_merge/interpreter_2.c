@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   interpreter_2.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/06 14:43:34 by gbooth            #+#    #+#             */
+/*   Updated: 2023/07/06 14:43:35 by gbooth           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	free_paths(char	**paths)
@@ -74,8 +86,6 @@ void	open_outfile(t_node *cmd_node)
 		write(STDERR_FD, cmd_node->outfile, ft_strlen(cmd_node->outfile));
 		write(STDERR_FD, ERR_WRITE, ft_strlen(ERR_WRITE));
 	}
-	// if (*(cmd_node->cmdarr) == NULL && cmd_node->outfile == NULL)
-	// 	return ;
 	if (cmd_node->out_fd != STDOUT_FD)
 	{
 		dup2(cmd_node->out_fd, STDOUT_FD);

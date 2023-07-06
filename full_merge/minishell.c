@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/06 14:44:51 by gbooth            #+#    #+#             */
+/*   Updated: 2023/07/06 14:44:52 by gbooth           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 // SIGINT is for CTRL + C
@@ -64,7 +76,7 @@ void	readlines(int infd, int outfd, char ***env)
 	}
 }
 
-char **dup_env(char **env)
+char	**dup_env(char **env)
 {
 	int		c;
 	int		j;
@@ -94,23 +106,17 @@ int	main(int argc, char **argv, char **orig_env)
 	infd = dup(STDIN_FD);
 	outfd = dup(STDOUT_FD);
 	if (argc == 2)
-	{
 		lexparseinterpret_line(argv[1], &env);
-		return (0);
-	}
 	if (argc > 2)
-	{
 		ft_printf("%s%s", PRG_NAME, ERR_PRG_ARGS);
+	if (argc == 2 || argc > 2)
 		return (0);
-	}
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	readlines(infd, outfd, &env);
 	i = 0;
 	while (env[i] != NULL)
-	{
 		free(env[i++]);
-	}
 	free(env);
 	return (0);
 }

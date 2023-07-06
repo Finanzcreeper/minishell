@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   interpreter_builtins_utils_1.c                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/06 14:44:07 by gbooth            #+#    #+#             */
+/*   Updated: 2023/07/06 14:44:08 by gbooth           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	format_export_for_display(char **env, int c)
@@ -53,7 +65,7 @@ void	bubble_sort_env(char **env, int c)
 	}
 }
 
-char *get_string_before_equals(char *str)
+char	*get_string_before_equals(char *str)
 {
 	char	*pre_eq;
 	char	*end;

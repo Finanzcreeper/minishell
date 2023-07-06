@@ -40,7 +40,7 @@
 
 # define ROOT -2
 
-extern int g_exitstatus;
+extern int	g_exitstatus;
 
 typedef enum e_token_type
 {
@@ -168,6 +168,7 @@ void	builtin_echo(int num_args, char **args);
 char	**builtin_export(char **args, char **env);
 char	**builtin_unset(char **args, char **env);
 char	**remove_key_from_env(char **env, char *key_to_remove);
+char	**count_and_copy_over(char **env, char **args, int i);
 void	builtin_pwd(void);
 void	run_builtin(char **cmd_as_array, char **env);
 bool	check_for_builtin(char *command);
