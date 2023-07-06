@@ -13,18 +13,18 @@ int	dollar_spotted(t_token *t, char **env, int c)
 	after = make_after(t, c);
 	c = match_searched(env, searched);
 	if (c == -1)
-	{
-		not_found(t, before, after, searched);
-		return (c);
-	}
+		return (not_found(t, before, after, searched));
 	else
 	{
 		free(t->content);
 		t->content = searched;
-		searched = env[c] + ft_strlen(searched);
 		if (c == -2)
 			searched = int_to_string(g_exitstatus);
+		else
+			searched = env[c] + ft_strlen(searched);
 		found(t, before, after, searched);
+		if (c == -2)
+			free(searched);
 		return (0);
 	}
 }
@@ -40,7 +40,7 @@ void	found(t_token *t, char *before, char *after, char *searched)
 	free(after);
 }
 
-void	not_found(t_token *t, char *before, char *after, char *searched)
+int	not_found(t_token *t, char *before, char *after, char *searched)
 {
 	free(searched);
 	searched = t->content;
@@ -48,6 +48,7 @@ void	not_found(t_token *t, char *before, char *after, char *searched)
 	free(searched);
 	free(before);
 	free(after);
+	return (-1);
 }
 
 int	match_searched(char **env, char *searched)
