@@ -58,24 +58,39 @@ void	bubble_sort_env(char **env, int c)
 	}
 }
 
+char *get_string_before_equals(char *str)
+{
+	char	*pre_eq;
+	char	*end;
+
+	pre_eq = ft_strdup(str);
+	end = ft_strchr(pre_eq, '=');
+	*end = '\0';
+	return (pre_eq);
+}
+
+int	ll(char *str1, char *str2)
+{
+	if (ft_strlen(str1) > ft_strlen(str2))
+		return (ft_strlen(str1));
+	else
+		return (ft_strlen(str2));
+}
+
 // extract key from env line (all chars before first equals sign)
 // used by 'export' and 'unset'
 // approach here works but maybe better to
 // allocate a new block of memory and copy across
-char	**remove_key_from_env(char **env, char *key_to_remove)
+char	**remove_key_from_env(char **env, char *key_to_rm)
 {
 	int		j;
-	char	*from_equals;
-	int		line_key_len;
 	char	*line_key;
 
 	j = 0;
 	while (env[j])
 	{
-		from_equals = ft_strchr(env[j], '=');
-		line_key_len = ft_strlen(env[j]) - ft_strlen(from_equals);
-		line_key = ft_substr(env[j], 0, line_key_len);
-		if (ft_strncmp(key_to_remove, line_key, ft_strlen(key_to_remove)) == 0)
+		line_key = get_string_before_equals(env[j]);
+		if (ft_strncmp(key_to_rm, line_key, ll(key_to_rm, line_key)) == 0)
 		{
 			free(env[j]);
 			free(line_key);
@@ -93,15 +108,4 @@ char	**remove_key_from_env(char **env, char *key_to_remove)
 		j++;
 	}
 	return (env);
-}
-
-char *get_string_before_equals(char *str)
-{
-	char	*pre_eq;
-	char	*end;
-
-	pre_eq = ft_strdup(str);
-	end = ft_strchr(pre_eq, '=');
-	*end = '\0';
-	return (pre_eq);
 }
