@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_dollar_handling.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:44:31 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/06 14:44:32 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/06 18:19:23 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ void	expand_dollars(t_token **list, char **env)
 			c = 0;
 			while (t->content[c] != '\0')
 			{
-				if (t->content[c] == '$')
+				if (t->content[c] == '$' && t->content[c + 1] != '\0')
 					c = dollar_spotted(t, env, c);
 				c++;
 			}

@@ -1,0 +1,19 @@
+/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*   Updated: 2023/07/06 14:44:52 by gbooth           ###   ########.fr       */
+	ast_head = ft_calloc(1, sizeof(t_node));
+		free_ast(ast_head);
+		lex_freedman(token_head);
+	if (parse__pipeline(&tokens, &ast_head) == false)
+		free_ast(ast_head);
+		lex_freedman(token_head);
+	free_ast(ast_head);
+	lex_freedman(token_head);
+void	readlines(int infd, int outfd, char ***env)
+		dup2(infd, STDIN_FD);
+		dup2(outfd, STDOUT_FD);
+		new_env[j] = ft_strdup(env[j]);
+	int		infd;
+	int		outfd;
+	infd = dup(STDIN_FD);
+	outfd = dup(STDOUT_FD);
+	readlines(infd, outfd, &env);
