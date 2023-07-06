@@ -174,6 +174,7 @@ bool	check_for_builtin(char *command);
 void	bubble_sort_env(char **env, int c);
 void	format_export_for_display(char **env, int c);
 char	*get_string_before_equals(char *str);
+int		ll(char *str1, char *str2);
 
 char	**list_to_array(t_list *list_head);
 char	*get_path(char **cmd_as_arr, char **env);

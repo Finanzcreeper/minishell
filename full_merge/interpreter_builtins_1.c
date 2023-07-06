@@ -14,7 +14,7 @@ void	builtin_echo(int num_elements, char **elements)
 		exit(g_exitstatus);
 	}
 	print_newline = true;
-	if (ft_strncmp(elements[0], "-n", ft_strlen(elements[0])) == 0)
+	if (ft_strncmp(elements[0], "-n", ll(elements[0], "-n")) == 0)
 	{
 		print_newline = false;
 		elements++;
