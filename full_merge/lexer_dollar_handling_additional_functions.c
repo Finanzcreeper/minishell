@@ -68,11 +68,11 @@ int	match_searched(char **env, char *searched)
 	int	c;
 
 	c = 0;
-	if (ft_strncmp(searched, "?=", ll(searched, "?=")) == 0)
+	if (ft_strncmp(searched, "?=", 3) == 0)
 		return (-2);
 	while (env[c] != NULL)
 	{
-		if (ft_strncmp(env[c], searched, ll(env[c], searched)) == 0)
+		if (ft_strncmp(env[c], searched, ft_strlen(searched)) == 0)
 			return (c);
 		c++;
 	}
