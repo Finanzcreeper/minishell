@@ -6,7 +6,7 @@
 /*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:43:47 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/06 14:43:48 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/06 15:30:19 by gbooth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,21 +93,22 @@ void	builtin_cd_single_arg(int argc, char **args)
 {
 	char			*path;
 	char			cwd[PATH_MAX];
+	char			*ret;
 
 	if (argc == 1)
 	{
+		g_exitstatus = 0;
 		path = args[0];
 		if (ft_strncmp(path, ".", ll(path, ".")) == 0)
-		{
-			g_exitstatus = 0;
 			return ;
-		}
 		if (ft_strncmp(path, "..", ll(path, "..")) == 0)
 		{
 			if (getcwd(cwd, sizeof(cwd)) != NULL)
-				*(ft_strrchr(cwd, '/')) = '\0';
+			{
+				ret = ft_strrchr(cwd, '/');
+				*(++ret) = '\0';
+			}
 			chdir(cwd);
-			g_exitstatus = 0;
 			return ;
 		}
 		if (path[0] == '/')
