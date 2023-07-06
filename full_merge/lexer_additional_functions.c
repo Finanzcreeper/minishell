@@ -77,7 +77,7 @@ char	*int_to_string(int in)
 		len++;
 	}
 	if (in == 0)
-		return ("0");
+		return (ft_strdup("0"));
 	out = ft_calloc(len + 1, sizeof(char));
 	while (in > 0)
 	{
