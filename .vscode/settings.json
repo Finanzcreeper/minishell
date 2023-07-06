@@ -4,6 +4,7 @@
 		"*.bak": "c",
 		"new": "c",
 		"typeinfo": "c",
-		"*.cdd": "c"
+		"*.cdd": "c",
+		"minishell.h": "c"
 	}
 }

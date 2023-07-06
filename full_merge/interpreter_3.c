@@ -25,7 +25,7 @@ char	**list_to_array(t_list *list_head)
 	return (array);
 }
 
-void	make_heredoc(char *limiter)
+void	make_heredoc(t_node *cmd_node)
 {
 	int		heredoc_fd;
 	char	*next_line;
@@ -37,12 +37,14 @@ void	make_heredoc(char *limiter)
 	{
 		next_line = readline("pipe heredoc> ");
 		if (next_line == NULL || 
-			ft_strncmp(next_line, limiter, ll(next_line, limiter)) == 0)
+			ft_strncmp(next_line, cmd_node->limiter,
+				ll(next_line, cmd_node->limiter)) == 0)
 			break ;
 		write(heredoc_fd, next_line, ft_strlen(next_line));
 		write(heredoc_fd, "\n", 1);
 		free(next_line);
 	}
+	cmd_node->infile = ft_strdup(".heredoc_tmp");
 	free(next_line);
 	close(heredoc_fd);
 }

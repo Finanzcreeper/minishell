@@ -71,7 +71,7 @@ void	pipe_to_parent(t_node *cmd_node, char ***env, bool lstcmd)
 {
 	cmd_node->cmdarr = list_to_array(cmd_node->command_elements);
 	if (cmd_node->read_from_heredoc == true)
-		make_heredoc(cmd_node->limiter);
+		make_heredoc(cmd_node);
 	if (*(cmd_node->cmdarr) != NULL)
 	{
 		if (is_builtin(cmd_node->cmdarr[0], "exit"))
