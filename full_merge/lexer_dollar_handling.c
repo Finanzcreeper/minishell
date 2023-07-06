@@ -22,7 +22,7 @@ char	*make_searched(t_token *t, int *c)
 	int		j;
 
 	i = *c + 1;
-	while (ft_isalnum(t->content[i]) == 1)
+	while (ft_isalnum(t->content[i]) == 1 || t->content[i] == '_')
 		i++;
 	if (t->content[*c + 1] == '?')
 		i = *c + 2;

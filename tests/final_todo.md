@@ -5,7 +5,7 @@ G - can't unset some env vars i.e. "unset TERM COLORTERM LANG", "echo $LANG" giv
 G - cd .. doesn't work when one level down from root
 G - can still do 'ls' after unsetting PATH 
 
-echo $? leaks
+✅ echo $? leaks
 Try ctrl-C after running a blocking command like cat without arguments or grep “something“. - we get two minishell prompts
 
 heredoc CTRLC doesn't end
