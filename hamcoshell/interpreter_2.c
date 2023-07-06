@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   interpreter_2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:43:34 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/06 14:43:35 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/06 18:45:51 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,23 +31,26 @@ char	*get_path(char **cmdarr, char **env)
 
 	if (access(cmdarr[0], F_OK | X_OK) == 0)
 		return (cmdarr[0]);
-	while (ft_strncmp("PATH=", *env, 5))
+	while (*env != NULL && ft_strncmp("PATH=", *env, 5))
 		env++;
-	paths = ft_split(*env + 5, ':');
-	i = 0;
-	while (paths[i])
+	if (*env != NULL)
 	{
-		pre = ft_strjoin(paths[i++], "/");
-		path_cmd = ft_strjoin(pre, cmdarr[0]);
-		free(pre);
-		if (access(path_cmd, F_OK | X_OK) == 0)
+		paths = ft_split(*env + 5, ':');
+		i = 0;
+		while (paths[i])
 		{
-			free_paths(paths);
-			return (path_cmd);
+			pre = ft_strjoin(paths[i++], "/");
+			path_cmd = ft_strjoin(pre, cmdarr[0]);
+			free(pre);
+			if (access(path_cmd, F_OK | X_OK) == 0)
+			{
+				free_paths(paths);
+				return (path_cmd);
+			}
+			free(path_cmd);
 		}
-		free(path_cmd);
+		free_paths(paths);
 	}
-	free_paths(paths);
 	return (NULL);
 }
 
