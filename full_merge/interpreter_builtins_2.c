@@ -94,10 +94,11 @@ char	**builtin_export(char **args, char **env)
 // unset (with no options)
 // remove item from env by name
 // NOTE: unsetting a not-previously-set variable does not abort or give an error
-void	builtin_unset(char **args, char **env)
+char **builtin_unset(char **args, char **env)
 {
 	int	i;
 
+	args++;
 	i = 0;
 	while (args[i])
 	{
@@ -105,4 +106,5 @@ void	builtin_unset(char **args, char **env)
 		i++;
 	}
 	g_exitstatus = 0;
+	return (env);
 }
