@@ -82,22 +82,21 @@ void	builtin_cd_single_arg(int argc, char **args)
 {
 	char			*path;
 	char			cwd[PATH_MAX];
-	char			*ret;
 
 	if (argc == 1)
 	{
-		g_exitstatus = 0;
 		path = args[0];
 		if (ft_strncmp(path, ".", ll(path, ".")) == 0)
+		{
+			g_exitstatus = 0;
 			return ;
+		}
 		if (ft_strncmp(path, "..", ll(path, "..")) == 0)
 		{
 			if (getcwd(cwd, sizeof(cwd)) != NULL)
-			{
-				ret = ft_strrchr(cwd, '/');
-				*(++ret) = '\0';
-			}
+				*(ft_strrchr(cwd, '/')) = '\0';
 			chdir(cwd);
+			g_exitstatus = 0;
 			return ;
 		}
 		if (path[0] == '/')
