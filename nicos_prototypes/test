@@ -1,5 +1,0 @@
-CC = cc
-MAKEFLAGS = --no-print-directory
-SRC = proto_lexer.c proto_lexer_additional_functions.c proto_quote_handling.c
-OBJ = $(SRC:.c=.o)
-	make clean -C ../libft
