@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   interpreter_builtins_3.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:44:02 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/06 14:44:02 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/06 18:52:58 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,10 @@ void	builtin_exit(char **args)
 	if (argc > 1)
 	{
 		ft_printf("%s%s%s", PRG_NAME, ERR_EXIT, ERR_TM_ARGS);
-		free(--args);
+		// free(--args);
 		g_exitstatus = 1;
-		exit(g_exitstatus);
+		// exit(g_exitstatus);
+		return ;
 	}
 	if (argc == 1)
 	{
