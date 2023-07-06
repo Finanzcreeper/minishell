@@ -8,7 +8,7 @@ void	execute_cmd(char **cmdarr, char **env)
 
 	if (*cmdarr == NULL)
 	{
-		g_exitstatus = 12345;
+		g_exitstatus = 1;
 		exit(g_exitstatus);
 	}
 	path = get_path(cmdarr, env);

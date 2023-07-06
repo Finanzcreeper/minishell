@@ -11,7 +11,7 @@ void	builtin_pwd(void)
 	else
 	{
 		perror(ERR_CWD);
-		g_exitstatus = 127;
+		g_exitstatus = 1;
 		exit(g_exitstatus);
 	}
 	g_exitstatus = 0;

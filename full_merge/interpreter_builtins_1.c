@@ -10,7 +10,7 @@ void	builtin_echo(int num_elements, char **elements)
 	if (num_elements == 0)
 	{
 		ft_printf("\n");
-		g_exitstatus = 127;
+		g_exitstatus = 1;
 		exit(g_exitstatus);
 	}
 	print_newline = true;
@@ -42,7 +42,7 @@ void	builtin_cd_absolute(char *path)
 	if (status != 0)
 	{
 		ft_printf("%s%s%s%s", PRG_NAME, ERR_CD, path, ERR_FILE);
-		g_exitstatus = 127;
+		g_exitstatus = 1;
 		return ;
 	}
 	g_exitstatus = 0;
@@ -67,14 +67,14 @@ void	builtin_cd_relative(char *path)
 		if (status != 0)
 		{
 			ft_printf("%s%s%s%s", PRG_NAME, ERR_CD, path, ERR_FILE);
-			g_exitstatus = 127;
+			g_exitstatus = 1;
 			return ;
 		}
 		g_exitstatus = 0;
 		return ;
 	}
 	perror(ERR_CWD);
-	g_exitstatus = 127;
+	g_exitstatus = 1;
 	return ;
 }
 
@@ -118,7 +118,7 @@ void	builtin_cd(char **cmd_as_array, char **env)
 	if (argc > 1)
 	{
 		ft_printf("%s%s%s", PRG_NAME, ERR_CD, ERR_TM_ARGS);
-		g_exitstatus = 127;
+		g_exitstatus = 1;
 		return ;
 	}
 	if (argc == 0)

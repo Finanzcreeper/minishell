@@ -9,7 +9,7 @@ void	builtin_env(int num_args, char **args, char **env)
 	if (num_args != 0)
 	{
 		ft_printf("%s‘%s’%s", ERR_ENV, args[0], ERR_FILE);
-		g_exitstatus = 127;
+		g_exitstatus = 1;
 		exit(g_exitstatus);
 	}
 	i = 0;
@@ -32,7 +32,7 @@ void	detect_non_numeric_arg(char **args)
 		if (args[0][i] < '0' || args[0][i] > '9')
 		{
 			ft_printf("%s%s%s%s", PRG_NAME, ERR_EXIT, args[0], ERR_NONNUM);
-			g_exitstatus = 127;
+			g_exitstatus = 1;
 			exit(g_exitstatus);
 		}
 		i++;
@@ -56,7 +56,7 @@ void	builtin_exit(char **args)
 	{
 		ft_printf("%s%s%s", PRG_NAME, ERR_EXIT, ERR_TM_ARGS);
 		free(--args);
-		g_exitstatus = 127;
+		g_exitstatus = 1;
 		exit(g_exitstatus);
 	}
 	if (argc == 1)
