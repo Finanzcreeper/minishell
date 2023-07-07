@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   interpreter_builtins_3.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
+/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:44:02 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/06 18:52:58 by nreher           ###   ########.fr       */
+/*   Updated: 2023/07/07 09:09:25 by gbooth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	detect_non_numeric_arg(char **args)
 		{
 			ft_printf("%s%s%s%s", PRG_NAME, ERR_EXIT, args[0], ERR_NONNUM);
 			g_exitstatus = 1;
-			exit(g_exitstatus);
+			return ;
 		}
 		i++;
 	}
@@ -67,14 +67,14 @@ void	builtin_exit(char **args)
 	if (argc > 1)
 	{
 		ft_printf("%s%s%s", PRG_NAME, ERR_EXIT, ERR_TM_ARGS);
-		// free(--args);
 		g_exitstatus = 1;
-		// exit(g_exitstatus);
 		return ;
 	}
 	if (argc == 1)
 	{
 		detect_non_numeric_arg(args);
+		if (g_exitstatus == 1)
+			return ;
 		g_exitstatus = ft_atoi(args[0]);
 	}
 	if (argc == 0)
