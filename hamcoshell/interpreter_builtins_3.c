@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   interpreter_builtins_3.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:44:02 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/07 10:24:34 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/07 14:29:04 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ void	builtin_exit(char **args)
 	}
 	if (argc == 1)
 	{
+		g_exitstatus = 0;
 		detect_non_numeric_arg(args);
 		if (g_exitstatus == 1)
 			return ;
