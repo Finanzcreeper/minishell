@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   interpreter_builtins_1.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:43:47 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/07 10:57:02 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/07 12:32:30 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ void	builtin_cd_single_arg(int argc, char **args)
 	}
 }
 
-void	builtin_cd(char **cmd_as_array, char **env)
+char	**builtin_cd(char **cmd_as_array, char **env)
 {
 	unsigned int	argc;
 	int				c;
@@ -131,19 +131,19 @@ void	builtin_cd(char **cmd_as_array, char **env)
 	{
 		ft_printf("%s%s%s", PRG_NAME, ERR_CD, ERR_TM_ARGS);
 		g_exitstatus = 1;
-		return ;
+		return (env);
 	}
 	if (argc == 0)
 	{
 		c = -1;
 		while (env[++c] != NULL && ft_strncmp(env[c], "HOME", 
 				ft_strlen("HOME")) != 0);
-		set_env_var("OLDPWD=", env);
+		env = set_env_var("OLDPWD=", env);
 		chdir(ft_strchr(env[c], '=') + 1);
-		set_env_var("PWD=", env);
+		env = set_env_var("PWD=", env);
 		g_exitstatus = 0;
-		return ;
+		return (env);
 	}
 	builtin_cd_single_arg(argc, cmd_as_array);
-	return ;
+	return (env);
 }

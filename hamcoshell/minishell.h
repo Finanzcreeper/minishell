@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:58:15 by nreher            #+#    #+#             */
-/*   Updated: 2023/07/07 11:00:16 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/07 12:32:49 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ bool	parse__pipeline_tail(t_token **token, t_node **ast_head);
 
 bool	is_builtin(char *command, char *builtin);
 void	builtin_exit(char **cmd_as_array);
-void	builtin_cd(char **cmd_as_array, char **env);
+char	**builtin_cd(char **cmd_as_array, char **env);
 void	builtin_echo(int num_args, char **args);
 char	**builtin_export_args(char **args, char **env);
 void	builtin_export_no_args(int argc, char **args, char **env);

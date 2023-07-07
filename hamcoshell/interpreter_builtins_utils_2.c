@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   interpreter_builtins_utils_2.c                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:44:12 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/07 11:02:15 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/07 12:38:08 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,15 @@ char	**set_env_var(char *key, char **env)
 {
 	char	**args;
 	char	buf_cwd[PATH_MAX];
+	char	**nenv;
 
 	args = ft_calloc(sizeof(char *), 3);
 	getcwd(buf_cwd, sizeof(buf_cwd));
 	args[0] = ft_strdup("export");
 	args[1] = ft_strjoin(key, buf_cwd);
-	// free(args[0]);
-	// free(args[1]);
-	// free(args);
-	// free(key);
-	return (builtin_export_args(args, env));
+	nenv = builtin_export_args(args, env);
+	free(args[0]);
+	free(args[1]);
+	free(args);
+	return (nenv);
 }

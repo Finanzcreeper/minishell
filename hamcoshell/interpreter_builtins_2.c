@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   interpreter_builtins_2.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:43:54 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/07 11:08:39 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/07 12:39:26 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ char	**builtin_export_args(char **args, char **env)
 				new_env = count_and_copy_over(env, args, i);
 				temp = env;
 				env = new_env;
-				// free(temp);
+				free(temp);
 				g_exitstatus = 0;
 			}
 			i++;
