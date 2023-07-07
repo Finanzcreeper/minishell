@@ -6,7 +6,7 @@
 /*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:43:47 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/07 13:37:22 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/07 13:51:14 by gbooth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,6 @@ void	builtin_cd_single_arg(int argc, char **args)
 char	**builtin_cd(char **cmd_as_array, char **env)
 {
 	unsigned int	argc;
-	int				c;
 
 	cmd_as_array++;
 	argc = 0;
@@ -133,18 +132,6 @@ char	**builtin_cd(char **cmd_as_array, char **env)
 		g_exitstatus = 1;
 		return (env);
 	}
-	env = set_env_var("OLDPWD=", env);
-	if (argc == 0)
-	{
-		c = -1;
-		while (env[++c] != NULL && ft_strncmp(env[c], "HOME", 
-				ft_strlen("HOME")) != 0);
-		chdir(ft_strchr(env[c], '=') + 1);
-		g_exitstatus = 0;
-		env = set_env_var("PWD=", env);
-		return (env);
-	}
-	builtin_cd_single_arg(argc, cmd_as_array);
-	env = set_env_var("PWD=", env);
+	env = crush_my_soul(env, argc, cmd_as_array);
 	return (env);
 }
