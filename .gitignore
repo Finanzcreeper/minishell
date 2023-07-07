@@ -11,4 +11,4 @@
 **/infile
 
 #ignore all files called infile
-**/nfs**
+**/.nfs*
