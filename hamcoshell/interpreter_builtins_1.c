@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   interpreter_builtins_1.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
+/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:43:47 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/07 12:32:30 by nreher           ###   ########.fr       */
+/*   Updated: 2023/07/07 13:37:22 by gbooth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,17 +133,18 @@ char	**builtin_cd(char **cmd_as_array, char **env)
 		g_exitstatus = 1;
 		return (env);
 	}
+	env = set_env_var("OLDPWD=", env);
 	if (argc == 0)
 	{
 		c = -1;
 		while (env[++c] != NULL && ft_strncmp(env[c], "HOME", 
 				ft_strlen("HOME")) != 0);
-		env = set_env_var("OLDPWD=", env);
 		chdir(ft_strchr(env[c], '=') + 1);
-		env = set_env_var("PWD=", env);
 		g_exitstatus = 0;
+		env = set_env_var("PWD=", env);
 		return (env);
 	}
 	builtin_cd_single_arg(argc, cmd_as_array);
+	env = set_env_var("PWD=", env);
 	return (env);
 }
