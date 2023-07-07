@@ -6,7 +6,7 @@
 /*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:44:12 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/07 13:54:25 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/07 14:01:06 by gbooth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,30 @@ char	**crush_my_soul(char **env, int argc, char **cmd_as_array)
 	builtin_cd_single_arg(argc, cmd_as_array);
 	env = set_env_var("PWD=", env);
 	return (env);
+}
+
+char	**export_your_mums_args(char **args, char **env)
+{
+	int		i;
+	char	*pre_eq;
+	char	**new_env;
+	char	**temp;
+
+	i = 0;
+	while (args[i] != NULL)
+	{
+		if (ft_strchr(args[i], '='))
+		{
+			pre_eq = get_string_before_equals(args[i]);
+			env = remove_key_from_env(env, pre_eq);
+			free(pre_eq);
+			new_env = count_and_copy_over(env, args, i);
+			temp = env;
+			env = new_env;
+			free(temp);
+			g_exitstatus = 0;
+		}
+		i++;
+	}
+	return (new_env);
 }

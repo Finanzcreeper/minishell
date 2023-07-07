@@ -6,7 +6,7 @@
 /*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:58:15 by nreher            #+#    #+#             */
-/*   Updated: 2023/07/07 13:54:38 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/07 14:01:15 by gbooth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,6 +185,7 @@ char	**remove_key_from_env(char **env, char *key_to_remove);
 char	**count_and_copy_over(char **env, char **args, int i);
 char	**set_env_var(char *key, char **env);
 char	**crush_my_soul(char **env, int argc, char **cmd_as_array);
+char	**export_your_mums_args(char **args, char **env);
 void	builtin_pwd(void);
 void	run_builtin(char **cmd_as_array, char **env);
 bool	check_for_builtin(char *command);
