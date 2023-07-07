@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:43:34 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/06 18:45:51 by nreher           ###   ########.fr       */
+/*   Updated: 2023/07/07 13:59:16 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ char	*get_path(char **cmdarr, char **env)
 	char	**paths;
 	int		i;
 	char	*path_cmd;
-	char	*pre;
 
 	if (access(cmdarr[0], F_OK | X_OK) == 0)
 		return (cmdarr[0]);
@@ -39,9 +38,7 @@ char	*get_path(char **cmdarr, char **env)
 		i = 0;
 		while (paths[i])
 		{
-			pre = ft_strjoin(paths[i++], "/");
-			path_cmd = ft_strjoin(pre, cmdarr[0]);
-			free(pre);
+			fuckynette(&path_cmd, &i, cmdarr, paths);
 			if (access(path_cmd, F_OK | X_OK) == 0)
 			{
 				free_paths(paths);

@@ -6,7 +6,7 @@
 /*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:43:18 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/07 12:31:51 by nreher           ###   ########.fr       */
+/*   Updated: 2023/07/07 14:06:13 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,30 +80,17 @@ void	forker(t_node *cmd_node, char **env, bool lstcmd)
 
 void	pipe_to_parent(t_node *cmd_node, char ***env, bool lstcmd)
 {
+	int	fuckoff;
+
 	cmd_node->cmdarr = list_to_array(cmd_node->command_elements);
 	if (cmd_node->read_from_heredoc == true)
 		make_heredoc(cmd_node);
 	if (*(cmd_node->cmdarr) != NULL)
 	{
-		if (is_builtin(cmd_node->cmdarr[0], "exit"))
-			return (builtin_exit(cmd_node->cmdarr));
-		if (is_builtin(cmd_node->cmdarr[0], "cd"))
-		{
-			*env = builtin_cd(cmd_node->cmdarr, *env);
+		fuckoff = 1;
+		fuckoff = fuck_this(cmd_node, env);
+		if (fuckoff == 0)
 			return ;
-		}
-		if (is_builtin(cmd_node->cmdarr[0], "export"))
-		{
-			g_exitstatus = 1;
-			*env = builtin_export_args(cmd_node->cmdarr, *env);
-			if (g_exitstatus != 1)
-				return ;
-		}
-		if (is_builtin(cmd_node->cmdarr[0], "unset"))
-		{
-			*env = builtin_unset(cmd_node->cmdarr, *env);
-			return ;
-		}
 	}
 	open_infile(cmd_node);
 	open_outfile(cmd_node);

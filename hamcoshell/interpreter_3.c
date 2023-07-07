@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   interpreter_3.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:43:40 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/06 14:43:41 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/07 14:06:15 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,4 +59,41 @@ void	make_heredoc(t_node *cmd_node)
 	cmd_node->infile = ft_strdup(".heredoc_tmp");
 	free(next_line);
 	close(heredoc_fd);
+}
+
+void	fuckynette(char **path_cmd, int *i, char **cmdarr, char **paths)
+{
+	char	*pre;
+
+	pre = ft_strjoin(paths[*i], "/");
+	*path_cmd = ft_strjoin(pre, cmdarr[0]);
+	free(pre);
+	*i = *i + 1;
+}
+
+int	fuck_this(t_node *cmd_node, char ***env)
+{
+	if (is_builtin(cmd_node->cmdarr[0], "exit"))
+	{
+		builtin_exit(cmd_node->cmdarr);
+		return (0);
+	}
+	if (is_builtin(cmd_node->cmdarr[0], "cd"))
+	{
+		*env = builtin_cd(cmd_node->cmdarr, *env);
+		return (0);
+	}
+	if (is_builtin(cmd_node->cmdarr[0], "export"))
+	{
+		g_exitstatus = 1;
+		*env = builtin_export_args(cmd_node->cmdarr, *env);
+		if (g_exitstatus != 1)
+			return (0);
+	}
+	if (is_builtin(cmd_node->cmdarr[0], "unset"))
+	{
+		*env = builtin_unset(cmd_node->cmdarr, *env);
+		return (0);
+	}
+	return (1);
 }

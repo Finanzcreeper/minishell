@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:58:15 by nreher            #+#    #+#             */
-/*   Updated: 2023/07/07 14:01:15 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/07 14:09:31 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,4 +203,6 @@ void	make_heredoc(t_node *cmd_node);
 
 void	sigint_handler(int sig);
 
+void	fuckynette(char **path_cmd, int *i, char **cmdarr, char **paths);
+int		fuck_this(t_node *cmd_node, char ***env);
 #endif
