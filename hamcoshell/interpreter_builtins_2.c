@@ -6,7 +6,7 @@
 /*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:43:54 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/06 14:43:55 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/07 11:08:39 by gbooth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,16 +35,22 @@ void	builtin_pwd(void)
 // NOTE: performs bubble sort 
 // NOTE: arguments are variable names without $
 // NOTE: no error message even if unsuccessful
-void	builtin_export_no_args(char **env)
+void	builtin_export_no_args(int argc, char **args, char **env)
 {
 	int		c;
 
-	env = remove_key_from_env(env, "_");
-	c = 0;
-	while (env[c])
-		c++;
-	bubble_sort_env(env, c);
-	format_export_for_display(env, c);
+	args++;
+	if (argc == 0)
+	{
+		env = remove_key_from_env(env, "_");
+		c = 0;
+		while (env[c])
+			c++;
+		bubble_sort_env(env, c);
+		format_export_for_display(env, c);
+		g_exitstatus = 0;
+		exit(g_exitstatus);
+	}
 }
 
 char	**builtin_export_args(char **args, char **env)
@@ -53,41 +59,32 @@ char	**builtin_export_args(char **args, char **env)
 	char	**temp;
 	char	*pre_eq;
 	char	**new_env;
-
-	i = 0;
-	while (args[i] != NULL)
-	{
-		if (ft_strchr(args[i], '='))
-		{
-			pre_eq = get_string_before_equals(args[i]);
-			env = remove_key_from_env(env, pre_eq);
-			free(pre_eq);
-			new_env = count_and_copy_over(env, args, i);
-			temp = env;
-			env = new_env;
-			free(temp);
-		}
-		i++;
-	}
-	return (new_env);
-}
-
-char	**builtin_export(char **args, char **env)
-{
 	int		num_args;
 
 	args++;
 	num_args = 0;
 	while (args[num_args])
 		num_args++;
-	if (num_args == 0)
+	if (num_args != 0)
 	{
-		builtin_export_no_args(env);
-		g_exitstatus = 0;
-		return (env);
+		i = 0;
+		while (args[i] != NULL)
+		{
+			if (ft_strchr(args[i], '='))
+			{
+				pre_eq = get_string_before_equals(args[i]);
+				env = remove_key_from_env(env, pre_eq);
+				free(pre_eq);
+				new_env = count_and_copy_over(env, args, i);
+				temp = env;
+				env = new_env;
+				// free(temp);
+				g_exitstatus = 0;
+			}
+			i++;
+		}
+		return (new_env);
 	}
-	env = builtin_export_args(args, env);
-	g_exitstatus = 0;
 	return (env);
 }
 

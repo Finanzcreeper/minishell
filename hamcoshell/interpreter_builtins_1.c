@@ -6,7 +6,7 @@
 /*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:43:47 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/07 09:05:32 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/07 10:57:02 by gbooth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,9 @@ void	builtin_cd(char **cmd_as_array, char **env)
 		c = -1;
 		while (env[++c] != NULL && ft_strncmp(env[c], "HOME", 
 				ft_strlen("HOME")) != 0);
+		set_env_var("OLDPWD=", env);
 		chdir(ft_strchr(env[c], '=') + 1);
+		set_env_var("PWD=", env);
 		g_exitstatus = 0;
 		return ;
 	}

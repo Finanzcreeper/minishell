@@ -6,7 +6,7 @@
 /*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:44:02 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/07 09:09:25 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/07 10:24:34 by gbooth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,4 +111,6 @@ void	run_builtin(char **cmd_as_array, char **env)
 		builtin_pwd();
 	else if (is_builtin(cmd, "env"))
 		builtin_env(argc, args, env);
+	else if (is_builtin(cmd, "export"))
+		builtin_export_no_args(argc, args, env);
 }

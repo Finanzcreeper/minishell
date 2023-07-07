@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
+/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:58:15 by nreher            #+#    #+#             */
-/*   Updated: 2023/07/06 14:58:17 by nreher           ###   ########.fr       */
+/*   Updated: 2023/07/07 11:00:16 by gbooth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,10 +177,12 @@ bool	is_builtin(char *command, char *builtin);
 void	builtin_exit(char **cmd_as_array);
 void	builtin_cd(char **cmd_as_array, char **env);
 void	builtin_echo(int num_args, char **args);
-char	**builtin_export(char **args, char **env);
+char	**builtin_export_args(char **args, char **env);
+void	builtin_export_no_args(int argc, char **args, char **env);
 char	**builtin_unset(char **args, char **env);
 char	**remove_key_from_env(char **env, char *key_to_remove);
 char	**count_and_copy_over(char **env, char **args, int i);
+char	**set_env_var(char *key, char **env);
 void	builtin_pwd(void);
 void	run_builtin(char **cmd_as_array, char **env);
 bool	check_for_builtin(char *command);

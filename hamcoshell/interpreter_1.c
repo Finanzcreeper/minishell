@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   interpreter_1.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
+/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:43:18 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/06 14:51:58 by nreher           ###   ########.fr       */
+/*   Updated: 2023/07/07 10:51:59 by gbooth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,10 @@ void	pipe_to_parent(t_node *cmd_node, char ***env, bool lstcmd)
 			return (builtin_cd(cmd_node->cmdarr, *env));
 		if (is_builtin(cmd_node->cmdarr[0], "export"))
 		{
-			*env = builtin_export(cmd_node->cmdarr, *env);
-			return ;
+			g_exitstatus = 1;
+			*env = builtin_export_args(cmd_node->cmdarr, *env);
+			if (g_exitstatus != 1)
+				return ;
 		}
 		if (is_builtin(cmd_node->cmdarr[0], "unset"))
 		{
