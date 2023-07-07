@@ -10,5 +10,5 @@
 #ignore all files called infile
 **/infile
 
-#ignore all files called infile
-**/.nfs*
+#ignore all files with .nfs
+**/*.nfs*
