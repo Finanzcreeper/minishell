@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gbooth <gbooth@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nreher <nreher@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 14:44:44 by gbooth            #+#    #+#             */
-/*   Updated: 2023/07/06 14:44:45 by gbooth           ###   ########.fr       */
+/*   Updated: 2023/07/13 09:32:36 by nreher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 void	set_type(t_token	*token, char **metachars, t_token **token_list)
 {
-	int		c;
-
-	c = 0;
 	token->type = T_WORD;
 	if (ft_strncmp(token->content, metachars[0]
 			, ft_strlen(token->content)) == 0)
